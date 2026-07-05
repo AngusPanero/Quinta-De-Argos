@@ -1,0 +1,124 @@
+.cookie-wrapper {
+    position: fixed;
+    bottom: 4rem;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 9999;
+    padding: 0 1rem;
+}
+
+.cookie-banner {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 900px;
+    width: 100%;
+    border: 1px solid;
+    transition: all 0.3s ease;
+}
+
+.cookie-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cookie-icon { 
+    font-size: 2.2rem; 
+}
+
+.cookie-banner a {
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px solid transparent;
+    transition: 0.3s;
+}
+
+.cookie-btn {
+    padding: 0.7rem 1.8rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s all;
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+
+/* --- THEME DARK (Tus colores originales) --- */
+.cookie-wrapper.dark .cookie-banner {
+    background: rgba(20, 20, 30, 0.7);
+    border-color: rgba(142, 45, 226, 0.4);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.cookie-wrapper.dark .cookie-content { 
+    color: #e0e0e0; 
+}
+
+.cookie-wrapper.dark .cookie-banner a { 
+    color: #9f6bff; 
+}
+
+.cookie-wrapper.dark .cookie-banner a:hover { 
+    border-bottom-color: #9f6bff; 
+}
+
+.cookie-wrapper.dark .cookie-btn {
+    background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+}
+
+.cookie-wrapper.dark .cookie-btn:hover {
+    box-shadow: 0 0 20px rgba(142, 45, 226, 0.6);
+}
+
+/* --- THEME LIGHT (Blanco y Azul Eléctrico) --- */
+.cookie-wrapper.light .cookie-banner {
+    background: rgba(255, 255, 255, 0.526);
+    border-color: rgba(0, 85, 255, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 85, 255, 0.15);
+}
+
+.cookie-wrapper.light .cookie-content { 
+    color: #1a1a1a; 
+}
+
+.cookie-wrapper.light .cookie-banner a { 
+    color: #0055ff; 
+}
+
+.cookie-wrapper.light .cookie-banner a:hover { 
+    border-bottom-color: #0055ff; 
+}
+
+.cookie-wrapper.light .cookie-btn {
+    background: linear-gradient(135deg, #0055ff 0%, #00c6ff 100%);
+}
+
+.cookie-wrapper.light .cookie-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 85, 255, 0.4);
+}
+
+@media (max-width: 768px) {
+    .cookie-wrapper {
+        bottom: 2rem;
+    }
+
+    .cookie-banner { 
+        flex-direction: column; 
+        text-align: center; 
+        gap: 1rem; 
+        padding: 1.5rem;
+    }
+    .cookie-btn {
+         width: 100%; 
+        }
+}

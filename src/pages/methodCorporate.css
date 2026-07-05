@@ -1,0 +1,431 @@
+.method-root {
+    --rose:       #c9637a;
+    --rose-soft:  #f0c4ce;
+    --rose-dim:   rgba(201, 99, 122, 0.1);
+    --navy:       #141820;
+    --border:     rgba(201, 99, 122, 0.15);
+    --border-neu: rgba(128, 128, 128, 0.12);
+ 
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    padding-top: 5rem;
+    overflow-x: hidden;
+}
+ 
+.method-root.dark  { background: var(--navy); color: #f0eaec; }
+.method-root.light { background: #fdfafa;     color: #141820; }
+ 
+/* ══════════════════════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════════════════════ */
+.method-header {
+    padding: 7rem 5% 5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 4rem;
+    flex-wrap: wrap;
+}
+ 
+.method-header-inner {
+    max-width: 700px;
+}
+ 
+.method-eyebrow {
+    display: block;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 2rem;
+}
+ 
+.method-title {
+    font-family: "Montserrat", serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -2px;
+    margin: 0 0 2rem;
+}
+ 
+.method-title-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--rose);
+}
+ 
+.method-subtitle {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    opacity: 0.6;
+    max-width: 500px;
+    font-weight: 400;
+    margin: 0;
+}
+ 
+/* ── Indicador de progreso ─────────────────────────────── */
+.method-step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+ 
+.method-step-current {
+    font-family: 'Montserrat', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--rose);
+    line-height: 1;
+    min-width: 60px;
+}
+ 
+.method-step-total {
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.35;
+}
+ 
+.method-step-bar {
+    width: 140px;
+    height: 2px;
+    background: var(--border-neu);
+    border-radius: 2px;
+    overflow: hidden;
+}
+ 
+.method-step-fill {
+    height: 100%;
+    background: var(--rose);
+    border-radius: 2px;
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   BODY — LISTA + PANEL
+══════════════════════════════════════════════════════════ */
+.method-body {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    min-height: 70vh;
+    border-bottom: 1px solid var(--border);
+}
+ 
+/* ── Lista de pasos ────────────────────────────────────── */
+.method-steps-list {
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+ 
+.method-step-btn {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1.6rem 2rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-neu);
+    color: inherit;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.3s ease, padding-left 0.3s ease;
+    position: relative;
+}
+ 
+.method-step-btn::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: var(--rose);
+    transition: width 0.3s ease;
+}
+ 
+.method-step-btn.is-active::before,
+.method-step-btn:hover::before {
+    width: 3px;
+}
+ 
+.method-step-btn.is-active {
+    background: var(--rose-dim);
+    padding-left: 2.5rem;
+}
+ 
+.method-step-btn:hover:not(.is-active) {
+    background: rgba(201, 99, 122, 0.05);
+    padding-left: 2.5rem;
+}
+ 
+.method-btn-id {
+    font-family: 'Montserrat', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--rose);
+    min-width: 36px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+ 
+.method-step-btn.is-active .method-btn-id { opacity: 1; }
+ 
+.method-btn-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex: 1;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+ 
+.method-step-btn.is-active .method-btn-title { opacity: 1; }
+ 
+.method-btn-arrow {
+    font-size: 1rem;
+    color: var(--rose);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.3s, transform 0.3s;
+}
+ 
+.method-step-btn.is-active .method-btn-arrow,
+.method-step-btn:hover .method-btn-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+ 
+/* ── Panel de detalle ──────────────────────────────────── */
+.method-detail-panel {
+    padding: 5rem 6%;
+    display: flex;
+    align-items: flex-start;
+}
+ 
+.method-detail-inner {
+    max-width: 680px;
+    width: 100%;
+}
+ 
+.method-detail-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--rose);
+    border: 1px solid var(--rose);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+}
+ 
+.method-detail-title {
+    font-family: "Montserrat", serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin: 0 0 2rem;
+}
+ 
+.method-detail-desc {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    opacity: 0.65;
+    font-weight: 400;
+    margin-bottom: 3rem;
+}
+ 
+.method-detail-footer {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+}
+ 
+.method-detail-id {
+    font-family: "Montserrat", serif;
+    font-size: 5rem;
+    font-weight: 700;
+    color: var(--rose);
+    line-height: 1;
+    opacity: 0.25;
+}
+ 
+.method-detail-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0;
+}
+ 
+.method-pill {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--border-neu);
+    border-radius: 2px;
+    opacity: 0.7;
+    transition: border-color 0.3s, opacity 0.3s;
+}
+ 
+.method-pill:hover {
+    border-color: var(--rose);
+    opacity: 1;
+}
+ 
+/* ── Botones anterior / siguiente ──────────────────────── */
+.method-nav-btns {
+    display: flex;
+    gap: 1rem;
+}
+ 
+.method-nav-btn {
+    background: transparent;
+    border: 1px solid var(--border-neu);
+    color: inherit;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    padding: 0.8rem 1.6rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+ 
+.method-nav-btn:hover:not(:disabled) {
+    border-color: var(--rose);
+    color: var(--rose);
+    opacity: 1;
+}
+ 
+.method-nav-btn--next {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: #fff;
+    opacity: 1;
+}
+ 
+.method-nav-btn--next:hover:not(:disabled) {
+    background: #b5536a;
+    border-color: #b5536a;
+    color: #fff;
+}
+ 
+.method-nav-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   CTA
+══════════════════════════════════════════════════════════ */
+.method-cta {
+    padding: 10rem 5%;
+    text-align: center;
+}
+ 
+.method-cta-link {
+    font-family: 'Montserrat', serif;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-weight: 600;
+    text-decoration: none;
+    color: inherit;
+    letter-spacing: -1px;
+    transition: color 0.4s;
+}
+ 
+.method-cta-link span { color: var(--rose); }
+.method-cta-link:hover { color: var(--rose); }
+ 
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — 1024px
+══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .method-body {
+        grid-template-columns: 300px 1fr;
+    }
+ 
+    .method-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2.5rem;
+    }
+ 
+    .method-step-indicator {
+        align-self: flex-start;
+    }
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — 768px
+══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .method-header {
+        padding: 6rem 5% 3rem;
+    }
+ 
+    .method-title {
+        letter-spacing: -1px;
+    }
+ 
+    .method-body {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+ 
+    .method-steps-list {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+ 
+    .method-step-btn {
+        padding: 1.2rem 1.5rem;
+    }
+ 
+    .method-detail-panel {
+        padding: 3rem 5%;
+    }
+ 
+    .method-detail-id {
+        font-size: 3.5rem;
+    }
+ 
+    .method-nav-btns {
+        flex-wrap: wrap;
+    }
+ 
+    .method-nav-btn {
+        flex: 1;
+        text-align: center;
+    }
+ 
+    .method-step-bar {
+        width: 80px;
+    }
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — 480px
+══════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+    .method-detail-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+ 
+    .method-cta { padding: 6rem 5%; }
+}

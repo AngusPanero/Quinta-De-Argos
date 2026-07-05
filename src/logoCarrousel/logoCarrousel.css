@@ -1,0 +1,116 @@
+.logo-carousel {
+    width: 100%;
+    height: 35vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    place-content: center;
+    padding: 3rem 0;
+    cursor: grab;
+    transition: background 0.4s ease; 
+}
+
+.logo-carousel.theme-dark {
+    background: #000000;
+}
+
+.logo-carousel.theme-light {
+    background: #F0F4F8; 
+}
+
+.logo-carousel:active {
+    cursor: grabbing;
+}
+
+.logo-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+}
+
+.logo-item {
+    width: 160px;
+    padding: 0 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-item img {
+    max-width: 90px;
+    filter: grayscale(100%) brightness(1.1);
+}
+
+/* Estilo para el link */
+.label-text a {
+    color: #6366f1;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.label-text a:hover {
+    color: #818cf8;
+    text-decoration: underline;
+}
+
+.theme-light .carousel-title {
+    color: #102A43; /* Azul medianoche */
+}
+
+.theme-light .logo-item img {
+    filter: invert(95%) sepia(90%) saturate(9500%) hue-rotate(235deg) brightness(100%) contrast(110%);
+}
+
+.h1-boost {
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    font-size: 3rem; 
+}
+
+@media (max-width: 768px) {
+    .logo-carousel {
+        height: auto; /* Dejamos que el padding mande sobre la altura */
+        padding: 2.5rem 0;
+        gap: 2rem;
+    }
+
+    .logo-item {
+        width: 120px; /* Reducimos el ancho del contenedor del logo */
+        padding: 0 1.5rem;
+    }
+
+    .logo-item img {
+        max-width: 70px; /* Logo un poco más pequeño para que quepan más en la visual */
+    }
+
+    .h1-boost {
+        font-size: 2rem; 
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-carousel {
+        padding: 2rem 0;
+    }
+
+    .logo-item {
+        width: 100px;
+        padding: 0 1rem;
+    }
+
+    .logo-item img {
+        max-width: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .label-text {
+        line-height: 1.5; /* Más espacio entre líneas si el texto legal es largo y se quiebra */
+    }
+    
+    .checkbox-wrapper {
+        align-items: center; /* En móvil queda mejor centrado si el texto es de una sola línea */
+    }
+}

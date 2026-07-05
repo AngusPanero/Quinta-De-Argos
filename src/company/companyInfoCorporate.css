@@ -1,0 +1,501 @@
+.bg-corp {
+    --rose:       #c9637a;        /* Rosa corporativo principal  */
+    --rose-soft:  #f0c4ce;        /* Acento suave / decorativo   */
+    --rose-dim:   rgba(201, 99, 122, 0.12);
+    --navy:       #141820;        /* Fondo dark                  */
+    --pearl:      #fdf8f8;        /* Fondo light                 */
+    --border:     rgba(201, 99, 122, 0.18);
+    --border-neu: rgba(128, 128, 128, 0.15);
+ 
+    font-family: "Montserrat", 'Jost', sans-serif;
+    min-height: 100vh;
+    padding-top: 5rem;
+    overflow-x: hidden;
+}
+ 
+/* ── THEMES ─────────────────────────────────────────────── */
+.bg-corp.dark  { background-color: var(--navy);  color: #f0eaec; }
+.bg-corp.light { background-color: var(--pearl); color: #141820; }
+ 
+/* ── LABEL SECTION ──────────────────────────────────────── */
+.bg-section-label {
+    font-family: "Montserrat", 'Jost', sans-serif;
+    font-size: 15px;
+    letter-spacing: 6px;
+    font-weight: 800;
+    color: var(--rose);
+    text-transform: uppercase;
+    padding: 0 5%;
+    margin-bottom: 3rem;
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════════════ */
+.bg-hero {
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 5% 6rem;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+}
+ 
+.bg-video-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+ 
+/* Placeholder hasta que se agregue el video */
+.bg-video-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #2a1520 0%, #1a0d14 50%, #0d0a12 100%);
+}
+ 
+.bg-hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+ 
+.bg-video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(20, 8, 13, 0.85) 0%,
+        rgba(20, 8, 13, 0.3) 60%,
+        rgba(20, 8, 13, 0.1) 100%
+    );
+}
+ 
+.bg-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin-bottom: 10rem;
+}
+ 
+.bg-eyebrow {
+    font-family: "Montserrat", 'Jost', sans-serif;
+    font-size: 14px;
+    letter-spacing: 5px;
+    font-weight: 500;
+    color: white;
+    margin-bottom: 2rem;
+}
+ 
+.light .bg-eyebrow {
+    font-family: "Montserrat", 'Jost', sans-serif;
+    font-size: 14px;
+    letter-spacing: 5px;
+    font-weight: 500;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+h1.bg-hero-title {
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 9vw, 5rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -2px;
+    color: #fff;
+    margin: 0;
+}
+ 
+.bg-rose-text { color: var(--rose-soft); }
+ 
+/* ══════════════════════════════════════════════════════════
+   MISIÓN
+══════════════════════════════════════════════════════════ */
+.bg-mission {
+    padding: 10rem 5%;
+    border-bottom: 1px solid var(--border);
+}
+ 
+.bg-mission-inner {
+    margin-top: 3rem;
+    max-width: 1100px;
+}
+ 
+.bg-mission-headline {
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 2.5rem;
+}
+ 
+.bg-mission-sub {
+    font-size: clamp(1rem, 1.8vw, 1.3rem);
+    line-height: 1.75;
+    max-width: 700px;
+    font-weight: 400;
+    opacity: 0.65;
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   MÉTRICAS
+══════════════════════════════════════════════════════════ */
+.bg-metrics {
+    border-bottom: 1px solid var(--border);
+}
+ 
+.bg-metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3rem 5%;
+    border-bottom: 1px solid var(--border-neu);
+    transition: background 0.35s ease, color 0.35s ease;
+    cursor: default;
+}
+ 
+.bg-metric-row:hover {
+    background: var(--rose);
+    color: #fff;
+}
+ 
+.bg-metric-label {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+ 
+.bg-metric-value {
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 7vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   PERFIL BETINA
+══════════════════════════════════════════════════════════ */
+.bg-profile {
+    padding: 10rem 5%;
+    border-bottom: 1px solid var(--border);
+}
+ 
+.bg-profile-grid {
+    margin-top: 4rem;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 6rem;
+    align-items: start;
+    max-width: 1400px;
+}
+ 
+/* Columna imagen */
+.bg-profile-image-col {
+    position: sticky;
+    top: 7rem;
+}
+ 
+.bg-image-frame {
+    position: relative;
+    line-height: 0;
+}
+ 
+/* Acento decorativo rosa detrás de la foto */
+.bg-image-accent {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--rose-soft);
+    border-radius: 2px;
+    opacity: 0.5;
+    z-index: 0;
+}
+ 
+.bg-profile-photo {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 2px;
+    display: block;
+    filter: grayscale(15%) contrast(1.05);
+    transition: filter 0.5s ease;
+}
+ 
+.bg-image-frame:hover .bg-profile-photo {
+    filter: grayscale(0%) contrast(1);
+}
+ 
+.bg-profile-caption {
+    margin-top: 1.5rem;
+    padding-left: 4px;
+}
+ 
+.bg-profile-caption h3 {
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+ 
+.bg-profile-caption span {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--rose);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+ 
+/* Columna texto */
+.bg-profile-text-col {
+    padding-top: 1rem;
+}
+ 
+.bg-profile-lead {
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+    line-height: 1.6;
+    font-weight: 400;
+    margin-bottom: 2.5rem;
+    border-left: 3px solid var(--rose);
+    padding-left: 2rem;
+}
+ 
+.bg-profile-body {
+    font-size: 1.2rem;
+    line-height: 1.85;
+    opacity: 0.68;
+    margin-bottom: 1.8rem;
+    font-weight: 400;
+}
+ 
+.bg-credential {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+ 
+.bg-credential-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--rose);
+    flex-shrink: 0;
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   TIMELINE
+══════════════════════════════════════════════════════════ */
+.bg-timeline-section {
+    padding: 10rem 5%;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+}
+ 
+.bg-timeline-canvas {
+    max-width: 1200px;
+    margin: 4rem auto 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10rem;
+}
+ 
+.bg-canvas-item {
+    width: 50%;
+    position: relative;
+    z-index: 2;
+}
+ 
+.bg-canvas-item.right {
+    align-self: flex-end;
+    padding-left: 5%;
+}
+ 
+.bg-canvas-item.left {
+    align-self: flex-start;
+    padding-right: 5%;
+    text-align: right;
+}
+ 
+.bg-canvas-year-bg {
+    position: absolute;
+    top: -50px;
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-size: clamp(7rem, 13vw, 12rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -8px;
+    z-index: -1;
+    opacity: 0.05;
+    transition: all 0.5s ease;
+    user-select: none;
+}
+ 
+.left .bg-canvas-year-bg  { right: -20px; }
+.right .bg-canvas-year-bg { left: -20px; }
+ 
+.bg-canvas-item:hover .bg-canvas-year-bg {
+    opacity: 0.1;
+    color: var(--rose);
+    transform: translateY(-8px);
+}
+ 
+.bg-canvas-tag {
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--rose);
+    display: block;
+    margin-bottom: 0.8rem;
+}
+ 
+.bg-canvas-content h4 {
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    line-height: 1.1;
+}
+ 
+.bg-canvas-content p {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    opacity: 0.6;
+    max-width: 480px;
+    font-weight: 400;
+}
+ 
+.left .bg-canvas-content p { margin-left: auto; }
+ 
+.bg-canvas-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border), transparent);
+    z-index: 1;
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   CONTACTO
+══════════════════════════════════════════════════════════ */
+.bg-contact {
+    padding: 8rem 5%;
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 4rem;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+}
+ 
+.bg-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+ 
+.bg-contact-item p {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    opacity: 0.65;
+    font-weight: 400;
+    margin: 0;
+}
+ 
+.bg-contact-city {
+    font-size: 1.4rem;
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 1rem;
+}
+ 
+/* ══════════════════════════════════════════════════════════
+   CTA FOOTER
+══════════════════════════════════════════════════════════ */
+.bg-cta {
+    padding: 12rem 5%;
+    text-align: center;
+}
+ 
+.bg-big-link {
+    font-family: "Montserrat", 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5.5vw, 5rem);
+    font-weight: 600;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.4s ease;
+    letter-spacing: -1px;
+}
+ 
+.bg-big-link span { color: var(--rose); }
+.bg-big-link:hover { color: var(--rose); }
+ 
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+    .bg-profile-grid {
+        grid-template-columns: 320px 1fr;
+        gap: 4rem;
+    }
+}
+ 
+@media (max-width: 900px) {
+    .bg-profile-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+
+    .bg-profile-image-col { position: static; }
+ 
+    .bg-profile-photo { height: 420px; }
+ 
+    .bg-canvas-item  { width: 100%; text-align: left; padding: 0; }
+    .bg-canvas-year-bg { font-size: 7rem; left: 0; top: -40px; }
+    .bg-canvas-line  { display: none; }
+ 
+    .bg-contact {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+ 
+    .bg-contact-grid { grid-template-columns: 1fr; }
+ 
+    .bg-timeline-canvas { padding: 0 40px; gap: 6rem; }
+
+}
+ 
+@media (max-width: 600px) {
+
+    h1.bg-hero-title { letter-spacing: -1px; font-size: 2rem;}
+ 
+    .bg-mission-headline { letter-spacing: -1px; }
+ 
+    .bg-metric-value { font-size: 3rem; }
+ 
+    .bg-profile-photo { height: 320px; }
+ 
+    .bg-hero { padding-bottom: 4rem; }
+ 
+    .bg-profile-lead { padding-left: 1.2rem; }
+}

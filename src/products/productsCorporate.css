@@ -1,0 +1,213 @@
+.stacked-main-container {
+    /* Variables de color basadas en CompanyInfoCorporate */
+    --navy-corporate: #0a1928; /* Azul oscuro */
+    --blue-accent: #0062FF;
+    --white-clean: #F0F4F8;
+    
+    background-color: var(--navy-corporate);
+    width: 100%;
+    margin-top: 4rem;
+}
+
+.stacked-main-container.light {
+    background-color: var(--white-clean);
+}
+
+.product-sticky-step {
+    position: sticky;
+    top: 0rem;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    /* Esto asegura que el fondo sea sólido para que no se vea lo de abajo */
+    background: inherit; 
+}
+
+.product-content-wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background: inherit;
+}
+
+/* LADO DE LA IMAGEN */
+.image-side {
+    position: absolute;
+    top: 0;
+    width: 65vw; /* Ocupa más de la mitad */
+    height: 100vh;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.full-bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Opcional: un ligero zoom para dar dinamismo */
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent, rgba(16, 42, 67, 0.4));
+}
+
+/* LADO DEL TEXTO */
+.text-wrapper{
+    height: 550px;
+}
+.text-side {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 8vw;
+    z-index: 5;
+    /* Fondo sólido para OCULTAR el texto de la sección de abajo */
+    background: inherit; 
+}
+
+/* --- DIAGONALES REFORZADAS --- */
+
+/* Par: Imagen izquierda (Corte diagonal hacia la derecha) */
+.right-layout .image-side {
+    left: 0;
+    clip-path: polygon(0 0, 100% 0, 50% 100%, 0% 100%);
+}
+.right-layout .text-side {
+    right: 10px;
+    justify-content: flex-end;
+    text-align: right;
+}
+
+/* Impar: Imagen derecha (Corte diagonal hacia la izquierda) */
+.left-layout .image-side {
+    right: 0;
+    clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+.left-layout .text-side {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+/* --- TIPOGRAFÍA --- */
+.text-wrapper {
+    max-width: 550px;
+}
+
+.index-indicator {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--blue-accent);
+    letter-spacing: 5px;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 2rem;
+    letter-spacing: -2px;
+}
+
+.dark h2 { color: #FFFFFF; }
+.light h2 { color: #102A43; }
+
+p {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.7;
+    opacity: 0.8;
+    font-weight: 300;
+}
+
+.dark p { color: #B0C4DE; }
+.light p { color: #334E68; }
+
+@media (max-width: 900px) {
+    .stacked-main-container {
+        margin-top: 6.5rem;
+    }
+
+    /* 1. Quitamos el efecto Sticky para que el scroll sea natural */
+    .product-sticky-step {
+        position: relative; /* Cambiado de sticky a relative */
+        height: auto;       /* El contenedor crece según el contenido */
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* 2. Reset del wrapper */
+    .product-content-wrapper {
+        display: flex;
+        flex-direction: column; /* Apilamos: Imagen arriba, Texto abajo (o viceversa) */
+        width: 100%;
+        height: auto;
+        align-items: center;
+    }
+
+    /* 3. La Imagen: Ocupará la mitad superior de la pantalla */
+    .image-side {
+        position: relative; /* Ya no flota */
+        width: 100vw;
+        height: 45vh;      /* Altura fija para la imagen */
+        /* clip-path: none !important; */
+        left: auto;
+        right: auto;
+    }
+
+    .full-bg-image {
+        transform: scale(1); /* Quitamos el zoom si molesta */
+    }
+
+    /* 4. El Texto: Seccionado con fondo sólido para legibilidad total */
+    .text-side {
+        position: relative; /* Ya no flota sobre la imagen */
+        width: 100%;
+        height: auto;
+        padding: 40px 10%; /* Espacio prolijo */
+        background: inherit; /* Mantiene el color del tema (navy o light) */
+        justify-content: center ;
+        text-align: center ;
+        z-index: 15;
+    }
+
+    .text-wrapper {
+        max-width: 100%;
+        padding: 0 15px 0 25px;
+    }
+
+    .index-indicator{
+        text-align: start;
+    }
+
+    /* 5. Ajustes de fuentes para mobile */
+    h2 {
+        text-align: start;
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+    }
+
+    p {
+        font-size: 1rem;
+        line-height: 1.6;
+        text-align: start;
+    }
+
+    /* Aseguramos que las capas no se mezclen */
+    .right-layout, .left-layout {
+        flex-direction: column; 
+    }
+}
+

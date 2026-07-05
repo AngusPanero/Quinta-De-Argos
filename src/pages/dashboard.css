@@ -1,0 +1,144 @@
+.dd-dashboard {
+    margin-top: 6rem;
+    min-height: 100vh;
+    font-family: "Montserrat", 'Courier New', Courier, monospace;
+    position: relative;
+    overflow: hidden;
+    padding-top: 6rem;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.dd-content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+.dd-user-badge {
+    font-size: 0.75rem;
+    display: inline-block;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.dd-title { font-family: "Montserrat"; font-size: 3rem; font-weight: 700; letter-spacing: -2px; }
+.dd-title span { font-family: "Montserrat"; }
+
+.dd-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.dd-terminal-card {
+    padding: 20px;
+    position: relative;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.dd-terminal-card.highlight { border-left-width: 4px; border-left-style: solid; }
+
+.card-header {
+    font-size: 0.7rem;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+}
+
+.dd-big-number { font-size: 4rem; font-weight: 900; display: block; line-height: 1; }
+.dd-unit { font-size: 0.8rem; font-weight: bold; }
+
+.dd-logs-container {
+    grid-column: span 2;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.dd-log-entry {
+    font-size: 0.9rem;
+    padding: 10px 0;
+    display: flex;
+    gap: 20px;
+}
+
+/* span.log-plan{
+    width: 110px;
+}
+
+span.log-id{
+    width: 200px;
+} */
+
+.log-status { color: #10b981; } 
+.log-amount { margin-left: auto; font-weight: bold; }
+
+.dd-progress-bar { height: 4px; margin-top: 15px; }
+.dd-progress-bar .fill { width: 70%; height: 100%; }
+
+/* --- ASIGNACIÓN INDEPENDIENTE: TEMA DARK --- */
+.dd-dashboard.dark { background-color: #000000; color: #ffffff; }
+
+.dd-dashboard.dark .dd-grid-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: linear-gradient(#1f1f1f 1px, transparent 1px), 
+                      linear-gradient(90deg, #1f1f1f 1px, transparent 1px);
+    background-size: 40px 40px; opacity: 0.2; z-index: 0;
+}
+
+.dd-dashboard.dark .dd-user-badge { color: #a855f7; border: 1px solid #a855f7; }
+
+.dd-dashboard.dark .dd-title span,
+.dd-dashboard.dark .dd-subtitle span {
+    background: linear-gradient(90deg, #e3c0ff, #8c00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dd-dashboard.dark .dd-terminal-card { background: #0a0a0a; border: 1px solid #1f1f1f; }
+.dd-dashboard.dark .dd-terminal-card.highlight { border-left: 4px solid #a855f7; }
+.dd-dashboard.dark .card-header { color: #6b7280; border-bottom: 1px solid #1f1f1f; }
+.dd-dashboard.dark .dd-unit { color: #a855f7; }
+.dd-dashboard.dark .dd-logs-container { background: #0a0a0a; border: 1px solid #1f1f1f; }
+.dd-dashboard.dark .dd-log-entry { border-bottom: 1px solid #1f1f1f; }
+.dd-dashboard.dark .log-date { color: #6b7280; }
+.dd-dashboard.dark .log-amount { color: #0076FF; }
+.dd-dashboard.dark .dd-progress-bar { background: #1a1a1a; }
+.dd-dashboard.dark .dd-progress-bar .fill { background: #a855f7; box-shadow: 0 0 10px #a855f7; }
+
+
+/* --- ASIGNACIÓN INDEPENDIENTE: TEMA LIGHT --- */
+.dd-dashboard.light { background-color: #F4F7FA; color: #0A192F; }
+
+.dd-dashboard.light .dd-grid-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: linear-gradient(rgba(0, 98, 255, 0.1) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(0, 98, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px; opacity: 0.2; z-index: 0;
+}
+
+.dd-dashboard.light .dd-user-badge { color: #0062FF; border: 1px solid #0062FF; }
+
+.dd-dashboard.light .dd-title span,
+.dd-dashboard.light .dd-subtitle span {
+    background: linear-gradient(90deg, #0062FF, #00D1FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dd-dashboard.light .dd-terminal-card { background: #ffffff; border: 1px solid rgba(0, 98, 255, 0.1); }
+.dd-dashboard.light .dd-terminal-card.highlight { border-left: 4px solid #0062FF; }
+.dd-dashboard.light .card-header { color: #476582; border-bottom: 1px solid rgba(0, 98, 255, 0.1); }
+.dd-dashboard.light .dd-unit { color: #0062FF; }
+.dd-dashboard.light .dd-logs-container { background: #ffffff; border: 1px solid rgba(0, 98, 255, 0.1); }
+.dd-dashboard.light .dd-log-entry { border-bottom: 1px solid rgba(0, 98, 255, 0.05); }
+.dd-dashboard.light .log-date { color: #476582; }
+.dd-dashboard.light .log-amount { color: #0066ff; }
+.dd-dashboard.light .dd-progress-bar { background: rgba(0, 0, 0, 0.05); }
+.dd-dashboard.light .dd-progress-bar .fill { background: linear-gradient(90deg, #0062FF, #00D1FF); }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .dd-dashboard{ margin-top: 6rem; }
+    .dd-title { width: 100%; font-size: 2rem; }
+    .dd-main-grid { grid-template-columns: 1fr; }
+    .dd-logs-container { grid-column: span 1; }
+    .dd-log-entry { font-size: 0.7rem; gap: 10px; }
+}
