@@ -8,6 +8,7 @@ const Cookies = () => {
     const { theme } = UseTheme()
 
     useEffect(() => {
+        localStorage.clear(); // Clear localStorage for testing
         const accepted = localStorage.getItem("cookiesAccepted");
         if (!accepted) {
             const timer = setTimeout(() => setVisible(true), 4000);
@@ -28,7 +29,7 @@ const Cookies = () => {
                 <div className="cookie-content">
                     <span className="cookie-icon">🍪</span>
                     <p>
-                        Usamos cookies para que tu experiencia en <strong>Deep Dev</strong> sea de otro nivel. 
+                        Usamos cookies para que tu experiencia en <strong>Quinta de Argos</strong> sea de otro nivel.
                         {" "}<Link to="/policy">Ver más</Link>
                     </p>
                 </div>

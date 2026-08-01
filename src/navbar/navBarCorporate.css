@@ -1,380 +1,417 @@
-.corporate-edition {
-    font-family: 'Montserrat', sans-serif;
-    transition: all 0.3s ease;
+/* ==========================================================
+   navBarCorporate.css — Quinta de Argos
+   Theming escopeado a la raíz .nav-corporate (nunca a :root).
+   Prefijo de clases: nav-corporate-*
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.nav-corporate {
+  --qa-clay: #b8763e;
+  --qa-clay-soft: #d3a06c;
+  --qa-charcoal: #201f1a;
+
+  /* ---- Texto invariante ----
+     La barra siempre se apoya en un fondo oscuro: transparente sobre
+     el video del hero, o sólida en pino oscuro al hacer scroll. El
+     overlay mobile también es siempre pino oscuro. Por eso el texto
+     de navegación NO debe cambiar con el tema. */
+  --qa-nav-text: #f2ede1;
+  --qa-nav-text-soft: #ece4d3;
+  --qa-nav-surface: #1c2519;
+
+  --qa-font-display: 'Playfair Display', Georgia, serif;
+  --qa-font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
 }
- 
-.nav-wrapper {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
+
+.nav-corporate * {
+  box-sizing: border-box;
 }
- 
-img.img-logo{
-    width: 130px;
-    border: 1px solid #2d3748;
-    transition: 0.4s;
+
+/* ---------- Barra principal ---------- */
+
+.nav-corporate-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.6rem 5vw;
+  background: transparent;
+  transition: background-color 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
 }
- 
-img.img-logo:hover{
-    transform: scale(1.04);
-    transition: 0.4s;
+
+.nav-corporate.is-scrolled .nav-corporate-bar {
+  padding: 1rem 5vw;
+  background-color: var(--qa-nav-surface);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
- 
-p.text-promo{
-    font-family: "Montserrat";
-    font-size: 1rem;
+
+/* ---------- Logo (desktop) ---------- */
+
+.nav-corporate-logo {
+  font-family: var(--qa-font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  color: var(--qa-nav-text);
+  text-decoration: none;
+  white-space: nowrap;
 }
- 
-/* --- PROMO BAR --- */
-.nav-promo {
-    background-color: #c9637a;
-    color: #ffffff;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.4s ease, height 0.4s ease, opacity 0.3s ease;
-    overflow: hidden;
+
+/* ---------- Links desktop ---------- */
+
+.nav-corporate-links {
+  display: flex;
+  align-items: center;
+  gap: 2.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  justify-content: center;
 }
- 
-.theme-dark .nav-promo{ background-color: rgb(234, 234, 234); color: black;}
-.logo-title{ font-size: 1.1rem; }
-.theme-light .logo-title{ color: black !important;}
-.theme-dark .logo-title{ color: white !important;}
- 
-.logo-title::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: #c9637a; /* ← rosa */
-    transition: width 0.3s ease;
+
+.nav-corporate-link {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--qa-font-display);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--qa-nav-text-soft);
+  text-decoration: none;
+  padding: 0.3rem 0;
 }
- 
-.logo-title:hover::after { width: 100%; }
- 
- 
-.nav-promo.open { height: 35px; opacity: 1; }
-.nav-promo.closed { height: 0; opacity: 0; transform: translateY(-100%); }
- 
-/* --- HEADER --- */
-.hero-header {
-    height: 75px;
-    padding: 0 5%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease;
+
+/* Línea de horizonte reducida: mismo motivo de marca que en Home,
+   usado acá como indicador de hover / link activo. */
+.nav-corporate-link-underline {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--qa-clay-soft) 0%, var(--qa-clay) 100%);
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
- 
-/* --- NAVEGACIÓN DESKTOP --- */
-.nav-desktop ul {
-    display: flex;
-    gap: 2.5rem;
-    padding: 0;
-    margin: 0;
+
+.nav-corporate-link:hover .nav-corporate-link-underline,
+.nav-corporate-link.is-active .nav-corporate-link-underline {
+  transform: scaleX(1);
 }
- 
-.nav-desktop li { list-style: none; }
- 
-.nav-desktop li a {
-    color: #2d3748;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    position: relative;
-    padding-bottom: 5px;
+
+.nav-corporate-link:hover,
+.nav-corporate-link.is-active {
+  color: var(--qa-nav-text);
 }
- 
-.nav-desktop li a::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: #c9637a; /* ← rosa */
-    transition: width 0.3s ease;
+
+/* ---------- CTA (Iniciar Sesión / Cerrar Sesión) ---------- */
+
+.nav-corporate-cta {
+  /* Reset de <button>: antes era un <a>, ahora puede ser cualquiera de los dos */
+  border: none;
+  font: inherit;
+  cursor: pointer;
+
+  font-family: var(--qa-font-display);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--qa-nav-text);
+  background-color: var(--qa-clay);
+  padding: 0.7rem 1.5rem;
+  border-radius: 2px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
- 
-.nav-desktop li a:hover::after { width: 100%; }
-.nav-desktop li a:hover { color: #c9637a; } /* ← rosa */
- 
-/* --- BOTONES DE ACCIÓN --- */
-div.actions-desktop-group{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
+
+.nav-corporate-cta:hover {
+  background-color: var(--qa-clay-soft);
+  transform: translateY(-1px);
 }
- 
-button.nav-buttons {
-    padding: 10px 20px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    border: 2px solid #2d3748;
-    background: transparent;
-    color: #2d3748;
-    border-radius: 2px;
-    transition: all 0.3s ease;
+
+.nav-corporate-cta:focus-visible {
+  outline: 2px solid var(--qa-nav-text);
+  outline-offset: 3px;
 }
- 
-button.nav-buttons:hover {
-    transform: scale(1.04);
-    transition: 0.4s;
+
+/* ---------- Theme toggle ---------- */
+
+.nav-corporate-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  color: var(--qa-nav-text-soft);
+  font-family: var(--qa-font-display);
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
- 
-select.lan-select {
-    border: none;
-    font-weight: 600;
-    background: #f7fafc;
-    padding: 8px 12px;
+
+.nav-corporate-theme-toggle:hover {
+  color: var(--qa-clay-soft);
+  transform: rotate(12deg);
 }
- 
-button.theme-btn {
-    border: none;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+.nav-corporate-theme-icon {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
 }
- 
-button.login-btn {
-    margin: 0;
-    background-color: #c9637a; /* ← rosa */
-    color: #ffffff;
-    border-color: #c9637a;     /* ← rosa */
+
+.nav-corporate-theme-toggle:focus-visible {
+  outline: 2px solid var(--qa-clay);
+  outline-offset: 4px;
+  border-radius: 50%;
 }
- 
-button.login-btn:hover {
-    background-color: #b5536a; /* ← rosa oscuro hover */
-    border-color: #b5536a;
+
+.nav-corporate-theme-toggle--mobile {
+  margin-top: 2.5rem;
+  color: var(--qa-nav-text-soft);
+  align-self: flex-start;
 }
- 
-/* --- TEMAS (Dark/Light) --- */
-.theme-dark .hero-header {
-    background-color: #141820 !important; /* ← navy de Boggero */
-    border-bottom: 1px solid #1e293b;
+
+.nav-corporate-theme-toggle--mobile:hover {
+  transform: none;
 }
- 
-.theme-dark .nav-desktop li a { color: #f0eaec; }
-.theme-dark .nav-desktop li a:hover { color: #f0c4ce; } /* ← rose-soft */
-.theme-dark .nav-desktop li a::after { background-color: #f0c4ce; }
-.theme-dark .nav-buttons { border-color: #f0eaec; color: #f0eaec; }
-.theme-dark .login-btn { background-color: #c9637a; color: #ffffff; border-color: #c9637a; }
-.theme-dark .lan-select { background: #1e293b; color: #f0eaec; }
-.theme-dark .img-logo { border: 1px solid #f0c4ce; } /* ← rose-soft */
- 
-.theme-light .hero-header { background-color: #ffffff !important; }
- 
-/* --- RESPONSIVE HAMBURGER --- */
-.hamburger-btn {
-    display: none;
-    background: #c9637a;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    flex-direction: column;
-    gap: 4px;
+
+/* ---------- Botón hamburguesa ---------- */
+
+.nav-corporate-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 110;
+  padding: 0;
 }
- 
-.bar { background-color: #ffffff; height: 2px; width: 20px; }
- 
+
+.nav-corporate-burger span {
+  display: block;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--qa-nav-text);
+}
+
+.nav-corporate.is-menu-open .nav-corporate-burger {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-corporate-burger:focus-visible {
+  outline: 2px solid var(--qa-clay);
+  outline-offset: 4px;
+}
+
+/* ---------- Overlay mobile — todo alineado a la izquierda ---------- */
+
+.nav-corporate-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 9vw;
+  /* Siempre pino oscuro, sin importar el tema activo */
+  background-color: var(--qa-nav-surface);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.nav-corporate-mobile-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 6vw;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 101;
+}
+
+.nav-corporate-mobile-close span {
+  position: absolute;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--qa-nav-text);
+}
+
+.nav-corporate-mobile-close span:first-child {
+  transform: rotate(45deg);
+}
+
+.nav-corporate-mobile-close span:last-child {
+  transform: rotate(-45deg);
+}
+
+.nav-corporate-mobile-close:hover span {
+  background-color: var(--qa-clay-soft);
+}
+
+.nav-corporate-mobile-close:focus-visible {
+  outline: 2px solid var(--qa-clay);
+  outline-offset: 4px;
+}
+
+.nav-corporate.is-menu-open .nav-corporate-mobile-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Logo/título dentro del menú mobile */
+.nav-corporate-mobile-logo {
+  align-self: flex-start;
+  font-family: var(--qa-font-display);
+  font-weight: 600;
+  font-size: 1.6rem;
+  letter-spacing: 0.01em;
+  color: var(--qa-nav-text);
+  text-decoration: none;
+  margin-bottom: 3rem;
+}
+
+.nav-corporate-mobile-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.75rem;
+  width: 100%;
+}
+
+.nav-corporate-mobile-item {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.nav-corporate.is-menu-open .nav-corporate-mobile-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-corporate-mobile-link {
+  /* Reset de <button>: algunas instancias son <a> (NavLink) y otras
+     <button> (Iniciar/Cerrar Sesión) */
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+
+  font-family: var(--qa-font-display);
+  font-weight: 600;
+  font-size: 1.9rem;
+  color: var(--qa-nav-text);
+  text-decoration: none;
+}
+
+.nav-corporate-mobile-link.is-active {
+  color: var(--qa-clay-soft);
+}
+
+.nav-corporate-mobile-link.is-cta {
+  align-self: flex-start;
+  font-family: var(--qa-font-display);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: white;
+  background-color: var(--qa-clay);
+  padding: 0.8rem 2rem;
+  border-radius: 2px;
+  margin-top: 3rem;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
 @media (max-width: 1024px) {
-    .nav-desktop, div.actions-desktop-group { display: none; }
-    .hamburger-btn { display: flex; }
+  .nav-corporate-links {
+    gap: 1.5rem;
+  }
 }
- 
-/* --- CORPORATE MOBILE PANEL --- */
-.corporate-mobile-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 320px;
-    height: 100vh;
-    height: 100dvh;
+
+@media (max-width: 860px) {
+  .nav-corporate-links,
+  .nav-corporate-cta,
+  .nav-corporate-bar > .nav-corporate-theme-toggle {
+    display: none;
+  }
+
+  .nav-corporate-burger {
     display: flex;
-    flex-direction: column;
-    z-index: 1001;
-    box-shadow: -10px 0 40px rgba(0,0,0,0.15);
-    font-family: 'Montserrat', sans-serif;
-    overflow: hidden;
+  }
+
+  .nav-corporate-bar {
+    padding: 1.3rem 6vw;
+  }
 }
- 
-.corporate-mobile-panel.dark { background-color: #141820; color: #f0eaec; } /* ← navy Boggero */
-.corporate-mobile-panel.light { background-color: #ffffff; color: #2d3748; }
- 
-.mobile-panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(201, 99, 122, 0.2); /* ← rosa border */
-    flex-shrink: 0;
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-corporate * {
+    transition-duration: 0.01ms !important;
+  }
 }
- 
-.panel-title {
-    font-size: 13px;
-    padding-left: 20px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: 700;
-    opacity: 0.6;
-}
- 
-.close-panel-btn {
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    padding-right: 15px;
-    color: inherit;
-    cursor: pointer;
-}
- 
-.mobile-nav-links {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    padding: 20px 0;
-    flex: 1;
-    overflow-y: auto;
-}
- 
-.mobile-nav-links a {
-    padding: 10px 30px;
-    text-decoration: none;
-    color: inherit;
-    font-size: 18px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    transition: color 0.3s ease;
-}
- 
-.mobile-nav-links a:hover { color: #c9637a; } /* ← rosa */
- 
-.link-number {
-    font-size: 10px;
-    margin-right: 15px;
-    opacity: 0.4;
-    font-weight: 700;
-}
- 
-.action-label{
-    padding-bottom: 10px;
-}
- 
-div.mobile-extra-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    width: 100%;
-    box-sizing: border-box;
-    background: inherit;
-    border-top: 1px solid rgba(201, 99, 122, 0.15); /* ← rosa border */
-    flex-shrink: 0;
-    padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 10px);
-}
- 
-.mobile-selectors {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    margin-bottom: 15px;
-}
- 
-.select-wrapper-mobile select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 4px;
-    border: 1px solid rgba(201, 99, 122, 0.3); /* ← rosa border */
-    background: rgba(201, 99, 122, 0.05);
-    color: inherit;
-    font-size: 14px;
-}
- 
-.theme-toggle-mobile{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 12px;
-    border-radius: 4px;
-    border: 1px solid rgba(201, 99, 122, 0.3); /* ← rosa border */
-    background: rgba(201, 99, 122, 0.05);
-    color: inherit;
-    font-size: 14px;
-}
- 
-.corporate-auth-btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 4px;
-    font-family: 'Montserrat';
-    font-weight: 700;
-    text-transform: uppercase;
-    cursor: pointer;
-}
- 
-.corporate-auth-btn.login {
-    background-color: #c9637a; /* ← rosa */
-    color: white;
-}
- 
-.corporate-auth-btn.login:hover {
-    background-color: #b5536a; /* ← rosa oscuro hover */
-}
- 
-/* --- RESPONSIVE FINAL --- */
-@media (max-width: 768px) {
-    .corporate-mobile-panel {
-        width: 100%;
-    }
-}
- 
-@keyframes slideInRight {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
-}
- 
-.corporate-mobile-panel {
-    animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
- 
-/* TOGGLE THEME */
+
+/* ==========================================================
+   ROUND MORPH — cambio de theme (mismo patrón que tus otros proyectos)
+   ========================================================== */
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
- 
+
 ::view-transition-new(root) {
   clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
-  animation: round-morph-in 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: qa-round-morph-in 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
   z-index: 9999;
 }
- 
+
 ::view-transition-old(root) {
   z-index: 1;
 }
- 
-@keyframes round-morph-in {
+
+@keyframes qa-round-morph-in {
   from { clip-path: circle(0% at var(--x) var(--y)); }
   to { clip-path: circle(150% at var(--x) var(--y)); }
 }

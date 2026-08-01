@@ -17,11 +17,16 @@ const Error404 = () => {
         return () => clearTimeout(timer)
     }, [navigate])
 
+    const handleGoHome = () => {
+        setError(null)
+        navigate("/")
+    }
+
     return (
         <div className={`error-container ${theme}`}>
             <div className="error-content error-content--404">
 
-                <span className="error-eyebrow">BOGGERO PROPIEDADES</span>
+                <span className="error-eyebrow">QUINTA DE ARGOS</span>
 
                 <p className="error-404-code">404</p>
 
@@ -36,6 +41,14 @@ const Error404 = () => {
                 <div className="error-progress-wrap">
                     <div className="error-progress-bar" />
                 </div>
+
+                <button
+                    type="button"
+                    className="error-home-button"
+                    onClick={handleGoHome}
+                >
+                    Volver al inicio
+                </button>
 
             </div>
         </div>

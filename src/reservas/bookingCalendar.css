@@ -1,0 +1,174 @@
+/* ==========================================================
+   BookingCalendar.css — Quinta de Argos
+   Prefijo de clases: booking-calendar-*
+   Este componente no define fondo propio: hereda el color de
+   texto/tema del contenedor padre (theme-dark en Reservations
+   o Checkout), pero sus propios colores de estado son literales.
+   ========================================================== */
+
+.booking-calendar {
+  border: 1px solid rgba(42, 54, 38, 0.15);
+  border-radius: 2px;
+  padding: 1.5rem;
+}
+
+.theme-dark .booking-calendar {
+  border-color: rgba(242, 237, 225, 0.15);
+}
+
+.booking-calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.booking-calendar-nav-prev,
+.booking-calendar-nav-next {
+  background: transparent;
+  border: 1px solid rgba(42, 54, 38, 0.2);
+  border-radius: 2px;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: #2a3626;
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+}
+
+.booking-calendar-nav-prev:hover,
+.booking-calendar-nav-next:hover {
+  background-color: #b8763e;
+  border-color: #b8763e;
+  color: #f2ede1;
+}
+
+.booking-calendar-nav-prev:disabled,
+.booking-calendar-nav-next:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.booking-calendar-nav-prev:disabled:hover,
+.booking-calendar-nav-next:disabled:hover {
+  background-color: transparent;
+  border-color: rgba(42, 54, 38, 0.2);
+  color: #2a3626;
+}
+
+.theme-dark .booking-calendar-nav-prev,
+.theme-dark .booking-calendar-nav-next {
+  border-color: rgba(242, 237, 225, 0.25);
+  color: #ece4d3;
+}
+
+.theme-dark .booking-calendar-nav-prev:disabled:hover,
+.theme-dark .booking-calendar-nav-next:disabled:hover {
+  background-color: transparent;
+  border-color: rgba(242, 237, 225, 0.25);
+  color: #ece4d3;
+}
+
+.booking-calendar-month-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #2a3626;
+}
+
+.theme-dark .booking-calendar-month-label {
+  color: #d3a06c;
+}
+
+.booking-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.5rem;
+}
+
+.booking-calendar-weekday {
+  text-align: center;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2c2a24;
+  opacity: 0.55;
+}
+
+.theme-dark .booking-calendar-weekday {
+  color: #ece4d3;
+}
+
+.booking-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.booking-calendar-day-empty {
+  aspect-ratio: 1;
+}
+
+.booking-calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.85rem;
+  color: #2c2a24;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.theme-dark .booking-calendar-day {
+  color: #ece4d3;
+}
+
+.booking-calendar-day:hover:not(.is-disabled) {
+  background-color: rgba(184, 118, 62, 0.18);
+  transform: scale(1.05);
+}
+
+.booking-calendar-day.is-disabled {
+  color: rgba(44, 42, 36, 0.25);
+  cursor: not-allowed;
+}
+
+.theme-dark .booking-calendar-day.is-disabled {
+  color: rgba(236, 228, 211, 0.2);
+}
+
+.booking-calendar-day.is-in-range {
+  background-color: rgba(184, 118, 62, 0.12);
+}
+
+.booking-calendar-day.is-checkin,
+.booking-calendar-day.is-checkout {
+  background-color: #2a3626;
+  color: #f2ede1;
+  font-weight: 500;
+}
+
+.theme-dark .booking-calendar-day.is-checkin,
+.theme-dark .booking-calendar-day.is-checkout {
+  background-color: #b8763e;
+  color: #201f1a;
+}
+
+@media (max-width: 480px) {
+  .booking-calendar-day {
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-calendar * {
+    transition-duration: 0.01ms !important;
+  }
+}

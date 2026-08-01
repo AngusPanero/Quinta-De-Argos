@@ -1,47 +1,61 @@
-import { useState, useEffect } from "react";
-import "./loader.css";
-import { UseTheme } from "../contexts/ThemeContext";
+import React from 'react';
+import { createPortal } from 'react-dom';
+import './Loader.css';
+import { UseTheme } from '../contexts/ThemeContext';
 
 interface LoaderProps {
-    onComplete?: () => void
+  /** Texto debajo del spinner. */
+  message?: string;
+  /** Si es false, se muestra inline en vez de pantalla completa. */
+  fullScreen?: boolean;
 }
 
-const Loader = ({ onComplete }: LoaderProps) => {
-    const { theme } = UseTheme();
-    const [progress, setProgress] = useState(0);
+/**
+ * Loader
+ * ---------------------------------------------------------
+ * Cuando fullScreen=true (default), se renderiza vía createPortal
+ * directo en document.body. Esto es a propósito: si el Loader se
+ * llama desde dentro de un contenedor que tenga `transform`,
+ * `filter` o `will-change` en algún ancestro (una animación de
+ * Framer Motion, un modal, etc.), ese ancestro se convierte en el
+ * "containing block" de cualquier hijo con position:fixed — y el
+ * loader queda atrapado dentro de esa caja en vez de cubrir toda
+ * la pantalla. El portal lo saca de ese árbol por completo y lo
+ * cuelga directo del <body>, así siempre es 100vw x 100vh de
+ * verdad, sin importar desde dónde se lo llame.
+ */
+const Loader: React.FC<LoaderProps> = ({ message = 'Cargando', fullScreen = true }) => {
+  const themeContext = UseTheme() as { theme?: 'light' | 'dark' } | undefined;
+  const theme = themeContext?.theme ?? 'light';
 
-    useEffect(() => {
-        if (progress < 100) {
-            const timer = setTimeout(() => setProgress(prev => prev + 1), 25);
-            return () => clearTimeout(timer);
-        } else {
-            const delay = setTimeout(() => onComplete?.(), 600);
-            return () => clearTimeout(delay);
-        }
-    }, [progress, onComplete]);
+  const content = (
+    <div
+      className={[
+        'qa-loader',
+        fullScreen ? 'qa-loader--fullscreen' : 'qa-loader--inline',
+        theme === 'dark' ? 'dark' : 'light',
+      ].join(' ')}
+      role="status"
+      aria-live="polite"
+    >
+      <span className="qa-loader-spinner" />
 
-    return (
-        <div className={`loader-overlay ${theme}`}>
-            <div className="loader-content">
+      {message && (
+        <span className="qa-loader-message">
+          {message}
+          <span className="qa-loader-dot">.</span>
+          <span className="qa-loader-dot">.</span>
+          <span className="qa-loader-dot">.</span>
+        </span>
+      )}
 
-                <span className="loader-eyebrow">BOGGERO PROPIEDADES</span>
+      {/* <span className="qa-loader-horizon" /> */}
+    </div>
+  );
 
-                <h1 className="loader-logo">
-                    Boggero<span>Propiedades</span>
-                </h1>
+  if (!fullScreen) return content;
 
-                <div className="loader-track">
-                    <div className="loader-bar" style={{ width: `${progress}%` }} />
-                </div>
-
-                <div className="loader-info">
-                    <span className="loader-status">Cargando experiencia</span>
-                    <span className="loader-number">{progress}%</span>
-                </div>
-
-            </div>
-        </div>
-    );
+  return createPortal(content, document.body);
 };
 
 export default Loader;

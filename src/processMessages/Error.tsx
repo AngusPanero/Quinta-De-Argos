@@ -21,6 +21,11 @@ const Error = ({ errorMessage }: ErrorProps) => {
         return () => clearTimeout(timer)
     }, [navigate, setError])
 
+    const handleGoHome = () => {
+        setError(null)
+        navigate("/")
+    }
+
     return (
         <div className={`error-container ${theme}`}>
             <div className="error-content">
@@ -38,6 +43,15 @@ const Error = ({ errorMessage }: ErrorProps) => {
                 <div className="error-progress-wrap">
                     <div className="error-progress-bar" />
                 </div>
+
+                {/* Respaldo por si la redirección automática no dispara */}
+                <button
+                    type="button"
+                    className="error-home-button"
+                    onClick={handleGoHome}
+                >
+                    Volver al inicio
+                </button>
 
             </div>
         </div>

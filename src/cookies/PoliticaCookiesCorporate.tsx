@@ -7,8 +7,8 @@ const SECTIONS = [
     content: `Las cookies son pequeños archivos de texto que los sitios web almacenan en tu dispositivo cuando los visitás. Permiten que el sitio recuerde tus acciones y preferencias durante un período de tiempo, para que no tengas que volver a configurarlas cada vez que lo visitás.`,
   },
   {
-    title: "Marco legal en Argentina",
-    content: `En la República Argentina, el tratamiento de datos personales está regulado por la Ley N° 25.326 de Protección de los Datos Personales y su decreto reglamentario N° 1558/2001. Esta normativa establece que los titulares de los datos tienen derecho a conocer qué información se recopila sobre ellos y con qué finalidad. El uso de cookies que recopilen datos personales queda sujeto al cumplimiento de esta ley. La Agencia de Acceso a la Información Pública (AAIP) es el organismo de control competente.`,
+    title: "Marco legal en España",
+    content: `El uso de cookies en España está regulado principalmente por el artículo 22.2 de la Ley 34/2002, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), que exige informar al usuario de forma clara y obtener su consentimiento antes de instalar cookies no esenciales. A esto se suma el Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), que regulan el tratamiento de los datos personales que las cookies puedan recopilar. La Agencia Española de Protección de Datos (AEPD) es el organismo de control competente, y ha publicado una Guía sobre el uso de las cookies con criterios de aplicación práctica para los sitios web.`,
   },
   {
     title: "¿Qué cookies utilizamos?",
@@ -16,7 +16,7 @@ const SECTIONS = [
     list: [
       {
         name: "Cookies esenciales",
-        desc: "Necesarias para el funcionamiento básico del sitio. Sin ellas, servicios como el inicio de sesión no estarían disponibles. No requieren consentimiento.",
+        desc: "Necesarias para el funcionamiento básico del sitio. Sin ellas, servicios como el inicio de sesión no estarían disponibles. Conforme al artículo 22.2 de la LSSI-CE, no requieren consentimiento previo.",
       },
       {
         name: "Cookies de rendimiento",
@@ -38,11 +38,11 @@ const SECTIONS = [
   },
   {
     title: "Consentimiento",
-    content: `Al continuar navegando este sitio, o al hacer clic en "Aceptar" en nuestro aviso de cookies, aceptás el uso de cookies no esenciales conforme a la presente política. Podés retirar tu consentimiento en cualquier momento limpiando las cookies de tu navegador. Este consentimiento es válido de acuerdo a lo establecido en la Ley N° 25.326 y sus modificatorias.`,
+    content: `Al continuar navegando este sitio, o al hacer clic en "Aceptar" en nuestro aviso de cookies, aceptás el uso de cookies no esenciales conforme a la presente política y a lo exigido por el artículo 22.2 de la LSSI-CE. Podés retirar tu consentimiento en cualquier momento eliminando las cookies desde la configuración de tu navegador o volviendo a configurar tus preferencias.`,
   },
   {
     title: "Derechos del titular",
-    content: `Como titular de los datos, tenés derecho a acceder, rectificar, actualizar o suprimir la información personal que tengamos registrada, conforme al artículo 14 de la Ley N° 25.326. Para ejercer estos derechos podés contactarnos a través de la sección Contacto de este sitio. La AAIP tiene la atribución de atender denuncias y reclamos en caso de que se entienda vulnerado el derecho a la protección de datos.`,
+    content: `Como titular de los datos, tenés derecho a acceder, rectificar, suprimir, limitar el tratamiento, oponerte y solicitar la portabilidad de tu información personal, conforme a los artículos 15 a 22 del RGPD y a la LOPDGDD. Para ejercer estos derechos podés contactarnos a través de la sección Contacto de este sitio. Si considerás que no hemos atendido correctamente tu solicitud, tenés derecho a presentar una reclamación ante la Agencia Española de Protección de Datos (www.aepd.es).`,
   },
   {
     title: "Cambios en esta política",
@@ -65,22 +65,23 @@ const PoliticaCookiesCorporate = () => {
             <span className="pc-title-accent">Cookies</span>
           </h1>
           <p className="pc-intro">
-            En <strong>Boggero Propiedades</strong> nos comprometemos a ser transparentes
+            En <strong>Quinta de Argos</strong> nos comprometemos a ser transparentes
             sobre cómo usamos la información que recopilamos cuando navegás nuestro sitio.
             Esta política explica qué son las cookies, cuáles utilizamos y cómo podés
-            gestionarlas, en cumplimiento de la legislación argentina vigente.
+            gestionarlas, en cumplimiento de la legislación española y europea vigente
+            en materia de cookies y protección de datos.
           </p>
           <div className="pc-meta">
             <span>
               Última actualización:{" "}
-              {new Date().toLocaleDateString("es-AR", {
+              {new Date().toLocaleDateString("es-ES", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
               })}
             </span>
             <span className="pc-meta-dot">·</span>
-            <span>Ley N° 25.326</span>
+            <span>RGPD · LSSI-CE</span>
           </div>
         </div>
 

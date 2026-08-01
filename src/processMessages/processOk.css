@@ -1,138 +1,189 @@
-/* ============================================================
-   processOk.css — Boggero Propiedades
-   ============================================================ */
+/* ==========================================================
+   processOk.css — Quinta de Argos
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 .process-container {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-    font-family: 'Montserrat', sans-serif;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6vw;
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
-.process-container.dark  { background: #141820; color: #f0eaec; }
-.process-container.light { background: #fdf8f8; color: #141820; }
+.process-container.dark {
+  background-color: #201f1a;
+  color: #ece4d3;
+}
 
-/* ── CARD ───────────────────────────────────────────────── */
+.process-container.light {
+  background-color: #f2ede1;
+  color: #2c2a24;
+}
+
 .process-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 4rem 5rem;
-    max-width: 480px;
-    width: 90%;
-    border: 1px solid rgba(201, 99, 122, 0.18);
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
 }
 
-.process-content::before {
-    content: "";
-    position: absolute;
-    top: -1px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: #c9637a;
-}
-
-.process-content::after {
-    content: "CONFIRMACIÓN";
-    position: absolute;
-    top: -11px;
-    left: 2rem;
-    background: #c9637a;
-    color: #fff;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 8px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    padding: 3px 10px;
-}
-
-/* ── EYEBROW ────────────────────────────────────────────── */
 .process-eyebrow {
-    display: block;
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: #c9637a;
-    margin-bottom: 1.5rem;
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  margin-bottom: 2rem;
 }
 
-/* ── ÍCONO ✓ ────────────────────────────────────────────── */
+.process-container.light .process-eyebrow {
+  color: #b8763e;
+}
+
+.process-container.dark .process-eyebrow {
+  color: #d3a06c;
+}
+
 .process-icon {
-    font-size: 2rem;
-    font-weight: 900;
-    color: #c9637a;
-    width: 56px;
-    height: 56px;
-    border: 2px solid rgba(201, 99, 122, 0.35);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.8rem;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  margin-bottom: 1.75rem;
+  background-color: #6b7a55;
+  color: #f2ede1;
+  animation: qa-process-icon-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── TÍTULO ─────────────────────────────────────────────── */
+@keyframes qa-process-icon-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .process-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: clamp(1rem, 3vw, 1.2rem);
-    font-weight: 800;
-    line-height: 1.45;
-    letter-spacing: -0.3px;
-    text-transform: uppercase;
-    margin: 0 0 2rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  line-height: 1.25;
+  margin: 0 0 1.75rem;
 }
 
-/* ── DIVIDER ────────────────────────────────────────────── */
+.process-container.light .process-title {
+  color: #2a3626;
+}
+
+.process-container.dark .process-title {
+  color: #d3a06c;
+}
+
 .process-divider {
-    width: 36px;
-    height: 2px;
-    background: rgba(201, 99, 122, 0.35);
-    margin-bottom: 1.5rem;
+  width: 60px;
+  height: 1.5px;
+  margin-bottom: 1.75rem;
+  background: linear-gradient(90deg, #2a3626 0%, #b8763e 100%);
 }
 
-/* ── TEXTO ──────────────────────────────────────────────── */
+.process-container.dark .process-divider {
+  background: linear-gradient(90deg, #d3a06c 0%, #b8763e 100%);
+}
+
 .process-text {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    opacity: 0.45;
-    margin: 0 0 1.5rem;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  margin: 0 0 2rem;
 }
 
-/* ── BARRA DE PROGRESO ──────────────────────────────────── */
 .process-progress-wrap {
-    width: 100%;
-    height: 2px;
-    background: rgba(201, 99, 122, 0.15);
-    overflow: hidden;
+  width: 220px;
+  height: 2px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.process-container.light .process-progress-wrap {
+  background-color: rgba(42, 54, 38, 0.12);
+}
+
+.process-container.dark .process-progress-wrap {
+  background-color: rgba(242, 237, 225, 0.12);
 }
 
 .process-progress-bar {
-    height: 100%;
-    background: #c9637a;
-    animation: processProgress 5s linear forwards;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6b7a55 0%, #b8763e 100%);
+  animation: qa-process-progress 5s linear forwards;
 }
 
-@keyframes processProgress {
-    from { width: 100%; }
-    to   { width: 0%; }
+@keyframes qa-process-progress {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
-/* ── RESPONSIVE ─────────────────────────────────────────── */
-@media (max-width: 768px) {
-    .process-content { padding: 3rem 2rem; }
+.process-home-button {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  padding: 0.9rem 2rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+.process-container.light .process-home-button {
+  background-color: #2a3626;
+  color: #f2ede1;
+}
+
+.process-container.light .process-home-button:hover {
+  background-color: #b8763e;
+  transform: translateY(-2px);
+}
+
+.process-container.dark .process-home-button {
+  background-color: #b8763e;
+  color: #201f1a;
+}
+
+.process-container.dark .process-home-button:hover {
+  background-color: #d3a06c;
+  transform: translateY(-2px);
+}
+
+/* ---------- Responsive ---------- */
 @media (max-width: 480px) {
-    .process-content { padding: 2.5rem 1.5rem; }
-    .process-content::after { left: 1rem; }
+  .process-progress-wrap {
+    width: 70%;
+  }
+
+  .process-home-button {
+    width: 100%;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .process-progress-bar {
+    animation: none;
+    width: 100%;
+  }
+
+  .process-icon {
+    animation: none;
+  }
 }

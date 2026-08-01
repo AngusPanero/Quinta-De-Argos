@@ -1,7 +1,9 @@
 /* ============================================================
-   politicaCookie.css — Boggero Propiedades
-   Paleta rosa corporativo · Montserrat
+   politicaCookieCorporate.css — Quinta de Argos
+   Paleta pino / arcilla / crema · Playfair Display + Jost + JetBrains Mono
    ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @keyframes pc-fade-up {
     from { opacity: 0; transform: translateY(24px); }
@@ -12,30 +14,30 @@
 .pc-wrapper {
     min-height: 100vh;
     padding: 150px 24px 96px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
     display: flex;
     justify-content: center;
     transition: background 0.35s ease, color 0.35s ease;
 }
 
 .pc-wrapper.dark {
-    background: #141820;
-    color: #f0eaec;
-    --pc-text:       #f0eaec;
-    --pc-text-muted: rgba(240, 234, 236, 0.55);
-    --pc-surface:    #1a2030;
-    --pc-border:     rgba(201, 99, 122, 0.15);
-    --pc-accent:     #c9637a;
+    background: #201f1a;
+    color: #ece4d3;
+    --pc-text:       #ece4d3;
+    --pc-text-muted: rgba(236, 228, 211, 0.6);
+    --pc-surface:    #1c2519;
+    --pc-border:     rgba(242, 237, 225, 0.12);
+    --pc-accent:     #d3a06c;
 }
 
 .pc-wrapper.light {
-    background: #fdf8f8;
-    color: #141820;
-    --pc-text:       #141820;
-    --pc-text-muted: rgba(20, 24, 32, 0.55);
+    background: #f2ede1;
+    color: #2c2a24;
+    --pc-text:       #2c2a24;
+    --pc-text-muted: rgba(44, 42, 36, 0.6);
     --pc-surface:    #ffffff;
-    --pc-border:     rgba(201, 99, 122, 0.15);
-    --pc-accent:     #c9637a;
+    --pc-border:     rgba(42, 54, 38, 0.12);
+    --pc-accent:     #b8763e;
 }
 
 /* ── CONTAINER ──────────────────────────────────────────── */
@@ -54,49 +56,54 @@
 
 .pc-eyebrow {
     display: block;
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: 5px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--pc-accent);
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.25rem;
 }
 
 .pc-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: clamp(2.5rem, 7vw, 5rem);
-    font-weight: 900;
-    letter-spacing: -2px;
-    line-height: 0.95;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
     color: var(--pc-text);
     margin: 0 0 1.8rem;
 }
+
+.pc-wrapper.light .pc-title { color: #2a3626; }
+.pc-wrapper.dark .pc-title { color: #f2ede1; }
 
 .pc-title-accent { color: var(--pc-accent); }
 
 .pc-intro {
     font-size: 0.95rem;
-    font-weight: 400;
+    font-weight: 300;
     line-height: 1.85;
     color: var(--pc-text-muted);
     max-width: 640px;
     margin: 0 0 1.5rem;
 }
 
-.pc-intro strong { color: var(--pc-text); font-weight: 700; }
+.pc-intro strong { color: var(--pc-text); font-weight: 600; }
 
 .pc-meta {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--pc-text-muted);
 }
 
-.pc-meta-dot { opacity: 0.35; }
+.pc-meta-dot { opacity: 0.4; }
 
 /* ── SECCIONES ──────────────────────────────────────────── */
 .pc-body {
@@ -115,14 +122,15 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    font-family: 'Montserrat', sans-serif;
-    font-size: clamp(1rem, 2.2vw, 1.3rem);
-    font-weight: 800;
-    letter-spacing: -0.3px;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+    font-weight: 600;
     color: var(--pc-text);
     margin: 0;
-    text-transform: uppercase;
 }
+
+.pc-wrapper.light .pc-section-title { color: #2a3626; }
+.pc-wrapper.dark .pc-section-title { color: #d3a06c; }
 
 .pc-section-bar {
     display: inline-block;
@@ -134,8 +142,8 @@
 }
 
 .pc-section-text {
-    font-size: 0.9rem;
-    font-weight: 400;
+    font-size: 0.92rem;
+    font-weight: 300;
     line-height: 1.85;
     color: var(--pc-text-muted);
     margin: 0;
@@ -169,16 +177,17 @@
 }
 
 .pc-list-name {
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: 3px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--pc-accent);
 }
 
 .pc-list-desc {
     font-size: 0.88rem;
-    font-weight: 400;
+    font-weight: 300;
     line-height: 1.7;
     color: var(--pc-text-muted);
 }
@@ -189,13 +198,15 @@
     padding-top: 3rem;
     border-top: 1px solid var(--pc-border);
     font-size: 0.9rem;
-    font-weight: 400;
+    font-weight: 300;
     color: var(--pc-text-muted);
     text-align: center;
 }
 
 .pc-contact-link {
-    font-weight: 800;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.85rem;
     color: var(--pc-accent);
     text-decoration: none;
     border-bottom: 1px solid transparent;
@@ -211,12 +222,16 @@
     .pc-body         { gap: 2.5rem; }
     .pc-list-item    { padding: 1.2rem 1.4rem; }
     .pc-list-item:hover { transform: none; }
-    .pc-title        { letter-spacing: -1px; }
 }
 
 /* ── RESPONSIVE 480px ───────────────────────────────────── */
 @media (max-width: 480px) {
     .pc-wrapper { padding: 120px 16px 64px; }
-    .pc-title   { letter-spacing: -0.5px; }
     .pc-intro   { font-size: 0.88rem; }
+}
+
+/* ── REDUCED MOTION ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .pc-container { animation: none; }
+    .pc-list-item { transition: none; }
 }

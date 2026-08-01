@@ -1,0 +1,364 @@
+/* ==========================================================
+   experiences.css — Quinta de Argos
+   Prefijo de clases: experiences-corporate-*
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.experiences-corporate {
+  --qa-section-pad-x: 6vw;
+
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f2ede1;
+  color: #2c2a24;
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+}
+
+.experiences-corporate.theme-dark {
+  background-color: #201f1a;
+  color: #ece4d3;
+}
+
+.experiences-corporate * {
+  box-sizing: border-box;
+}
+
+/* ============ PORTADA ============ */
+
+.experiences-corporate-hero {
+  padding: 8rem var(--qa-section-pad-x) 4rem;
+  max-width: 760px;
+}
+
+.experiences-corporate-eyebrow-hero {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #b8763e;
+  margin-bottom: 1.5rem;
+}
+
+.experiences-corporate-heading-hero {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  line-height: 1.15;
+  color: #2a3626;
+  margin: 0 0 1.5rem;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-heading-hero {
+  color: #d3a06c;
+}
+
+.experiences-corporate-paragraph-hero {
+  font-weight: 300;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 54ch;
+  margin: 0;
+  color: #2c2a24;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-paragraph-hero {
+  color: #ece4d3;
+}
+
+/* ============ TIMELINE ============ */
+
+.experiences-corporate-timeline {
+  position: relative;
+  padding: 2rem var(--qa-section-pad-x) 6rem;
+}
+
+.experiences-corporate-timeline-track {
+  position: absolute;
+  top: 2rem;
+  bottom: 6rem;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+}
+
+.experiences-corporate-timeline-track-base {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(42, 54, 38, 0.12);
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-timeline-track-base {
+  background-color: rgba(242, 237, 225, 0.12);
+}
+
+.experiences-corporate-timeline-track-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #2a3626 0%, #b8763e 100%);
+  transform-origin: top center;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-timeline-track-fill {
+  background: linear-gradient(180deg, #d3a06c 0%, #b8763e 100%);
+}
+
+.experiences-corporate-timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+
+.experiences-corporate-timeline-row {
+  position: relative;
+  display: flex;
+}
+
+.experiences-corporate-timeline-row.is-left {
+  justify-content: flex-start;
+}
+
+.experiences-corporate-timeline-row.is-right {
+  justify-content: flex-end;
+}
+
+.experiences-corporate-timeline-node {
+  position: absolute;
+  top: 2.5rem;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #b8763e;
+  border: 3px solid #f2ede1;
+  z-index: 2;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-timeline-node {
+  border-color: #201f1a;
+}
+
+/* ---------- Tarjeta ---------- */
+
+.experiences-corporate-card {
+  width: 44%;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  border: 1px solid rgba(42, 54, 38, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-card {
+  border-color: rgba(242, 237, 225, 0.12);
+  background-color: rgba(38, 37, 32, 0.5);
+}
+
+.experiences-corporate-card-image {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: #e2dbc9;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-card-image {
+  background-color: #2a2924;
+}
+
+.experiences-corporate-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.experiences-corporate-card:hover .experiences-corporate-card-image img {
+  transform: scale(1.06);
+}
+
+.experiences-corporate-card-body {
+  padding: 1.75rem;
+}
+
+.experiences-corporate-card-category {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b8763e;
+  margin-bottom: 0.75rem;
+}
+
+.experiences-corporate-card-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: #2a3626;
+  margin: 0 0 0.75rem;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-card-title {
+  color: #d3a06c;
+}
+
+.experiences-corporate-card-description {
+  font-weight: 300;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #2c2a24;
+  margin: 0 0 1.25rem;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-card-description {
+  color: #ece4d3;
+}
+
+.experiences-corporate-card-distance {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(42, 54, 38, 0.1);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-card-distance {
+  border-top-color: rgba(242, 237, 225, 0.1);
+}
+
+.experiences-corporate-card-distance-km {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #2a3626;
+}
+
+.experiences-corporate.theme-dark .experiences-corporate-card-distance-km {
+  color: #d3a06c;
+}
+
+.experiences-corporate-card-distance-sep {
+  opacity: 0.4;
+  font-size: 0.8rem;
+}
+
+.experiences-corporate-card-distance-time {
+  font-weight: 500;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.experiences-corporate-card-distance-mode {
+  font-size: 0.68rem;
+  opacity: 0.55;
+  margin-left: auto;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ============ CIERRE ============ */
+
+.experiences-corporate-outro {
+  padding: 6rem var(--qa-section-pad-x) 7rem;
+  display: flex;
+  justify-content: center;
+  background-color: #1c2519;
+}
+
+.experiences-corporate-outro-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 520px;
+}
+
+.experiences-corporate-outro-paragraph {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.3rem;
+  line-height: 1.55;
+  color: #f2ede1;
+  margin: 0 0 2.25rem;
+}
+
+.experiences-corporate-cta-outro {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #1c2519;
+  background-color: #b8763e;
+  padding: 1.1rem 2.4rem;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background-color 0.35s ease, transform 0.35s ease;
+}
+
+.experiences-corporate-cta-outro:hover {
+  background-color: #d3a06c;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================
+   RESPONSIVE — en mobile la línea pasa a la izquierda y las
+   tarjetas se apilan en una sola columna
+   ========================================================== */
+
+@media (max-width: 860px) {
+  .experiences-corporate-timeline-track {
+    left: 1.25rem;
+    transform: none;
+  }
+
+  .experiences-corporate-timeline-row.is-left,
+  .experiences-corporate-timeline-row.is-right {
+    justify-content: flex-start;
+    padding-left: 3rem;
+  }
+
+  .experiences-corporate-timeline-node {
+    left: 1.25rem;
+  }
+
+  .experiences-corporate-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .experiences-corporate-hero {
+    padding: 6.5rem 6vw 3rem;
+  }
+
+  .experiences-corporate-card-body {
+    padding: 1.4rem;
+  }
+
+  .experiences-corporate-card-distance {
+    flex-wrap: wrap;
+  }
+
+  .experiences-corporate-card-distance-mode {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .experiences-corporate * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

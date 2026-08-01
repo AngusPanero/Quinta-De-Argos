@@ -27,22 +27,23 @@ const NavBarCorporateMobile = forwardRef(({ closeMenu, texts, language, theme, t
                 <a href="/" onClick={closeMenu}>
                     <span className="link-number">01</span> Inicio
                 </a>
-                <a href="/houses" onClick={closeMenu}>
-                    <span className="link-number">02</span> Propiedades
+
+                <a href="/experiences" onClick={closeMenu}>
+                    <span className="link-number">02</span> Experiencias
                 </a>
 
-                <a href="/company" onClick={closeMenu}>
-                    <span className="link-number">03</span> Compañía
+                <a href="/gallery" onClick={closeMenu}>
+                    <span className="link-number">03</span> Galería
                 </a>
-  
+
+                <a href="/reservations" onClick={closeMenu}>
+                    <span className="link-number">04</span> Reservas
+                </a>
+
                 <a href="/contact" onClick={closeMenu}>
-                    <span className="link-number">04</span> Contacto
+                    <span className="link-number">05</span> Contacto
                 </a>
 
-                <a href="/method" onClick={closeMenu}>
-                    <span className="link-number">05</span> Método
-                </a>
-                
                 {user && user.admin === true && (
                     <a href="/admin" onClick={closeMenu} className="mobile-dash-link">
                         <span className="link-number">06</span> Administrador
@@ -61,6 +62,10 @@ const NavBarCorporateMobile = forwardRef(({ closeMenu, texts, language, theme, t
                         <img src={theme === "dark" ? sun : moon} alt="theme-icon" width={20} />
                         <span>{theme === "dark" ? "Modo Claro" : "Modo Oscuro"}</span>
                     </button>
+
+                    <a href="/reservas" onClick={closeMenu} className="corporate-auth-btn reservas">
+                        Reservas
+                    </a>
                 </div>
 
                 {user ? (

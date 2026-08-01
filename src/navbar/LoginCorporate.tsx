@@ -74,7 +74,7 @@ const LoginCorporate = ({ closeLogin }: LoginProps) => {
 
                     <p className="log-corp-desc">
                         Este acceso está reservado exclusivamente para administradores 
-                        habilitados de Boggero Propiedades. Las credenciales están 
+                        habilitados de Quinta de Argos. Las credenciales están 
                         cifradas y protegidas mediante autenticación segura.
                         Si no sos parte del equipo, por favor cerrá esta ventana.
                     </p>

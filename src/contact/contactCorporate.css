@@ -1,271 +1,790 @@
-.contact-page {
-    --rose:        #c9637a;
-    --rose-soft:   #f0c4ce;
-    --rose-dim:    rgba(201, 99, 122, 0.12);
-    --rose-shadow: rgba(201, 99, 122, 0.25);
-    --navy:        #141820;
-    --border:      rgba(201, 99, 122, 0.15);
-    --border-neu:  rgba(128, 128, 128, 0.15);
- 
-    min-height: 100vh;
-    padding: 12rem 5% 6rem;
-    font-family: 'Montserrat', sans-serif;
+/* ==========================================================
+   ContactCorporate.css — Quinta de Argos
+   Ninguna clase se comparte entre elementos. Cada campo del
+   formulario y cada bloque de info tiene su propio bloque
+   completo e independiente, con override de tema oscuro
+   explícito donde corresponde.
+   Prefijo de clases: contact-corporate-*
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.contact-corporate {
+  --qa-section-pad-y: 7rem;
+  --qa-section-pad-x: 6vw;
+
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f2ede1;
+  color: #2c2a24;
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
 }
- 
-/* ── THEMES ─────────────────────────────────────────────── */
-.contact-page.dark  { background: var(--navy); color: #f0eaec; }
-.contact-page.light { background: #faf3f5;     color: #141820; }
- 
-/* ── GRID ───────────────────────────────────────────────── */
-.contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 6rem;
-    max-width: 1400px;
-    margin: 0 auto;
+
+.contact-corporate.theme-dark {
+  background-color: #201f1a;
+  color: #ece4d3;
 }
- 
-/* ══════════════════════════════════════════════════════════
-   PANEL IZQUIERDO
-══════════════════════════════════════════════════════════ */
-.contact-info-panel {
-    position: sticky;
-    top: 10rem;
-    height: fit-content;
+
+.contact-corporate * {
+  box-sizing: border-box;
 }
- 
-.contact-badge {
-    font-size: 14px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    color: var(--rose);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 2rem;
+
+/* ============ INTRO ============ */
+
+.contact-corporate-hero {
+  padding: var(--qa-section-pad-y) var(--qa-section-pad-x) 3rem;
+  max-width: 720px;
 }
- 
-.contact-title {
-    font-family: 'Montserrat', serif;
-    font-size: clamp(2.5rem, 5vw, 4.8rem);
-    font-weight: 600;
-    line-height: 1.0;
-    margin: 0 0 2rem;
-    letter-spacing: -1px;
+
+.contact-corporate-eyebrow-hero {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b8763e;
+  margin-bottom: 1.25rem;
 }
- 
-.contact-title .text-rose { color: var(--rose); }
- 
-.contact-subtitle {
-    font-size: 1rem;
-    line-height: 1.75;
-    opacity: 0.65;
-    max-width: 400px;
-    margin-bottom: 4rem;
-    font-weight: 400;
+
+.contact-corporate-heading-hero {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  line-height: 1.15;
+  margin: 0 0 1.25rem;
+  color: #2a3626;
 }
- 
-.contact-details {
-    display: grid;
-    gap: 2rem;
-    border-left: 2px solid var(--border);
-    padding-left: 1.5rem;
+
+.contact-corporate.theme-dark .contact-corporate-heading-hero {
+  color: #d3a06c;
 }
- 
-.detail-item small {
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--rose);
-    display: block;
-    margin-bottom: 0.4rem;
+
+.contact-corporate-paragraph-hero {
+  font-weight: 300;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 52ch;
+  color: #2c2a24;
 }
- 
-.detail-item p {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
-    opacity: 0.85;
+
+.contact-corporate.theme-dark .contact-corporate-paragraph-hero {
+  color: #ece4d3;
 }
- 
-/* ══════════════════════════════════════════════════════════
-   FORMULARIO
-══════════════════════════════════════════════════════════ */
-.contact-form-corp {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+
+/* ============ CONTENIDO (dos columnas) ============ */
+
+.contact-corporate-content {
+  display: grid;
+  grid-template-columns: 0.9fr 1.3fr;
+  gap: 5vw;
+  padding: 0 var(--qa-section-pad-x) var(--qa-section-pad-y);
 }
- 
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+
+/* ---------- Columna info ---------- */
+
+.contact-corporate-info {
+  display: flex;
+  flex-direction: column;
 }
- 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+
+.contact-corporate-eyebrow-info {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b8763e;
+  margin-bottom: 1rem;
 }
- 
-.form-group.full-width { grid-column: span 2; }
- 
-.form-group label {
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    opacity: 0.6;
+
+.contact-corporate-info-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.25;
+  margin: 0 0 2.25rem;
+  color: #2a3626;
 }
- 
-/* ── Inputs / Select / Textarea ─────────────────────────── */
-.form-group input,
-.form-group select,
-.form-group textarea {
-    background: transparent;
-    border: 1px solid var(--border-neu);
-    padding: 0.9rem 1rem;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.92rem;
-    color: inherit;
-    border-radius: 3px;
-    transition: border-color 0.3s ease, background 0.3s ease;
-    outline: none;
+
+.contact-corporate.theme-dark .contact-corporate-info-heading {
+  color: #d3a06c;
 }
- 
-.dark .form-group input,
-.dark .form-group select,
-.dark .form-group textarea {
-    background: rgba(255, 255, 255, 0.03);
+
+/* ---------- Imagen ---------- */
+
+.contact-corporate-info-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 2px;
+  margin-bottom: 2rem;
 }
- 
-.light .form-group input,
-.light .form-group select,
-.light .form-group textarea {
-    background: #fdf8f8;
+
+.contact-corporate-info-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
- 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-    opacity: 0.35;
+
+/* ---------- Estadísticas ---------- */
+
+.contact-corporate-stats {
+  display: flex;
+  gap: 2.25rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(42, 54, 38, 0.12);
 }
- 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: var(--rose);
-    background: var(--rose-dim);
+
+.contact-corporate.theme-dark .contact-corporate-stats {
+  border-bottom-color: rgba(242, 237, 225, 0.12);
 }
- 
-.form-group select {
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c9637a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    padding-right: 2.5rem;
+
+.contact-corporate-stat-block-jardin {
+  display: flex;
+  flex-direction: column;
 }
- 
-.form-group textarea {
-    height: 130px;
-    resize: none;
-    line-height: 1.6;
+
+.contact-corporate-stat-number-jardin {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.9rem;
+  color: #2a3626;
 }
- 
-/* ── Botón ──────────────────────────────────────────────── */
-.btn-container {
-    margin-top: 1rem;
+
+.contact-corporate.theme-dark .contact-corporate-stat-number-jardin {
+  color: #d3a06c;
 }
- 
-.corp-send-btn {
-    width: 100%;
-    background: var(--rose);
-    color: #fff;
-    border: none;
-    padding: 1.1rem;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 900;
-    font-size: 13px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+
+.contact-corporate-stat-suffix-jardin {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #b8763e;
+  margin-left: 0.15rem;
 }
- 
-.corp-send-btn:hover {
-    transform: translateY(-3px);
-    background: #b5536a;
-    box-shadow: 0 15px 30px var(--rose-shadow);
+
+.contact-corporate-stat-label-jardin {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2c2a24;
+  opacity: 0.7;
+  margin-top: 0.35rem;
 }
- 
-.corp-send-btn:active {
-    transform: translateY(0);
+
+.contact-corporate.theme-dark .contact-corporate-stat-label-jardin {
+  color: #ece4d3;
 }
- 
-/* ══════════════════════════════════════════════════════════
-   RESPONSIVE — 1024px
-══════════════════════════════════════════════════════════ */
+
+.contact-corporate-stat-block-huespedes {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-corporate-stat-number-huespedes {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.9rem;
+  color: #2a3626;
+}
+
+.contact-corporate.theme-dark .contact-corporate-stat-number-huespedes {
+  color: #d3a06c;
+}
+
+.contact-corporate-stat-label-huespedes {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2c2a24;
+  opacity: 0.7;
+  margin-top: 0.35rem;
+}
+
+.contact-corporate.theme-dark .contact-corporate-stat-label-huespedes {
+  color: #ece4d3;
+}
+
+.contact-corporate-stat-block-valoracion {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-corporate-stat-number-valoracion {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.9rem;
+  color: #2a3626;
+}
+
+.contact-corporate.theme-dark .contact-corporate-stat-number-valoracion {
+  color: #d3a06c;
+}
+
+.contact-corporate-stat-suffix-valoracion {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #b8763e;
+  margin-left: 0.15rem;
+}
+
+.contact-corporate-stat-label-valoracion {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2c2a24;
+  opacity: 0.7;
+  margin-top: 0.35rem;
+}
+
+.contact-corporate.theme-dark .contact-corporate-stat-label-valoracion {
+  color: #ece4d3;
+}
+
+.contact-corporate-info-location-block {
+  margin-bottom: 1.75rem;
+}
+
+.contact-corporate-info-location-label {
+  display: block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2a3626;
+  margin-bottom: 0.5rem;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-location-label {
+  color: #d3a06c;
+}
+
+.contact-corporate-info-location-text {
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  max-width: 34ch;
+  color: #2c2a24;
+  margin: 0;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-location-text {
+  color: #ece4d3;
+}
+
+.contact-corporate-info-email-block {
+  margin-bottom: 1.5rem;
+}
+
+.contact-corporate-info-email-label {
+  display: block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2a3626;
+  margin-bottom: 0.5rem;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-email-label {
+  color: #d3a06c;
+}
+
+.contact-corporate-info-email-link {
+  font-weight: 400;
+  font-size: 1rem;
+  color: #2c2a24;
+  text-decoration: none;
+  border-bottom: 1px solid #b8763e;
+  padding-bottom: 2px;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.contact-corporate-info-email-link:hover {
+  color: #b8763e;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-email-link {
+  color: #ece4d3;
+  border-bottom-color: #d3a06c;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-email-link:hover {
+  color: #d3a06c;
+}
+
+.contact-corporate-info-whatsapp-block {
+  margin-bottom: 2rem;
+}
+
+.contact-corporate-info-whatsapp-label {
+  display: block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2a3626;
+  margin-bottom: 0.5rem;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-whatsapp-label {
+  color: #d3a06c;
+}
+
+.contact-corporate-info-whatsapp-link {
+  font-weight: 400;
+  font-size: 1rem;
+  color: #2c2a24;
+  text-decoration: none;
+  border-bottom: 1px solid #b8763e;
+  padding-bottom: 2px;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.contact-corporate-info-whatsapp-link:hover {
+  color: #b8763e;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-whatsapp-link {
+  color: #ece4d3;
+  border-bottom-color: #d3a06c;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-whatsapp-link:hover {
+  color: #d3a06c;
+}
+
+.contact-corporate-info-response-note {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: #6b7a55;
+  margin: 0 0 2rem;
+}
+
+.contact-corporate.theme-dark .contact-corporate-info-response-note {
+  color: #a8b89a;
+}
+
+.contact-corporate-info-horizon {
+  display: block;
+  width: 100%;
+  max-width: 160px;
+  height: 1.5px;
+  background: linear-gradient(90deg, #b8763e 0%, transparent 100%);
+}
+
+/* ---------- Columna formulario ---------- */
+
+.contact-corporate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-corporate-field-row-contact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.contact-corporate-field-row-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.8fr;
+  gap: 1.5rem;
+}
+
+/* --- Nombre --- */
+.contact-corporate-field-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.contact-corporate-field-name-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+.contact-corporate.theme-dark .contact-corporate-field-name-label {
+  color: #d3a06c;
+}
+.contact-corporate-field-name-input {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.95rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #2c2a24;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+.contact-corporate-field-name-input:focus {
+  border-color: #b8763e;
+}
+.contact-corporate.theme-dark .contact-corporate-field-name-input {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+  color: #ece4d3;
+}
+.contact-corporate.theme-dark .contact-corporate-field-name-input:focus {
+  border-color: #d3a06c;
+}
+
+/* --- Email --- */
+.contact-corporate-field-email {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.contact-corporate-field-email-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+.contact-corporate.theme-dark .contact-corporate-field-email-label {
+  color: #d3a06c;
+}
+.contact-corporate-field-email-input {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.95rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #2c2a24;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+.contact-corporate-field-email-input:focus {
+  border-color: #b8763e;
+}
+.contact-corporate.theme-dark .contact-corporate-field-email-input {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+  color: #ece4d3;
+}
+.contact-corporate.theme-dark .contact-corporate-field-email-input:focus {
+  border-color: #d3a06c;
+}
+
+/* --- Teléfono --- */
+.contact-corporate-field-phone {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.contact-corporate-field-phone-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+.contact-corporate.theme-dark .contact-corporate-field-phone-label {
+  color: #d3a06c;
+}
+.contact-corporate-field-phone-input {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.95rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #2c2a24;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+.contact-corporate-field-phone-input:focus {
+  border-color: #b8763e;
+}
+.contact-corporate.theme-dark .contact-corporate-field-phone-input {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+  color: #ece4d3;
+}
+.contact-corporate.theme-dark .contact-corporate-field-phone-input:focus {
+  border-color: #d3a06c;
+}
+
+/* --- Llegada --- */
+.contact-corporate-field-checkin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.contact-corporate-field-checkin-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+.contact-corporate.theme-dark .contact-corporate-field-checkin-label {
+  color: #d3a06c;
+}
+.contact-corporate-field-checkin-input {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #2c2a24;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+.contact-corporate-field-checkin-input:focus {
+  border-color: #b8763e;
+}
+.contact-corporate.theme-dark .contact-corporate-field-checkin-input {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+  color: #ece4d3;
+}
+.contact-corporate.theme-dark .contact-corporate-field-checkin-input:focus {
+  border-color: #d3a06c;
+}
+
+/* --- Salida --- */
+.contact-corporate-field-checkout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.contact-corporate-field-checkout-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+.contact-corporate.theme-dark .contact-corporate-field-checkout-label {
+  color: #d3a06c;
+}
+.contact-corporate-field-checkout-input {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #2c2a24;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+.contact-corporate-field-checkout-input:focus {
+  border-color: #b8763e;
+}
+.contact-corporate.theme-dark .contact-corporate-field-checkout-input {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+  color: #ece4d3;
+}
+.contact-corporate.theme-dark .contact-corporate-field-checkout-input:focus {
+  border-color: #d3a06c;
+}
+
+/* --- Huéspedes --- */
+.contact-corporate-field-guests {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.contact-corporate-field-guests-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+.contact-corporate.theme-dark .contact-corporate-field-guests-label {
+  color: #d3a06c;
+}
+.contact-corporate-field-guests-input {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #2c2a24;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.25s ease;
+}
+.contact-corporate-field-guests-input:focus {
+  border-color: #b8763e;
+}
+.contact-corporate.theme-dark .contact-corporate-field-guests-input {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+  color: #ece4d3;
+}
+.contact-corporate.theme-dark .contact-corporate-field-guests-input:focus {
+  border-color: #d3a06c;
+}
+
+/* --- Mensaje --- */
+.contact-corporate-field-message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.contact-corporate-field-message-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+.contact-corporate.theme-dark .contact-corporate-field-message-label {
+  color: #d3a06c;
+}
+.contact-corporate-field-message-textarea {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.95rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #2c2a24;
+  outline: none;
+  resize: vertical;
+  min-height: 120px;
+  transition: border-color 0.25s ease;
+}
+.contact-corporate-field-message-textarea:focus {
+  border-color: #b8763e;
+}
+.contact-corporate.theme-dark .contact-corporate-field-message-textarea {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+  color: #ece4d3;
+}
+.contact-corporate.theme-dark .contact-corporate-field-message-textarea:focus {
+  border-color: #d3a06c;
+}
+
+/* --- Botón enviar --- */
+.contact-corporate-submit-button {
+  align-self: flex-start;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f2ede1;
+  background-color: #2a3626;
+  border: none;
+  padding: 1rem 2.2rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+.contact-corporate-submit-button:hover:not(:disabled) {
+  background-color: #b8763e;
+  transform: translateY(-2px);
+}
+.contact-corporate-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.contact-corporate.theme-dark .contact-corporate-submit-button {
+  background-color: #b8763e;
+  color: #201f1a;
+}
+.contact-corporate.theme-dark .contact-corporate-submit-button:hover:not(:disabled) {
+  background-color: #d3a06c;
+}
+
+/* --- Mensajes de estado --- */
+.contact-corporate-status-success {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.9rem;
+  color: #4a6741;
+  margin: 0;
+}
+.contact-corporate.theme-dark .contact-corporate-status-success {
+  color: #a8c99a;
+}
+
+.contact-corporate-status-error {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.9rem;
+  color: #9a4a34;
+  margin: 0;
+}
+.contact-corporate.theme-dark .contact-corporate-status-error {
+  color: #e0a08c;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
 @media (max-width: 1024px) {
-    main.contact-page {
-        padding: 6rem 5% 5rem;
-    }
- 
-    .contact-grid {
-        grid-template-columns: 1fr;
-        gap: 4rem;
-    }
- 
-    .contact-info-panel {
-        position: static;
-    }
- 
-    .contact-title {
-        font-size: clamp(2.5rem, 7vw, 4rem);
-    }
- 
-    .contact-subtitle {
-        max-width: 100%;
-    }
+  .contact-corporate {
+    --qa-section-pad-y: 5.5rem;
+    --qa-section-pad-x: 7vw;
+  }
+
+  .contact-corporate-content {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+  }
+
+  .contact-corporate-stats {
+    gap: 1.75rem;
+  }
 }
- 
-/* ══════════════════════════════════════════════════════════
-   RESPONSIVE — 768px
-══════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-    main.contact-page {
-        padding: 10rem 6% ;
-    }
- 
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 1.2rem;
-    }
- 
-    .form-group.full-width {
-        grid-column: span 1;
-    }
- 
-    .contact-details {
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-    }
+
+@media (max-width: 640px) {
+  .contact-corporate-field-row-contact {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .contact-corporate-field-row-dates {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .contact-corporate-submit-button {
+    width: 100%;
+    text-align: center;
+  }
 }
- 
-/* ══════════════════════════════════════════════════════════
-   RESPONSIVE — 480px
-══════════════════════════════════════════════════════════ */
-@media (max-width: 480px) {
-    .contact-page {
-        padding: 6rem 4% 3rem;
-    }
- 
-    .contact-details {
-        grid-template-columns: 1fr;
-    }
- 
-    .contact-title {
-        letter-spacing: -0.5px;
-    }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .contact-corporate * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -99,6 +99,7 @@ export const SessionProvider = ({ children }: ProviderProps) => {
             console.log("USER", user);        
             
             setUser(user);
+            setLoading(false);
 
             if (isAdmin) {
                 navigate("/admin");

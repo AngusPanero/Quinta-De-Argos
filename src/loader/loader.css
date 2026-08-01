@@ -1,103 +1,135 @@
-/* ============================================================
-   loader.css — Boggero Propiedades
-   ============================================================ */
+/* ==========================================================
+   Loader.css — Quinta de Argos
+   ========================================================== */
 
-.loader-overlay {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-    font-family: 'Montserrat', sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.qa-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
 }
 
-.loader-overlay.dark  { background: #141820; }
-.loader-overlay.light { background: #fdf8f8; }
-
-/* ── CONTENT ────────────────────────────────────────────── */
-.loader-content {
-    text-align: center;
-    width: 100%;
-    max-width: 380px;
-    padding: 2rem;
+.qa-loader--fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  animation: qa-loader-fade-in 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-/* ── EYEBROW ────────────────────────────────────────────── */
-.loader-eyebrow {
-    display: block;
-    font-size: 9px;
-    font-weight: 900;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: #c9637a;
-    margin-bottom: 1.5rem;
+.qa-loader--fullscreen.light {
+  background-color: rgba(242, 237, 225, 0.72);
 }
 
-/* ── LOGO ───────────────────────────────────────────────── */
-.loader-logo {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 900;
-    font-size: clamp(2rem, 8vw, 3rem);
-    letter-spacing: -2px;
-    margin: 0 0 2.5rem;
-    line-height: 1;
+.qa-loader--fullscreen.dark {
+  background-color: rgba(28, 37, 25, 0.72);
 }
 
-.loader-overlay.dark  .loader-logo { color: #f0eaec; }
-.loader-overlay.light .loader-logo { color: #141820; }
-
-.loader-logo span { color: #c9637a; }
-
-/* ── TRACK ──────────────────────────────────────────────── */
-.loader-track {
-    width: 100%;
-    height: 2px;
-    background: rgba(201, 99, 122, 0.12);
-    overflow: hidden;
-    margin-bottom: 1rem;
+.qa-loader--inline {
+  padding: 1.5rem;
 }
 
-.loader-bar {
-    height: 100%;
-    background: #c9637a;
-    transition: width 0.1s linear;
-    position: relative;
+@keyframes qa-loader-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.loader-bar::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    animation: loaderShine 1.5s infinite;
+/* ---------- Spinner ----------
+   Anillo armado con conic-gradient + mask (sin imágenes):
+   reutiliza el degradé pino→arcilla, el mismo motivo de marca
+   que la línea de horizonte del resto del sitio. */
+
+.qa-loader-spinner {
+  display: block;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  animation: qa-loader-spin 0.9s linear infinite;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
 }
 
-@keyframes loaderShine {
-    from { transform: translateX(-100%); }
-    to   { transform: translateX(100%); }
+.light .qa-loader-spinner {
+  background: conic-gradient(from 0deg, transparent 0%, #b8763e 55%, #2a3626 100%);
 }
 
-/* ── INFO ───────────────────────────────────────────────── */
-.loader-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+.dark .qa-loader-spinner {
+  background: conic-gradient(from 0deg, transparent 0%, #d3a06c 55%, #b8763e 100%);
 }
 
-.loader-overlay.dark  .loader-status { color: #f0eaec; opacity: 0.35; }
-.loader-overlay.light .loader-status { color: #141820; opacity: 0.35; }
-
-.loader-number { color: #c9637a; }
-
-/* ── RESPONSIVE ─────────────────────────────────────────── */
-@media (max-width: 768px) {
-    .loader-content { max-width: 80%; }
+@keyframes qa-loader-spin {
+  to { transform: rotate(360deg); }
 }
 
-@media (max-height: 450px) {
-    .loader-logo { font-size: 1.8rem; margin-bottom: 1rem; }
+/* ---------- Mensaje ---------- */
+
+.qa-loader-message {
+  display: inline-flex;
+  align-items: baseline;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.light .qa-loader-message {
+  color: #2a3626;
+}
+
+.dark .qa-loader-message {
+  color: #ece4d3;
+}
+
+.qa-loader-dot {
+  animation: qa-loader-dot-blink 1.2s infinite;
+  opacity: 0;
+}
+
+.qa-loader-dot:nth-child(1) { animation-delay: 0s; }
+.qa-loader-dot:nth-child(2) { animation-delay: 0.2s; }
+.qa-loader-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes qa-loader-dot-blink {
+  0%, 80%, 100% { opacity: 0; }
+  40% { opacity: 1; }
+}
+
+/* ---------- Línea de horizonte (motivo de marca) ---------- */
+
+.qa-loader-horizon {
+  width: 90px;
+  height: 1.5px;
+  background: linear-gradient(90deg, #2a3626 0%, #b8763e 100%);
+  animation: qa-loader-horizon-pulse 1.6s ease-in-out infinite;
+}
+
+.dark .qa-loader-horizon {
+  background: linear-gradient(90deg, #d3a06c 0%, #b8763e 100%);
+}
+
+@keyframes qa-loader-horizon-pulse {
+  0%, 100% { opacity: 0.3; transform: scaleX(0.6); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .qa-loader-spinner {
+    animation-duration: 2.2s;
+  }
+
+  .qa-loader-dot,
+  .qa-loader-horizon {
+    animation: none;
+    opacity: 1;
+  }
 }

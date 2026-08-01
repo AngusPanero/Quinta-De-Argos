@@ -1,8 +1,43 @@
-body{
+body {
   padding: 0;
   margin: 0;
 }
 
-a{
+a {
   text-decoration: none;
+}
+
+/* ==========================================================
+   SCROLLBAR — estilo acorde a la paleta de Quinta de Argos
+   (pino / arcilla / crema). Funciona en Chrome, Edge, Safari
+   (::-webkit-scrollbar) y Firefox (scrollbar-color).
+   ========================================================== */
+
+html {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #b8763e rgba(42, 54, 38, 0.08); /* Firefox: thumb / track */
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(42, 54, 38, 0.06);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #b8763e;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #9a6234;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }

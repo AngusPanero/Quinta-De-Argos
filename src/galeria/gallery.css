@@ -1,0 +1,371 @@
+/* ==========================================================
+   gallery.css — Quinta de Argos
+   Prefijo de clases: gallery-corporate-*
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.gallery-corporate {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f2ede1;
+  color: #2c2a24;
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+}
+
+.gallery-corporate.theme-dark {
+  background-color: #201f1a;
+  color: #ece4d3;
+}
+
+.gallery-corporate * {
+  box-sizing: border-box;
+}
+
+/* ============ PORTADA ============ */
+
+.gallery-corporate-cover {
+  position: relative;
+  height: 100svh;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 8vw;
+}
+
+.gallery-corporate-eyebrow-cover {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #b8763e;
+  margin-bottom: 1.5rem;
+}
+
+.gallery-corporate-heading-cover {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  line-height: 1.1;
+  color: #2a3626;
+  margin: 0 0 1.5rem;
+  max-width: 16ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.gallery-corporate.theme-dark .gallery-corporate-heading-cover {
+  color: #d3a06c;
+}
+
+.gallery-corporate-paragraph-cover {
+  font-weight: 300;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 48ch;
+  margin: 0 auto;
+  color: #2c2a24;
+}
+
+.gallery-corporate.theme-dark .gallery-corporate-paragraph-cover {
+  color: #ece4d3;
+}
+
+.gallery-corporate-scroll-cue {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #b8763e;
+}
+
+.gallery-corporate-scroll-cue-line {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(180deg, #b8763e 0%, transparent 100%);
+  animation: qa-gallery-scroll-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes qa-gallery-scroll-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ==========================================================
+   EXPERIENCIA INMERSIVA — contenedor con scroll propio
+   ========================================================== */
+
+.gallery-corporate-story {
+  position: relative;
+  height: 100svh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox: si no, hereda el estilo global y se ve duplicada */
+  -ms-overflow-style: none; /* Edge/IE legacy */
+}
+
+.gallery-corporate-story::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Edge Chromium */
+}
+
+.gallery-corporate-scene {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+  /* Perspectiva para que rotateX de la leyenda se vea genuinamente 3D */
+  perspective: 1400px;
+}
+
+.gallery-corporate-scene-image {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: center center;
+}
+
+.gallery-corporate-scene-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Ken Burns continuo, independiente de la entrada 3D */
+  animation: qa-gallery-kenburns 14s ease-in-out infinite alternate;
+}
+
+@keyframes qa-gallery-kenburns {
+  from { transform: scale(1) translateX(0); }
+  to { transform: scale(1.08) translateX(-1.5%); }
+}
+
+.gallery-corporate-scene-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(28, 37, 25, 0.15) 0%,
+    rgba(28, 37, 25, 0.1) 40%,
+    rgba(28, 37, 25, 0.75) 100%
+  );
+  pointer-events: none;
+}
+
+.gallery-corporate-scene-caption-wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 8vw 4.5rem;
+  display: flex;
+  justify-content: flex-start;
+  transform-style: preserve-3d;
+}
+
+.gallery-corporate-scene-caption {
+  max-width: 480px;
+  padding: 1.75rem 2rem;
+  border-radius: 3px;
+  background: rgba(28, 37, 25, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(242, 237, 225, 0.15);
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.gallery-corporate-scene-index {
+  display: block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: #d3a06c;
+  margin-bottom: 0.75rem;
+}
+
+.gallery-corporate-scene-eyebrow {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  color: #f2ede1;
+  margin-bottom: 0.75rem;
+}
+
+.gallery-corporate-scene-description {
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #ece4d3;
+  margin: 0;
+}
+
+/* ---------- Indicador de progreso ---------- */
+
+.gallery-corporate-progress {
+  position: absolute;
+  top: 50%;
+  right: 3vw;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  z-index: 5;
+}
+
+.gallery-corporate-progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 237, 225, 0.5);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.gallery-corporate-progress-dot:hover {
+  background-color: rgba(242, 237, 225, 0.4);
+}
+
+.gallery-corporate-progress-dot.is-active {
+  background-color: #d3a06c;
+  border-color: #d3a06c;
+  width: 10px;
+  height: 10px;
+  transform: scale(1.2);
+}
+
+/* ============ CIERRE ============ */
+
+.gallery-corporate-outro {
+  padding: 7rem 6vw;
+  display: flex;
+  justify-content: center;
+}
+
+.gallery-corporate-outro-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 520px;
+}
+
+.gallery-corporate-eyebrow-outro {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b8763e;
+  margin-bottom: 1.25rem;
+}
+
+.gallery-corporate-heading-outro {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+  color: #2a3626;
+  margin: 0 0 2rem;
+}
+
+.gallery-corporate.theme-dark .gallery-corporate-heading-outro {
+  color: #d3a06c;
+}
+
+.gallery-corporate-cta-outro {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #f2ede1;
+  background-color: #2a3626;
+  padding: 1.1rem 2.4rem;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background-color 0.35s ease, transform 0.35s ease;
+}
+
+.gallery-corporate-cta-outro:hover {
+  background-color: #b8763e;
+  transform: translateY(-2px);
+}
+
+.gallery-corporate.theme-dark .gallery-corporate-cta-outro {
+  background-color: #b8763e;
+  color: #201f1a;
+}
+
+.gallery-corporate.theme-dark .gallery-corporate-cta-outro:hover {
+  background-color: #d3a06c;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 768px) {
+  .gallery-corporate-scene-caption-wrapper {
+    padding: 0 6vw 3.5rem;
+  }
+
+  .gallery-corporate-scene-caption {
+    max-width: 100%;
+    padding: 1.4rem 1.5rem;
+  }
+
+  .gallery-corporate-scene-eyebrow {
+    font-size: 1.35rem;
+  }
+
+  .gallery-corporate-progress {
+    top: auto;
+    bottom: 1.5rem;
+    right: 0;
+    left: 0;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-corporate-scene-description {
+    font-size: 0.88rem;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-corporate * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .gallery-corporate-scene-image img {
+    animation: none;
+  }
+}

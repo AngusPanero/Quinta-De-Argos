@@ -1,0 +1,572 @@
+/* ==========================================================
+   checkout.css — Quinta de Argos
+   Prefijo de clases: checkout-*
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.checkout {
+  --qa-section-pad-y: 7rem;
+  --qa-section-pad-x: 6vw;
+
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f2ede1;
+  color: #2c2a24;
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+}
+
+.checkout.theme-dark {
+  background-color: #201f1a;
+  color: #ece4d3;
+}
+
+.checkout * {
+  box-sizing: border-box;
+}
+
+/* ============ HERO ============ */
+
+.checkout-hero {
+  padding: var(--qa-section-pad-y) var(--qa-section-pad-x) 2.5rem;
+  max-width: 640px;
+}
+
+.checkout-eyebrow-hero {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b8763e;
+  margin-bottom: 1.25rem;
+}
+
+.checkout-heading-hero {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+  line-height: 1.2;
+  margin: 0 0 1rem;
+  color: #2a3626;
+}
+
+.checkout.theme-dark .checkout-heading-hero {
+  color: #d3a06c;
+}
+
+.checkout-paragraph-hero {
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #2c2a24;
+  margin: 0;
+}
+
+.checkout.theme-dark .checkout-paragraph-hero {
+  color: #ece4d3;
+}
+
+/* ============ CONTENIDO (dos columnas) ============ */
+
+.checkout-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5vw;
+  padding: 0 var(--qa-section-pad-x) var(--qa-section-pad-y);
+  align-items: start;
+}
+
+/* ---------- Columna resumen ---------- */
+
+.checkout-summary {
+  border: 1px solid rgba(42, 54, 38, 0.15);
+  border-radius: 2px;
+  padding: 2rem;
+}
+
+.checkout.theme-dark .checkout-summary {
+  border-color: rgba(242, 237, 225, 0.15);
+}
+
+.checkout-summary-dates-block {
+  margin-bottom: 1.75rem;
+}
+
+.checkout-summary-dates-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+}
+
+.checkout-summary-dates-title {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+
+.checkout.theme-dark .checkout-summary-dates-title {
+  color: #d3a06c;
+}
+
+.checkout-summary-edit-dates-button {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b8763e;
+  background: transparent;
+  border: 1px solid #b8763e;
+  padding: 0.4rem 0.9rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.checkout-summary-edit-dates-button:hover {
+  background-color: #b8763e;
+  color: #f2ede1;
+}
+
+.checkout-summary-dates-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.checkout-summary-dates-range {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #2c2a24;
+}
+
+.checkout.theme-dark .checkout-summary-dates-range {
+  color: #ece4d3;
+}
+
+.checkout-summary-dates-nights {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.72rem;
+  color: #2c2a24;
+  opacity: 0.6;
+}
+
+.checkout.theme-dark .checkout-summary-dates-nights {
+  color: #ece4d3;
+}
+
+.checkout-summary-guests-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(42, 54, 38, 0.1);
+  border-bottom: 1px solid rgba(42, 54, 38, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.checkout.theme-dark .checkout-summary-guests-block {
+  border-color: rgba(242, 237, 225, 0.1);
+}
+
+.checkout-summary-guests-title {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+
+.checkout.theme-dark .checkout-summary-guests-title {
+  color: #d3a06c;
+}
+
+.checkout-summary-guests-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.checkout-summary-guests-decrease,
+.checkout-summary-guests-increase {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  background: transparent;
+  color: #2a3626;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.checkout-summary-guests-decrease:hover,
+.checkout-summary-guests-increase:hover {
+  background-color: #b8763e;
+  border-color: #b8763e;
+  color: #f2ede1;
+}
+
+.checkout.theme-dark .checkout-summary-guests-decrease,
+.checkout.theme-dark .checkout-summary-guests-increase {
+  border-color: rgba(242, 237, 225, 0.25);
+  color: #ece4d3;
+}
+
+.checkout-summary-guests-count {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  min-width: 1.2rem;
+  text-align: center;
+  color: #2c2a24;
+}
+
+.checkout.theme-dark .checkout-summary-guests-count {
+  color: #ece4d3;
+}
+
+.checkout-summary-addons-block {
+  margin-bottom: 1.5rem;
+}
+
+.checkout-summary-addons-title {
+  display: block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2a3626;
+  margin-bottom: 1rem;
+}
+
+.checkout.theme-dark .checkout-summary-addons-title {
+  color: #d3a06c;
+}
+
+.checkout-summary-addons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.checkout-summary-addon-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.checkout-summary-addon-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #b8763e;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkout-summary-addon-name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #2c2a24;
+}
+
+.checkout.theme-dark .checkout-summary-addon-name {
+  color: #ece4d3;
+}
+
+.checkout-summary-addon-price {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #b8763e;
+}
+
+.checkout-summary-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  font-size: 0.85rem;
+  color: #2c2a24;
+  opacity: 0.75;
+}
+
+.checkout.theme-dark .checkout-summary-breakdown-row {
+  color: #ece4d3;
+}
+
+.checkout-summary-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 1.25rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(42, 54, 38, 0.15);
+}
+
+.checkout.theme-dark .checkout-summary-total-row {
+  border-top-color: rgba(242, 237, 225, 0.15);
+}
+
+.checkout-summary-total-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2a3626;
+}
+
+.checkout.theme-dark .checkout-summary-total-label {
+  color: #d3a06c;
+}
+
+.checkout-summary-total-value {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #2a3626;
+}
+
+.checkout.theme-dark .checkout-summary-total-value {
+  color: #d3a06c;
+}
+
+/* ---------- Columna pago ---------- */
+
+.checkout-payment {
+  border: 1px solid rgba(42, 54, 38, 0.15);
+  border-radius: 2px;
+  padding: 2rem;
+}
+
+.checkout.theme-dark .checkout-payment {
+  border-color: rgba(242, 237, 225, 0.15);
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.checkout-field-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.checkout-field-name-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+
+.checkout.theme-dark .checkout-field-name-label {
+  color: #d3a06c;
+}
+
+.checkout-field-name-input {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.95rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #2c2a24;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.checkout-field-name-input:focus {
+  border-color: #b8763e;
+}
+
+.checkout.theme-dark .checkout-field-name-input {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+  color: #ece4d3;
+}
+
+.checkout.theme-dark .checkout-field-name-input:focus {
+  border-color: #d3a06c;
+}
+
+.checkout-field-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.checkout-field-card-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+}
+
+.checkout.theme-dark .checkout-field-card-label {
+  color: #d3a06c;
+}
+
+.checkout-field-card-element {
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  background-color: #ffffff;
+}
+
+.checkout.theme-dark .checkout-field-card-element {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.2);
+}
+
+.checkout-error-message {
+  font-size: 0.85rem;
+  color: #9a4a34;
+  margin: 0;
+}
+
+.checkout.theme-dark .checkout-error-message {
+  color: #e0a08c;
+}
+
+.checkout-pay-button {
+  width: 100%;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f2ede1;
+  background-color: #2a3626;
+  border: none;
+  padding: 1.1rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
+.checkout-pay-button:hover:not(:disabled) {
+  background-color: #b8763e;
+  transform: translateY(-2px);
+}
+
+.checkout-pay-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.checkout.theme-dark .checkout-pay-button {
+  background-color: #b8763e;
+  color: #201f1a;
+}
+
+.checkout.theme-dark .checkout-pay-button:hover:not(:disabled) {
+  background-color: #d3a06c;
+}
+
+.checkout-secure-note {
+  text-align: center;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.68rem;
+  color: #2c2a24;
+  opacity: 0.55;
+  margin: 0;
+}
+
+.checkout.theme-dark .checkout-secure-note {
+  color: #ece4d3;
+}
+
+/* ---------- Éxito ---------- */
+
+.checkout-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.checkout-success-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #6b7a55;
+  color: #f2ede1;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.checkout-success-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #2a3626;
+  margin: 0 0 0.75rem;
+}
+
+.checkout.theme-dark .checkout-success-heading {
+  color: #d3a06c;
+}
+
+.checkout-success-paragraph {
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #2c2a24;
+  max-width: 36ch;
+  margin: 0;
+}
+
+.checkout.theme-dark .checkout-success-paragraph {
+  color: #ece4d3;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1024px) {
+  .checkout {
+    --qa-section-pad-y: 5rem;
+    --qa-section-pad-x: 7vw;
+  }
+
+  .checkout-content {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-summary,
+  .checkout-payment {
+    padding: 1.5rem;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .checkout * {
+    transition-duration: 0.01ms !important;
+  }
+}

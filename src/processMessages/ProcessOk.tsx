@@ -18,11 +18,15 @@ const ProcessOk = ({ processMessage }: ProcessProps) => {
         return () => clearTimeout(timer)
     }, [navigate])
 
+    const handleGoHome = () => {
+        navigate("/")
+    }
+
     return (
         <div className={`process-container ${theme}`}>
             <div className="process-content">
 
-                <span className="process-eyebrow">BOGGERO PROPIEDADES</span>
+                <span className="process-eyebrow">QUINTA DE ARGOS</span>
 
                 <div className="process-icon">✓</div>
 
@@ -37,6 +41,15 @@ const ProcessOk = ({ processMessage }: ProcessProps) => {
                 <div className="process-progress-wrap">
                     <div className="process-progress-bar" />
                 </div>
+
+                {/* Respaldo por si la redirección automática no dispara */}
+                <button
+                    type="button"
+                    className="process-home-button"
+                    onClick={handleGoHome}
+                >
+                    Volver al inicio
+                </button>
 
             </div>
         </div>

@@ -1,213 +1,367 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { motion } from "framer-motion"
-import axios from "axios"
-import "./contactCorporate.css"
-import { UseTheme } from "../contexts/ThemeContext"
-import Error from "../processMessages/Error"
-import Loader from "../loader/Loader"
- 
-const ContactCorporate = () => {
-    const { theme } = UseTheme()
-    const navigate = useNavigate()
- 
-    const [formData, setFormData] = useState({
-        name: "",
-        lastName: "",
-        phone: "",
-        type: "Información",
-        email: "",
-        comment: "",
-    })
- 
-    const [error, setError]     = useState<boolean>(false)
-    const [loading, setLoading] = useState<boolean>(false)
- 
-    const handleSetValues = (field: string, value: string) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
-    }
- 
-    // ── Nodemailer ───────────────────────────────────────────
-    const handleSubmitNodemailer = async () => {
-        try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/sendemail`, formData)
-            if (res.status !== 200) console.error("Error al enviar el correo.")
-        } catch (err: any) {
-            setError(true)
-            console.error(`Error al enviar el correo: ${err.message}`)
-            throw err
-        }
-    }
- 
-    // ── DB ───────────────────────────────────────────────────
-    const handleSubmit = async () => {
-        try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/contact`, formData)
-            if (res.status === 201) navigate("/gracias")
-        } catch (err: any) {
-            setError(true)
-            console.error(`Error al guardar los datos: ${err.message}`)
-            throw err
-        }
-    }
- 
-    // ── Ambas ────────────────────────────────────────────────
-    const handleSubmitForm = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError(false)
-        setLoading(true)
-        try {
-            await handleSubmitNodemailer()
-            await handleSubmit()
-        } catch (err: any) {
-            setError(true)
-            console.error(`Error al procesar el formulario: ${err.message}`)
-        } finally {
-            setLoading(false)
-        }
-    }
- 
-    if (loading) return <Loader />
-    if (error)   return <Error errorMessage="Error en el envío. Por favor, intentá nuevamente." />
- 
-    return (
-        <main className={`contact-page ${theme}`}>
-            <div className="contact-grid">
- 
-                {/* ── PANEL IZQUIERDO ── */}
-                <motion.section
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="contact-info-panel"
-                >
-                    <span className="contact-badge">CONSULTA SIN COMPROMISO</span>
- 
-                    <h1 className="contact-title">
-                        Tu próxima<br />
-                        <span className="text-rose">propiedad,<br />empieza acá.</span>
-                    </h1>
- 
-                    <p className="contact-subtitle">
-                        Más de 10 años asesorando en compra, venta y alquiler de propiedades.
-                        Completá el formulario y Elizabeth te responderá a la brevedad con
-                        atención personalizada.
-                    </p>
- 
-                    <div className="contact-details">
-                        <div className="detail-item">
-                            <small>OFICINA</small>
-                            <p>Ramos Mejía Buenos Aires</p>
-                        </div>
-                        <div className="detail-item">
-                            <small>EMAIL</small>
-                            <p>boggeropropiedades@gmail.com</p>
-                        </div>
-                        <div className="detail-item">
-                            <small>WHATSAPP</small>
-                            <p>+54 9 11-2742-2947</p>
-                        </div>
-                    </div>
-                </motion.section>
- 
-                {/* ── FORMULARIO ── */}
-                <motion.section
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="contact-form-panel"
-                >
-                    <form className="contact-form-corp" onSubmit={handleSubmitForm}>
- 
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="name">Nombre</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    value={formData.name}
-                                    onChange={e => handleSetValues("name", e.target.value)}
-                                    placeholder="Tu nombre"
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="lastName">Apellido</label>
-                                <input
-                                    type="text"
-                                    id="lastName"
-                                    value={formData.lastName}
-                                    onChange={e => handleSetValues("lastName", e.target.value)}
-                                    placeholder="Tu apellido"
-                                    required
-                                />
-                            </div>
-                        </div>
- 
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="phone">Teléfono</label>
-                                <input
-                                    type="text"
-                                    id="phone"
-                                    value={formData.phone}
-                                    onChange={e => handleSetValues("phone", e.target.value)}
-                                    placeholder="Ej: 11-0000-0000"
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="email">Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    value={formData.email}
-                                    onChange={e => handleSetValues("email", e.target.value)}
-                                    placeholder="tuemail@ejemplo.com"
-                                    required
-                                />
-                            </div>
-                        </div>
- 
-                        <div className="form-group full-width">
-                            <label htmlFor="type">Tipo de Consulta</label>
-                            <select
-                                id="type"
-                                value={formData.type}
-                                onChange={e => handleSetValues("type", e.target.value)}
-                                required
-                            >
-                                <option value="Información">Información general</option>
-                                <option value="Alquiler">Alquiler</option>
-                                <option value="Compra">Compra</option>
-                                <option value="Venta">Venta</option>
-                                <option value="Tasación">Tasación</option>
-                            </select>
-                        </div>
- 
-                        <div className="form-group full-width">
-                            <label htmlFor="comment">Comentario</label>
-                            <textarea
-                                id="comment"
-                                value={formData.comment}
-                                onChange={e => handleSetValues("comment", e.target.value)}
-                                placeholder="Contanos más sobre tu consulta..."
-                                required
-                            />
-                        </div>
- 
-                        <div className="btn-container">
-                            <button type="submit" className="corp-send-btn">
-                                ENVIAR CONSULTA
-                            </button>
-                        </div>
- 
-                    </form>
-                </motion.section>
- 
-            </div>
-        </main>
-    )
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, animate, useInView } from 'framer-motion';
+import axios from 'axios';
+import './ContactCorporate.css';
+import { UseTheme } from '../contexts/ThemeContext';
+// TODO (Angus): confirmá que este asset existe en tu carpeta (ya lo usás en HomeCorporate como img4).
+import imgPiscina from '../assets/quinta4.jpg';
+
+/**
+ * ContactCorporate
+ * ---------------------------------------------------------
+ * Componente único y autocontenido: sección de contacto con
+ * info de la finca + formulario de consulta conectado al
+ * backend. No conoce Nav/Home/Footer.
+ *
+ * TODO (Angus): ajustá API_BASE a como manejás la URL del
+ * backend en este proyecto (env var, axios instance, etc).
+ * Por ahora pega a `${API_BASE}/contact` con axios directo.
+ */
+
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
+// Número que cuenta hacia arriba al entrar en pantalla, una sola vez.
+const AnimatedStat: React.FC<{
+  value: number;
+  decimals?: number;
+  className?: string;
+}> = ({ value, decimals = 0, className }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.6 });
+  const [display, setDisplay] = useState((0).toFixed(decimals));
+
+  useEffect(() => {
+    if (!isInView) return;
+    const controls = animate(0, value, {
+      duration: 1.4,
+      ease: [0.65, 0, 0.35, 1],
+      onUpdate: (latest) => setDisplay(latest.toFixed(decimals)),
+    });
+    return () => controls.stop();
+  }, [isInView, value, decimals]);
+
+  return (
+    <span ref={ref} className={className}>
+      {display.replace('.', ',')}
+    </span>
+  );
+};
+
+interface ContactFormData {
+  nombre: string;
+  email: string;
+  telefono: string;
+  checkin: string;
+  checkout: string;
+  huespedes: string;
+  mensaje: string;
 }
- 
-export default ContactCorporate
+
+const initialFormData: ContactFormData = {
+  nombre: '',
+  email: '',
+  telefono: '',
+  checkin: '',
+  checkout: '',
+  huespedes: '',
+  mensaje: '',
+};
+
+type SubmitStatus = 'idle' | 'loading' | 'success' | 'error';
+
+const ContactCorporate: React.FC = () => {
+  const themeContext = UseTheme() as { theme?: 'light' | 'dark' } | undefined;
+  const theme = themeContext?.theme ?? 'light';
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);  
+
+  const [formData, setFormData] = useState<ContactFormData>(initialFormData);
+  const [status, setStatus] = useState<SubmitStatus>('idle');
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus('loading');
+
+    try {
+      await axios.post(`${API_BASE}/contact`, formData, {
+        withCredentials: true,
+      });
+      setStatus('success');
+      setFormData(initialFormData);
+    } catch (error: any) {
+        console.error('Error al enviar el formulario de contacto:', error);
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div className={`contact-corporate ${theme === 'dark' ? 'theme-dark' : ''}`}>
+      {/* ============ INTRO ============ */}
+      <section className="contact-corporate-hero">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          variants={staggerContainer}
+        >
+          <motion.span className="contact-corporate-eyebrow-hero" variants={fadeUp} transition={{ duration: 0.6 }}>
+            Contacto
+          </motion.span>
+          <motion.h1 className="contact-corporate-heading-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
+            Hablemos de tu estancia
+          </motion.h1>
+          <motion.p className="contact-corporate-paragraph-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
+            Contanos qué estás buscando y te respondemos en menos de 24 horas
+            con disponibilidad, tarifas y todo lo que necesites saber antes de
+            reservar.
+          </motion.p>
+        </motion.div>
+      </section>
+
+      {/* ============ CONTENIDO ============ */}
+      <section className="contact-corporate-content">
+        {/* ---------- Info ---------- */}
+        <motion.div
+          className="contact-corporate-info"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.7 }}
+        >
+          <span className="contact-corporate-eyebrow-info">Encontranos</span>
+          <h2 className="contact-corporate-info-heading">Cehegín, Región de Murcia</h2>
+
+          <motion.div
+            className="contact-corporate-info-image"
+            initial={{ opacity: 0, scale: 1.04 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 1, ease: [0.65, 0, 0.35, 1] }}
+          >
+            <img src={imgPiscina} alt="Piscina infinity de Quinta de Argos" />
+          </motion.div>
+
+          <div className="contact-corporate-stats">
+            <div className="contact-corporate-stat-block-jardin">
+              <AnimatedStat value={7000} className="contact-corporate-stat-number-jardin" />
+              <span className="contact-corporate-stat-suffix-jardin">m²</span>
+              <span className="contact-corporate-stat-label-jardin">Jardín privado</span>
+            </div>
+            <div className="contact-corporate-stat-block-huespedes">
+              <AnimatedStat value={6} className="contact-corporate-stat-number-huespedes" />
+              <span className="contact-corporate-stat-suffix-jardin">Hasta</span>
+              <span className="contact-corporate-stat-label-huespedes">Huéspedes</span>
+            </div>
+            <div className="contact-corporate-stat-block-valoracion">
+              <AnimatedStat
+                value={9.9}
+                decimals={1}
+                className="contact-corporate-stat-number-valoracion"
+              />
+              <span className="contact-corporate-stat-suffix-valoracion">/10 Calificaciones</span>
+              <span className="contact-corporate-stat-label-valoracion">en Booking y Airbnb</span>
+            </div>
+          </div>
+
+          <div className="contact-corporate-info-location-block">
+            <span className="contact-corporate-info-location-label">Ubicación</span>
+            <p className="contact-corporate-info-location-text">
+              Comarca del Noroeste de Murcia, a 7 km de Caravaca de la Cruz.
+              En pleno campo, pero a minutos del casco histórico.
+            </p>
+          </div>
+
+          <div className="contact-corporate-info-email-block">
+            <span className="contact-corporate-info-email-label">Email</span>
+            {/* TODO (Angus): reemplazar por el email real */}
+            <a href="mailto:reservas@quintadeargos.com" className="contact-corporate-info-email-link">
+              reservas@quintadeargos.com
+            </a>
+          </div>
+
+          <div className="contact-corporate-info-whatsapp-block">
+            <span className="contact-corporate-info-whatsapp-label">WhatsApp</span>
+            {/* TODO (Angus): reemplazar por el número real */}
+            <a href="https://wa.me/34000000000" className="contact-corporate-info-whatsapp-link">
+              +34 000 00 00 00
+            </a>
+          </div>
+
+          <p className="contact-corporate-info-response-note">
+            Solemos responder en menos de 24 horas.
+          </p>
+
+          <span className="contact-corporate-info-horizon" />
+        </motion.div>
+
+        {/* ---------- Formulario ---------- */}
+        <motion.form
+          className="contact-corporate-form"
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.7 }}
+        >
+          <div className="contact-corporate-field-row-contact">
+            <div className="contact-corporate-field-name">
+              <label htmlFor="nombre" className="contact-corporate-field-name-label">
+                Nombre completo
+              </label>
+              <input
+                id="nombre"
+                name="nombre"
+                type="text"
+                className="contact-corporate-field-name-input"
+                value={formData.nombre}
+                onChange={handleChange}
+                placeholder="Tu nombre"
+                required
+              />
+            </div>
+
+            <div className="contact-corporate-field-email">
+              <label htmlFor="email" className="contact-corporate-field-email-label">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                className="contact-corporate-field-email-input"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="tu@email.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="contact-corporate-field-phone">
+            <label htmlFor="telefono" className="contact-corporate-field-phone-label">
+              Teléfono / WhatsApp
+            </label>
+            <input
+              id="telefono"
+              name="telefono"
+              type="tel"
+              className="contact-corporate-field-phone-input"
+              value={formData.telefono}
+              onChange={handleChange}
+              placeholder="+34 000 00 00 00"
+              required
+            />
+          </div>
+
+          <div className="contact-corporate-field-row-dates">
+            <div className="contact-corporate-field-checkin">
+              <label htmlFor="checkin" className="contact-corporate-field-checkin-label">
+                Llegada
+              </label>
+              <input
+                id="checkin"
+                name="checkin"
+                type="date"
+                className="contact-corporate-field-checkin-input"
+                value={formData.checkin}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="contact-corporate-field-checkout">
+              <label htmlFor="checkout" className="contact-corporate-field-checkout-label">
+                Salida
+              </label>
+              <input
+                id="checkout"
+                name="checkout"
+                type="date"
+                className="contact-corporate-field-checkout-input"
+                value={formData.checkout}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="contact-corporate-field-guests">
+              <label htmlFor="huespedes" className="contact-corporate-field-guests-label">
+                Huéspedes
+              </label>
+              <select
+                id="huespedes"
+                name="huespedes"
+                className="contact-corporate-field-guests-input"
+                value={formData.huespedes}
+                onChange={handleChange}
+              >
+                <option value="">—</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="contact-corporate-field-message">
+            <label htmlFor="mensaje" className="contact-corporate-field-message-label">
+              Mensaje
+            </label>
+            <textarea
+              id="mensaje"
+              name="mensaje"
+              className="contact-corporate-field-message-textarea"
+              value={formData.mensaje}
+              onChange={handleChange}
+              placeholder="Contanos qué estás buscando: fechas, ocasión, cualquier duda..."
+              rows={5}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="contact-corporate-submit-button"
+            disabled={status === 'loading'}
+          >
+            {status === 'loading' ? 'Enviando...' : 'Enviar consulta'}
+          </button>
+
+          {status === 'success' && (
+            <p className="contact-corporate-status-success">
+              Gracias — recibimos tu consulta y te respondemos a la brevedad.
+            </p>
+          )}
+
+          {status === 'error' && (
+            <p className="contact-corporate-status-error">
+              Hubo un problema al enviar tu consulta. Probá de nuevo o
+              escribinos directamente por WhatsApp.
+            </p>
+          )}
+        </motion.form>
+      </section>
+    </div>
+  );
+};
+
+export default ContactCorporate;

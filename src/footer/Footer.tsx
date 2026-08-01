@@ -1,101 +1,112 @@
 import "./footer.css";
 import { UseTheme } from "../contexts/ThemeContext";
- 
+
+/**
+ * Footer
+ * ---------------------------------------------------------
+ * Componente único y autocontenido: solo maneja el footer.
+ * Misma lógica funcional que el footer de Boggero Propiedades
+ * (UseTheme, grid de secciones, mapa embebido, bottom bar),
+ * rediseñada con el sistema visual de Quinta de Argos.
+ */
+
 const Footer = () => {
     const { theme } = UseTheme();
- 
+
     return (
-        <footer className={`footer ${theme === "dark" ? "theme-dark" : "theme-light"}`}>
-            <div className="footer-grid">
- 
+        <footer className={`footer-corporate ${theme === "dark" ? "theme-dark" : "theme-light"}`}>
+            <div className="footer-corporate-grid">
+
                 {/* BRAND */}
-                <div className="footer-brand">
-                    <h2 className="footer-logo">Boggero Propiedades</h2>
-                    <p className="footer-tagline">EST. 2014 · MÁS DE 10 AÑOS DE TRAYECTORIA</p>
-                    <p className="footer-description">
-                        Asesoramiento inmobiliario profesional, claro y personalizado.
-                        Compra, venta y alquiler de propiedades con el respaldo de
-                        Elizabeth Boggero, Martillera y Corredora Pública Mat. 1049.
+                <div className="footer-corporate-brand">
+                    <h2 className="footer-corporate-logo">Quinta de Argos</h2>
+                    <p className="footer-corporate-tagline">CEHEGÍN · REGIÓN DE MURCIA</p>
+                    <p className="footer-corporate-description">
+                        Una casa de campo de arquitectura nórdica, en la comarca del
+                        Noroeste de la Región de Murcia. Un refugio pensado para muy
+                        pocos huéspedes por vez.
                     </p>
+                    <span className="footer-corporate-horizon" />
                 </div>
- 
+
                 {/* NAVEGACIÓN */}
-                <div className="footer-section">
-                    <h4 className="footer-title">Navegación</h4>
-                    <ul className="footer-list">
+                <div className="footer-corporate-section">
+                    <h4 className="footer-corporate-title">Navegación</h4>
+                    <ul className="footer-corporate-list">
                         <li><a href="/">Inicio</a></li>
-                        <li><a href="/nosotros">Nosotros</a></li>
-                        <li><a href="/propiedades">Propiedades</a></li>
-                        <li><a href="/servicios">Servicios</a></li>
-                        <li><a href="/contacto">Contacto</a></li>
+                        {/* <li><a href="/la-finca">La Finca</a></li> */}
+                        <li><a href="/experiences">Experiencias</a></li>
+                        <li><a href="/gallery">Galería</a></li>
+                        <li><a href="/reservations">Reservas</a></li>
+                        <li><a href="/contact">Contacto</a></li>
                     </ul>
                 </div>
- 
-                {/* SERVICIOS */}
-                <div className="footer-section">
-                    <h4 className="footer-title">Servicios</h4>
-                    <ul className="footer-list">
-                        <li>Compra y Venta</li>
-                        <li>Alquileres</li>
-                        <li>Tasaciones</li>
-                        <li>Asesoramiento Legal</li>
-                        <li>Gestión de Contratos</li>
+
+                {/* EL ENTORNO */}
+                <div className="footer-corporate-section">
+                    <h4 className="footer-corporate-title">El Entorno</h4>
+                    <ul className="footer-corporate-list">
+                        <li>Comarca del Noroeste de Murcia</li>
+                        <li>Municipio de Cehegín</li>
+                        <li>A 7 km de Caravaca de la Cruz</li>
+                        <li>Ciudad Santa · Basílica de la Vera Cruz</li>
                     </ul>
                 </div>
- 
+
                 {/* CONTACTO */}
-                <div className="footer-section">
-                    <h4 className="footer-title">Comunicación Directa</h4>
-                    <ul className="footer-list">
+                <div className="footer-corporate-section">
+                    <h4 className="footer-corporate-title">Comunicación Directa</h4>
+                    <ul className="footer-corporate-list">
                         <li>
-                            <a href="mailto:[email]" className="footer-link-highlight">
-                                boggeropropiedades@gmail.com
+                            {/* TODO (Angus): reemplazar por el email real */}
+                            <a href="mailto:reservas@quintadeargos.com" className="footer-corporate-link-highlight">
+                                reservas@quintadeargos.com
                             </a>
                         </li>
-                        <li style={{ marginTop: "15px" }} className="footer-location">
-                            <strong>OFICINA</strong><br />
-                            Ramos Mejía - Centro<br />
-                            Buenos Aires, Argentina
+                        <li style={{ marginTop: "15px" }} className="footer-corporate-location">
+                            <strong>UBICACIÓN</strong><br />
+                            Cehegín, Región de Murcia<br />
+                            España
                         </li>
-                        <li className="footer-location">
-                            <strong>WHATSAPP:</strong> +54 9 11-2742-2947
+                        <li className="footer-corporate-location">
+                            {/* TODO (Angus): reemplazar por el WhatsApp real */}
+                            <strong>WHATSAPP:</strong> +34 633 49 18 25
                         </li>
                     </ul>
                 </div>
             </div>
- 
+
             {/* MAPA */}
-            <div className="footer-map-container">
+            <div className="footer-corporate-map-container">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26256.26964046805!2d-58.57874894532144!3d-34.65385171533168!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcc7d93bab75a3%3A0xaafe140bc9dea3db!2sB1704%20Ramos%20Mej%C3%ADa%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1776796816294!5m2!1ses-419!2sar"
-                    className="footer-iframe"
+                    src="https://www.google.com/maps?q=Cehegín,+Región+de+Murcia,+España&output=embed"
+                    className="footer-corporate-iframe"
                     allowFullScreen={true}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                 />
             </div>
- 
-            <div className="footer-bottom">
+
+            <div className="footer-corporate-bottom">
                 <span>
-                    © {new Date().getFullYear()} Boggero Propiedades · Elizabeth Boggero Mat. 1049
+                    © {new Date().getFullYear()} Quinta de Argos · Cehegín, Región de Murcia
                     {" · "}Desarrollado por{" "}
                     <a
                         href="https://www.deepdev.com.ar"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="footer-dev-link"
+                        className="footer-corporate-dev-link"
                         >
-                        DeepDev Studios
+                        DeepDev Studio
                     </a>
                 </span>
-                <div className="footer-legal">
-                    <a href="/privacidad">Política de Privacidad</a>
-                    <a href="/terminos">Términos y Condiciones</a>
+                <div className="footer-corporate-legal">
+                    <a href="/policy">Política de Cookies</a>
+                    {/* <a href="/terminos">Términos y Condiciones</a> */}
                 </div>
             </div>
         </footer>
     );
 };
- 
-export default Footer;
 
+export default Footer;
