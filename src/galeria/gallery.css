@@ -173,7 +173,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 30px;
   padding: 0 8vw 4.5rem;
   display: flex;
   justify-content: flex-start;

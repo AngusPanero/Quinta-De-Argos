@@ -5,7 +5,6 @@ import NavBarCorporate from "../navbar/NavBarCorporate";
 import PoliticaCookiesCorporate from "../cookies/PoliticaCookiesCorporate";
 import ContactCorporate from "../contact/ContactCorporate";
 import HomeCorporate from "../home/HomeCorporate";
-import SpinnerCorporate from "../spinner/corporate/SpinerCorporate";
 import Error from "../processMessages/Error";
 import PrivateRoute from "./PrivateRoute";
 import AdminDashboard from "../pages/AdminDashboard";

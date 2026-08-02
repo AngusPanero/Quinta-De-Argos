@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import './checkout.css';
@@ -146,7 +146,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
         setSucceeded(true);
       }
     } catch (err: any) {
-        console.error('Error al procesar el pago:', err);   
+      console.error('Error al procesar el pago:', err);
       setErrorMessage('Hubo un problema al procesar el pago. Probá de nuevo.');
     } finally {
       setProcessing(false);
@@ -264,7 +264,13 @@ const Checkout: React.FC = () => {
   );
   const grandTotal = subtotal + addonsTotal;
 
-  if (!checkin || !checkoutDate) return null;
+  // Antes este guard chequeaba `!checkin || !checkoutDate` en cada render.
+  // El problema: al editar fechas, el calendario pasa por un estado
+  // intermedio donde checkoutDate es null (elegiste la nueva llegada,
+  // todavía no la salida) — y ese guard tiraba `return null`, borrando
+  // toda la página. Ahora depende de `initial`, que es estable durante
+  // toda la sesión de edición.
+  if (!initial) return null;
 
   return (
     <div className={`checkout ${theme === 'dark' ? 'theme-dark' : ''}`}>
@@ -295,10 +301,12 @@ const Checkout: React.FC = () => {
             {!editingDates ? (
               <div className="checkout-summary-dates-display">
                 <span className="checkout-summary-dates-range">
-                  {formatDateLong(checkin)} → {formatDateLong(checkoutDate)}
+                  {checkin && checkoutDate
+                    ? `${formatDateLong(checkin)} → ${formatDateLong(checkoutDate)}`
+                    : 'Seleccioná llegada y salida'}
                 </span>
                 <span className="checkout-summary-dates-nights">
-                  {nights} {nights === 1 ? 'noche' : 'noches'}
+                  {nights ? `${nights} ${nights === 1 ? 'noche' : 'noches'}` : '—'}
                 </span>
               </div>
             ) : (
@@ -381,16 +389,22 @@ const Checkout: React.FC = () => {
 
         {/* ---------- Columna: pago ---------- */}
         <div className="checkout-payment">
-          <Elements stripe={stripePromise}>
-            <CheckoutForm
-              checkin={checkin}
-              checkoutDate={checkoutDate}
-              guests={guests}
-              selectedAddons={selectedAddons}
-              grandTotal={grandTotal}
-              theme={theme as 'light' | 'dark'}
-            />
-          </Elements>
+          {checkin && checkoutDate ? (
+            <Elements stripe={stripePromise}>
+              <CheckoutForm
+                checkin={checkin}
+                checkoutDate={checkoutDate}
+                guests={guests}
+                selectedAddons={selectedAddons}
+                grandTotal={grandTotal}
+                theme={theme as 'light' | 'dark'}
+              />
+            </Elements>
+          ) : (
+            <p className="checkout-payment-pending-note">
+              Completá la fecha de salida para continuar con el pago.
+            </p>
+          )}
         </div>
       </section>
     </div>

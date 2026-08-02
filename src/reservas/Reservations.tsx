@@ -18,7 +18,7 @@ import { addDays, diffInDays, formatDateLong, formatPrice, startOfDay } from './
 
 // Clave de sessionStorage compartida con Checkout.tsx: si el usuario
 // refresca /checkout, la reserva sobrevive.
-export const RESERVATION_STORAGE_KEY = 'quinta-de-argos-reservation';
+export const RESERVATION_STORAGE_KEY = import.meta.env.VITE_RESERVATION_STORAGE_KEY;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
