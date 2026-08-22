@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import "./reservations.css";
@@ -7,13 +7,7 @@ import BookingCalendar from './BookingCalendar';
 import imgPiscina from '../assets/quinta4.jpg';
 import imgBuhardilla from '../assets/quinta3.jpg';
 import imgJardin from '../assets/quinta5.jpg';
-import {
-  ADDONS,
-  PRICE_PER_NIGHT,
-  MAX_NIGHTS,
-  MAX_GUESTS,
-  MAX_BOOKING_HORIZON_DAYS,
-} from './BookingConfig';
+import { ADDONS, PRICE_PER_NIGHT, MAX_NIGHTS, MAX_GUESTS, MAX_BOOKING_HORIZON_DAYS } from './BookingConfig';
 import { addDays, diffInDays, formatDateLong, formatPrice, startOfDay } from './BookingDates';
 
 // Clave de sessionStorage compartida con Checkout.tsx: si el usuario
@@ -119,7 +113,7 @@ const Reservations: React.FC = () => {
             Reservas
           </motion.span>
           <motion.h1 className="reservas-corporate-heading-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
-            Diseñá tu estancia perfecta
+            Diseña tu estancia perfecta
           </motion.h1>
           <motion.p className="reservas-corporate-paragraph-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
             Quinta de Argos recibe a muy pocos huéspedes por vez — hasta seis

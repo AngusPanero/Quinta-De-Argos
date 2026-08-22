@@ -9,6 +9,7 @@ import comidas from "../../public/experiencias/comidas.jpg";
 import vino from "../../public/experiencias/ruta-del-vino.jpg";
 import usero from "../../public/experiencias/salto-del-usero.webp";
 import viaVerde from "../../public/experiencias//via-verde.jpg";
+import cueva from "../../public/experiencias/cueva.jpg";
 
 /**
  * Experiences
@@ -28,14 +29,14 @@ import viaVerde from "../../public/experiencias//via-verde.jpg";
 type Category = 'Gastronomía' | 'Naturaleza' | 'Cultura' | 'Vino';
 
 interface Experience {
-  id: string;
-  category: Category;
-  title: string;
-  description: string;
-  image: string;
-  distanceKm: number;
-  timeMinutes: number;
-  mode: string;
+  id?: string;
+  category?: Category;
+  title?: string;
+  description?: string;
+  image?: string;
+  distanceKm?: number;
+  timeMinutes?: number;
+  mode?: string;
 }
 
 // 📍 Datos de cada experiencia. Agregar/quitar acá alcanza para
@@ -46,10 +47,10 @@ const EXPERIENCES: Experience[] = [
     category: 'Gastronomía',
     title: 'Sabores de Cehegín',
     description:
-      'A un paseo de la finca, el casco antiguo de Cehegín reúne asadores y bodegones con generaciones de tradición — desde el bienmesabe hasta los guisos de caza de siempre.',
+      'Cehegín y su casco antiguo reúne bares de tapas, restaurantes y mesones asadores y bodegones con generaciones de tradición — desde los guisos de caza de siempre hasta el bienmesabe.',
     image: comidas,
-    distanceKm: 0.5,
-    timeMinutes: 3,
+    distanceKm: 5,
+    timeMinutes: 8,
     mode: 'En coche',
   },
   {
@@ -68,11 +69,9 @@ const EXPERIENCES: Experience[] = [
     category: 'Naturaleza',
     title: 'Vía Verde del Noroeste',
     description:
-      'Un antiguo trazado ferroviario reconvertido en sendero de casi 80 km entre pinares, viñedos y viaductos — perfecto para caminar o pedalear sin prisa, con acceso directo en Cehegín.',
+      'Un antiguo trazado ferroviario reconvertido en sendero de casi 80 km entre pinares, viñedos y viaductos — perfecto para caminar o pedalear sin prisa, con acceso directo en Cehegín y con final en Caravaca de la Cruz, una de las cinco ciudades santas del mundo con jubileo perpetuo, destino peregrino del Camino de la Vera Cruz.',
     image: viaVerde,
-    distanceKm: 1,
-    timeMinutes: 5,
-    mode: 'A pie o en bici',
+    distanceKm: 5
   },
   {
     id: 'caravaca',
@@ -81,14 +80,12 @@ const EXPERIENCES: Experience[] = [
     description:
       'El corazón de la Ciudad Santa de Caravaca: un santuario del siglo XVII levantado sobre un castillo templario, y a sus pies, las Fuentes del Marqués entre álamos centenarios.',
     image: basilica,
-    distanceKm: 7,
-    timeMinutes: 10,
-    mode: 'En coche',
+    distanceKm: 10
   },
   {
     id: 'salto-usero',
     category: 'Naturaleza',
-    title: 'Salto del Usero',
+    title: 'Salto del Usero (Bullas)',
     description:
       'Una cascada de aguas turquesas formada por travertinos, escondida en la ladera del Cerro del Castellar — sendero fácil y una poza natural donde refrescarse en verano.',
     image: usero,
@@ -118,6 +115,18 @@ const EXPERIENCES: Experience[] = [
     timeMinutes: 45,
     mode: 'En coche',
   },
+
+  {
+    id: 'canon-almadenes',
+    category: 'Naturaleza',
+    title: 'Cueva del Puerto (Calasparra),',
+    description:
+      'Un desfiladero de 11 km tallado por el río Segura, con paredes de hasta 120 metros. La ruta circular de 10 km es la escapada de día completo para los más aventureros.',
+    image: cueva,
+    distanceKm: 70,
+    timeMinutes: 45,
+    mode: 'En coche',
+  }
 ];
 
 const fadeUp = {
@@ -167,9 +176,9 @@ const Experiences: React.FC = () => {
             Más allá de la finca
           </motion.h1>
           <motion.p className="experiences-corporate-paragraph-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
-            La Comarca del Noroeste murciano tiene mucho más que silencio.
-            Gastronomía, naturaleza, historia y vino — todo a menos de una
-            hora de la puerta de Quinta de Argos.
+            La Comarca del Noroeste murciano tiene mucho que ofrecer:
+Gastronomía, naturaleza, historia, monumentos, tradiciones y vino, todo a muy pocos
+kilómetros de Quinta de Argos.
           </motion.p>
         </motion.div>
       </section>

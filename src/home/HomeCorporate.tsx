@@ -147,7 +147,7 @@ const HomeCorporate: React.FC = () => {
             Quinta de Argos
           </motion.h1>
           <motion.p className="home-corporate-hero-subtitle" variants={fadeUp} transition={{ duration: 0.8 }}>
-            El refugio de tus sueños, en plena naturaleza.
+            El refugio de tus sueños. Privacidad y confort en plena naturaleza.
           </motion.p>
           <motion.div variants={fadeUp} transition={{ duration: 0.8 }}>
             <HorizonLine className="home-corporate-horizon-hero" />
@@ -160,7 +160,7 @@ const HomeCorporate: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.4, duration: 0.8 }}
         >
-          <span>Descubrí la historia</span>
+          <span>Descubre la historia</span>
           <span className="home-corporate-scroll-cue-line" />
         </motion.div>
       </section>
@@ -181,19 +181,18 @@ const HomeCorporate: React.FC = () => {
             Luz, madera y silencio en clave mediterránea
           </motion.h2>
           <motion.p className="home-corporate-story-paragraph-one" variants={fadeUp} transition={{ duration: 0.7 }}>
-            Quinta de Argos es una casa de autor en plena naturaleza, concebida
-            como una experiencia estética y sensorial. Rodeada de 7.000 m² de
-            jardín y abierta al paisaje a través de porches y una piscina
-            infinity que se funde con el horizonte, la propiedad invita a
-            desconectar del ruido y reconectar con la belleza.
+            Quinta de Argos es una casa exclusiva en plena campiña del
+noroeste murciano concebida como una experiencia estética y sensorial. Rodeada de 7.000
+m² de jardín y abierta al paisaje a través de un porche y una piscina infinity que se funde
+con el horizonte, la propiedad invita a desconectar del ruido y reconectar con la belleza y la
+naturaleza.
           </motion.p>
           <motion.p className="home-corporate-story-paragraph-two" variants={fadeUp} transition={{ duration: 0.7 }}>
-            Cada espacio ha sido diseñado con intención: madera noble, luz
-            cuidadosamente modulada, piezas artísticas con carácter y una
-            arquitectura que respira amplitud y calma. Aquí, el campo no es
-            rústico, es elegante; el descanso no es casual, es ritual; y cada
-            estancia cuenta una historia propia dentro de un conjunto
-            coherente y exclusivo.
+            Cada espacio ha sido diseñado con intención: madera noble, luz cuidadosamente
+modulada, piezas artísticas con carácter y una arquitectura que respira amplitud y calma. En
+Quinta de Argos, el campo no es rústico, es elegante; el descanso no es casual, es
+ritual; y cada estancia cuenta una historia propia dentro de un conjunto coherente y
+exclusivo.
           </motion.p>
         </motion.div>
 
@@ -234,7 +233,15 @@ const HomeCorporate: React.FC = () => {
 
         <motion.div className="home-corporate-stat-block-caravaca" variants={fadeUp} transition={{ duration: 0.6 }}>
           <span>
-            <AnimatedStat value={7} className="home-corporate-stat-number-caravaca" />
+            <AnimatedStat value={5} className="home-corporate-stat-number-caravaca" />
+            <span className="home-corporate-stat-suffix-caravaca">km</span>
+          </span>
+          <span className="home-corporate-stat-label-caravaca">A Cehegín <br /> (8 minutos en coche)</span>
+        </motion.div>
+
+        <motion.div className="home-corporate-stat-block-caravaca" variants={fadeUp} transition={{ duration: 0.6 }}>
+          <span>
+            <AnimatedStat value={10} className="home-corporate-stat-number-caravaca" />
             <span className="home-corporate-stat-suffix-caravaca">km</span>
           </span>
           <span className="home-corporate-stat-label-caravaca">A Caravaca de la Cruz</span>
@@ -292,9 +299,9 @@ const HomeCorporate: React.FC = () => {
             El refugio de tus sueños
           </motion.h2>
           <motion.p className="home-corporate-closing-paragraph" variants={fadeUp} transition={{ duration: 0.7 }}>
-            Diseñada para un máximo de seis huéspedes, Quinta de Argos
-            mantiene el silencio, la privacidad y esa sensación boutique que
-            la distingue de cualquier otra propiedad rural.
+          Dimensionada para un máximo de seis huéspedes, Quinta de Argos
+mantiene el silencio, una extraordinaria privacidad y esa sensación boutique que la
+distingue de cualquier otra propiedad rural.
           </motion.p>
           <motion.a
             href="/reservations"

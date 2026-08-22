@@ -43,7 +43,7 @@
   font-size: 0.92rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #d3a06c;
+  color: white;
   margin-bottom: 1.25rem;
 }
 
@@ -611,6 +611,10 @@
   .home-corporate {
     --qa-section-pad-y: 5rem;
     --qa-section-pad-x: 6vw;
+  }
+
+  .home-corporate-hero{
+    height: 110vh !important;
   }
 
   .home-corporate-gallery-grid {

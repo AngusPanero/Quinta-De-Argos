@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import './gallery.css';
 import { UseTheme } from '../contexts/ThemeContext';
 import imgPiscina from '../assets/quinta4.jpg';
@@ -12,11 +12,16 @@ import imgBarbacoa from '../assets/quinta.jpg';
 /**
  * Gallery
  * ---------------------------------------------------------
- * Galería inmersiva: cada foto es una escena a pantalla
- * completa dentro de un contenedor con scroll propio y
- * scroll-snap. Sin Three.js/WebGL — la sensación 3D viene de
- * `perspective` + `rotateX` en la leyenda, más un Ken Burns
- * continuo en la imagen. Liviano y 100% táctil en mobile.
+ * Carrusel de avance automático (cada 5s) con efecto de página
+ * que se dobla desde un extremo (perspective + rotateY, sin
+ * librerías externas). Incluye:
+ *  - Visualizador de miniaturas abajo (paginación) — clickear
+ *    una salta directo a esa foto y pausa el auto-avance.
+ *  - Botón para pausar / reanudar el avance automático.
+ *  - Click en la imagen → pantalla completa real (Fullscreen
+ *    API del navegador), con fallback a overlay CSS a pantalla
+ *    completa en navegadores que no la soportan en elementos
+ *    arbitrarios (ej. iOS Safari).
  */
 
 interface GalleryItem {
@@ -27,14 +32,12 @@ interface GalleryItem {
   description: string;
 }
 
-// 🖼️ Datos de la galería: una foto, su nombre de espacio y su
-// descripción. Agregar/quitar acá alcanza para modificar la galería.
 const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: 'piscina',
     src: imgPiscina,
     alt: 'Piscina infinity de Quinta de Argos',
-    eyebrow: 'Piscina infinity',
+    eyebrow: 'Piscina',
     description:
       'Agua que se funde con el horizonte, un espacio sereno y elegante para disfrutar de amaneceres, atardeceres y momentos de contemplación.',
   },
@@ -42,7 +45,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     id: 'jardin',
     src: imgJardin,
     alt: 'Jardín de 7.000 metros cuadrados de Quinta de Argos',
-    eyebrow: 'Jardín · 7.000 m²',
+    eyebrow: 'Jardín',
     description:
       'Una parcela que invita a pasear y respirar naturaleza, donde cada rincón transmite privacidad, belleza y la esencia elegante de Quinta de Argos.',
   },
@@ -52,7 +55,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     alt: 'Porche de Quinta de Argos',
     eyebrow: 'Porche',
     description:
-      'Rincón abierto al paisaje, con mobiliario confortable y detalles acogedores, perfecto para desayunos, cenas o simplemente contemplar la naturaleza.',
+      'Espacio exterior abierto al paisaje, con mobiliario confortable y detalles acogedores, perfecto para desayunos, cenas, reuniones familiares y de amigos… o simplemente contemplar la naturaleza.',
   },
   {
     id: 'salon',
@@ -63,12 +66,36 @@ const GALLERY_ITEMS: GalleryItem[] = [
       'Un espacio cálido y luminoso donde la madera, la luz natural y los detalles artísticos crean un ambiente acogedor y elegante para compartir momentos inolvidables.',
   },
   {
+    id: 'dormitorio1',
+    src: imgPorche,
+    alt: 'Habitacion Flora',
+    eyebrow: 'Habitacion Flora',
+    description:
+      'Habitación de inspiración floral con cama doble de 150 cm, vestidor y baño.',
+  },
+  {
+    id: 'dormitorio2',
+    src: imgPorche,
+    alt: 'Habitacion Fábula',
+    eyebrow: 'Habitacion Fábula',
+    description:
+      'Habitación doble de atmósfera juvenil.',
+  },
+  {
+    id: 'dormitorio3',
+    src: imgPorche,
+    alt: 'Habitacion Argos',
+    eyebrow: 'Habitacion Argos',
+    description:
+      'Dormitorio doble y versátil, que puede ser usado con camas separadas o unidas formando un lecho de 180 cm.',
+  },
+  {
     id: 'buhardilla',
     src: imgBuhardilla,
     alt: 'Buhardilla con proyector de Quinta de Argos',
     eyebrow: 'Buhardilla',
     description:
-      'Refugio versátil de ocio y descanso, con sofá, sillón y zona de juegos, donde la luz cálida y la madera aportan confort y estilo contemporáneo.',
+      'Refugio versátil de ocio y descanso, con sofá, sillón, espacio audiovisual y zona de juegos, donde la luz cálida y la madera aportan confort y estilo contemporáneo.',
   },
   {
     id: 'barbacoa',
@@ -76,18 +103,31 @@ const GALLERY_ITEMS: GalleryItem[] = [
     alt: 'Zona de barbacoa de Quinta de Argos',
     eyebrow: 'Barbacoa',
     description:
-      'Espacio al aire libre diseñado para compartir aromas, sabores y conversaciones, donde piedra y madera se combinan con estilo y funcionalidad.',
-  },
+      'Espacio al aire libre diseñado para compartir aromas, sabores y conversaciones.',
+  }
 ];
 
-const captionVariants = {
-  hidden: { opacity: 0, y: 60, rotateX: 14, scale: 0.96 },
-  visible: { opacity: 1, y: 0, rotateX: 0, scale: 1 },
-};
+const AUTOPLAY_MS = 5000;
 
-const imageVariants = {
-  hidden: { scale: 1.22 },
-  visible: { scale: 1 },
+// Variantes del "doblado de página": la que sale gira hacia un
+// extremo y se desvanece: la que entra gira desde el extremo
+// opuesto hacia el centro.
+const pageVariants = {
+  enter: (direction: number) => ({
+    rotateY: direction > 0 ? 78 : -78,
+    opacity: 0,
+    zIndex: 1,
+  }),
+  center: {
+    rotateY: 0,
+    opacity: 1,
+    zIndex: 2,
+  },
+  exit: (direction: number) => ({
+    rotateY: direction > 0 ? -78 : 78,
+    opacity: 0,
+    zIndex: 3,
+  }),
 };
 
 const fadeUp = {
@@ -104,200 +144,254 @@ const Gallery: React.FC = () => {
   const themeContext = UseTheme() as { theme?: 'light' | 'dark' } | undefined;
   const theme = themeContext?.theme ?? 'light';
 
-  const storyRef = useRef<HTMLDivElement>(null);
-  const outroRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [])
 
-  // Detección de escena activa + reencuadre post-scroll: si un swipe
-  // rápido dejó la vista a mitad de camino entre dos fotos (pasa con
-  // gestos veloces, sobre todo en mobile), apenas el usuario deja de
-  // scrollear la reencuadramos a la foto más cercana.
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const total = GALLERY_ITEMS.length;
+  const current = GALLERY_ITEMS[activeIndex];
+
+  // ---------- Auto-avance cada 5s ----------
   useEffect(() => {
-    const el = storyRef.current;
-    if (!el) return;
+    if (!isPlaying) return;
+    const id = setInterval(() => {
+      setDirection(1);
+      setActiveIndex((i) => (i + 1) % total);
+    }, AUTOPLAY_MS);
+    return () => clearInterval(id);
+  }, [isPlaying, total]);
 
-    let ticking = false;
-    let settleTimeout: ReturnType<typeof setTimeout>;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => {
-          const index = Math.round(el.scrollTop / el.clientHeight);
-          setActiveIndex(Math.min(GALLERY_ITEMS.length - 1, Math.max(0, index)));
-          ticking = false;
-        });
-      }
-
-      clearTimeout(settleTimeout);
-      settleTimeout = setTimeout(() => {
-        const nearest = Math.round(el.scrollTop / el.clientHeight);
-        const target = nearest * el.clientHeight;
-        if (Math.abs(el.scrollTop - target) > 2) {
-          el.scrollTo({ top: target, behavior: 'smooth' });
-        }
-      }, 120);
-    };
-
-    el.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      el.removeEventListener('scroll', handleScroll);
-      clearTimeout(settleTimeout);
-    };
-  }, []);
-
-  // Al llegar a la última foto, si el usuario sigue intentando bajar
-  // (rueda del mouse o swipe), soltamos el scroll hacia la sección de
-  // cierre en vez de retenerlo adentro del contenedor.
-  useEffect(() => {
-    const el = storyRef.current;
-    if (!el) return;
-
-    const isAtBottom = () => el.scrollTop >= el.scrollHeight - el.clientHeight - 2;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (isAtBottom() && e.deltaY > 0) {
-        e.preventDefault();
-        outroRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }
-    };
-
-    let touchStartY = 0;
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-    };
-    const handleTouchMove = (e: TouchEvent) => {
-      const deltaY = touchStartY - e.touches[0].clientY; // positivo = dedo sube = querés bajar
-      if (isAtBottom() && deltaY > 30) {
-        e.preventDefault();
-        outroRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }
-    };
-
-    el.addEventListener('wheel', handleWheel, { passive: false });
-    el.addEventListener('touchstart', handleTouchStart, { passive: true });
-    el.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-    return () => {
-      el.removeEventListener('wheel', handleWheel);
-      el.removeEventListener('touchstart', handleTouchStart);
-      el.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, []);
-
-  const scrollToIndex = (index: number) => {
-    const el = storyRef.current;
-    if (!el) return;
-    el.scrollTo({ top: index * el.clientHeight, behavior: 'smooth' });
+  const goTo = (index: number) => {
+    setDirection(index > activeIndex ? 1 : -1);
+    setActiveIndex(index);
   };
 
+  const goNext = () => {
+    setDirection(1);
+    setActiveIndex((i) => (i + 1) % total);
+  };
+
+  const goPrev = () => {
+    setDirection(-1);
+    setActiveIndex((i) => (i - 1 + total) % total);
+  };
+
+  const handleThumbClick = (index: number) => {
+    setIsPlaying(false);
+    goTo(index);
+  };
+
+  // ---------- Fullscreen ----------
+  const enterFullscreen = async () => {
+    setIsFullscreen(true);
+    try {
+      if (stageRef.current && stageRef.current.requestFullscreen) {
+        await stageRef.current.requestFullscreen();
+      }
+    } catch {
+      // Navegadores sin soporte de Fullscreen API en el elemento
+      // (ej. iOS Safari): igual queda el overlay CSS a pantalla completa.
+    }
+  };
+
+  const exitFullscreen = async () => {
+    setIsFullscreen(false);
+    if (document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // noop
+      }
+    }
+  };
+
+  // Sincroniza el estado si el usuario sale con Escape (nativo del navegador).
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) setIsFullscreen(false);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  // Escape también cierra el fallback CSS (por si la Fullscreen API
+  // nativa no se activó y por lo tanto no dispara "fullscreenchange").
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') exitFullscreen();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
   return (
-    <div className={`gallery-corporate ${theme === 'dark' ? 'theme-dark' : ''}`}>
+    <div className={`gallery-carousel ${theme === 'dark' ? 'theme-dark' : ''}`}>
       {/* ============ PORTADA ============ */}
-      <section className="gallery-corporate-cover">
+      <section className="gallery-carousel-cover">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}
           variants={staggerContainer}
         >
-          <motion.span className="gallery-corporate-eyebrow-cover" variants={fadeUp} transition={{ duration: 0.6 }}>
+          <motion.span className="gallery-carousel-eyebrow-cover" variants={fadeUp} transition={{ duration: 0.6 }}>
             Galería
           </motion.span>
-          <motion.h1 className="gallery-corporate-heading-cover" variants={fadeUp} transition={{ duration: 0.7 }}>
+          <motion.h1 className="gallery-carousel-heading-cover" variants={fadeUp} transition={{ duration: 0.7 }}>
             Un recorrido por Quinta de Argos
           </motion.h1>
-          <motion.p className="gallery-corporate-paragraph-cover" variants={fadeUp} transition={{ duration: 0.7 }}>
-            Seis espacios, seis atmósferas. Desplazate para sumergirte en cada
-            rincón de la finca, tal como se sienten en persona.
+          <motion.p className="gallery-carousel-paragraph-cover" variants={fadeUp} transition={{ duration: 0.7 }}>
+            Seis espacios, seis atmósferas — se van sucediendo solas. Toca
+            cualquiera para verla en pantalla completa.
           </motion.p>
-        </motion.div>
-
-        <motion.div
-          className="gallery-corporate-scroll-cue"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.8 }}
-        >
-          <span>Desplazate para sumergirte</span>
-          <span className="gallery-corporate-scroll-cue-line" />
+          {window.innerWidth < 768 && (
+            <motion.p  variants={fadeUp} transition={{ duration: 0.7 }}>
+              En dispositivos móviles recomendamos ver las fotos en pantalla horizontal.
+            </motion.p>
+          )}
         </motion.div>
       </section>
 
-      {/* ============ EXPERIENCIA INMERSIVA ============ */}
-      <div className="gallery-corporate-story" ref={storyRef}>
-        {GALLERY_ITEMS.map((item, index) => {
-          const isActive = index === activeIndex;
-
-          return (
-            <section key={item.id} className="gallery-corporate-scene">
-              <motion.div
-                className="gallery-corporate-scene-image"
-                variants={imageVariants}
-                initial="hidden"
-                animate={isActive ? 'visible' : 'hidden'}
-                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+      {/* ============ CARRUSEL ============ */}
+      <section className="gallery-carousel-stage-section">
+        <div
+          ref={stageRef}
+          className={`gallery-carousel-stage ${isFullscreen ? 'is-fullscreen' : ''}`}
+        >
+          <div className="gallery-carousel-flip-wrap">
+            <AnimatePresence custom={direction} initial={false} mode="sync">
+              <motion.button
+                key={current.id}
+                type="button"
+                className="gallery-carousel-page"
+                custom={direction}
+                variants={pageVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.9, ease: [0.45, 0, 0.2, 1] }}
+                style={{
+                  transformOrigin: direction > 0 ? 'left center' : 'right center',
+                }}
+                onClick={enterFullscreen}
+                aria-label={`Ver ${current.eyebrow} en pantalla completa`}
               >
-                <img src={item.src} alt={item.alt} loading="lazy" />
-              </motion.div>
-
-              <div className="gallery-corporate-scene-overlay" />
-
-              <div className="gallery-corporate-scene-caption-wrapper">
-                <motion.div
-                  className="gallery-corporate-scene-caption"
-                  variants={captionVariants}
-                  initial="hidden"
-                  animate={isActive ? 'visible' : 'hidden'}
-                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <span className="gallery-corporate-scene-index">
-                    {String(index + 1).padStart(2, '0')} / {String(GALLERY_ITEMS.length).padStart(2, '0')}
+                <img src={current.src} alt={current.alt} />
+                <div className="gallery-carousel-page-overlay" />
+                <div className="gallery-carousel-page-caption">
+                  <span className="gallery-carousel-page-index">
+                    {String(activeIndex + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
                   </span>
-                  <span className="gallery-corporate-scene-eyebrow">{item.eyebrow}</span>
-                  <p className="gallery-corporate-scene-description">{item.description}</p>
-                </motion.div>
-              </div>
-            </section>
-          );
-        })}
+                  <span className="gallery-carousel-page-eyebrow">{current.eyebrow}</span>
+                  <p className="gallery-carousel-page-description">{current.description}</p>
+                </div>
+              </motion.button>
+            </AnimatePresence>
+          </div>
 
-        {/* ---------- Indicador de progreso ---------- */}
-        <div className="gallery-corporate-progress">
+          {isFullscreen && (
+            <>
+              <button
+                type="button"
+                className="gallery-carousel-fs-close"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  exitFullscreen();
+                }}
+                aria-label="Cerrar pantalla completa"
+              >
+                <span />
+                <span />
+              </button>
+
+              <button
+                type="button"
+                className="gallery-carousel-fs-prev"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goPrev();
+                }}
+                aria-label="Foto anterior"
+              >
+                ‹
+              </button>
+
+              <button
+                type="button"
+                className="gallery-carousel-fs-next"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goNext();
+                }}
+                aria-label="Foto siguiente"
+              >
+                ›
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* ---------- Controles de auto-avance ---------- */}
+        <div className="gallery-carousel-controls">
+          <button
+            type="button"
+            className="gallery-carousel-play-toggle"
+            onClick={() => setIsPlaying((p) => !p)}
+          >
+            {isPlaying ? 'Pausar' : 'Reanudar avance automático'}
+          </button>
+
+          <button
+            type="button"
+            className="gallery-carousel-fullscreen-toggle"
+            onClick={enterFullscreen}
+          >
+            Pantalla completa
+          </button>
+        </div>
+
+        {/* ---------- Visualizador / paginación con miniaturas ---------- */}
+        <div className="gallery-carousel-pagination">
           {GALLERY_ITEMS.map((item, index) => (
             <button
               key={item.id}
               type="button"
-              className={`gallery-corporate-progress-dot ${index === activeIndex ? 'is-active' : ''}`}
-              onClick={() => scrollToIndex(index)}
-              aria-label={`Ir a ${item.eyebrow}`}
-            />
+              className={`gallery-carousel-thumb ${index === activeIndex ? 'is-active' : ''}`}
+              onClick={() => handleThumbClick(index)}
+            >
+              <img src={item.src} alt={item.eyebrow} loading="lazy" />
+              <span className="gallery-carousel-thumb-label">{item.eyebrow}</span>
+            </button>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ============ CIERRE ============ */}
-      <section className="gallery-corporate-outro" ref={outroRef}>
+      <section className="gallery-carousel-outro">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}
           variants={staggerContainer}
-          className="gallery-corporate-outro-inner"
+          className="gallery-carousel-outro-inner"
         >
-          <motion.span className="gallery-corporate-eyebrow-outro" variants={fadeUp} transition={{ duration: 0.6 }}>
+          <motion.span className="gallery-carousel-eyebrow-outro" variants={fadeUp} transition={{ duration: 0.6 }}>
             ¿Te imaginás acá?
           </motion.span>
-          <motion.h2 className="gallery-corporate-heading-outro" variants={fadeUp} transition={{ duration: 0.7 }}>
+          <motion.h2 className="gallery-carousel-heading-outro" variants={fadeUp} transition={{ duration: 0.7 }}>
             Vení a conocerla en persona
           </motion.h2>
           <motion.a
             href="/reservations"
-            className="gallery-corporate-cta-outro"
+            className="gallery-carousel-cta-outro"
             variants={fadeUp}
             transition={{ duration: 0.7 }}
           >

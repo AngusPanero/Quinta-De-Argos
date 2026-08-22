@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { UseTheme } from "../contexts/ThemeContext";
 import "./politicaCookieCorporate.css";
 
@@ -52,6 +53,10 @@ const SECTIONS = [
 
 const PoliticaCookiesCorporate = () => {
   const { theme } = UseTheme();
+
+  useEffect(() => {
+     window.scrollTo(0, 0);
+    }, []);   
 
   return (
     <section className={`pc-wrapper ${theme}`}>
@@ -116,7 +121,7 @@ const PoliticaCookiesCorporate = () => {
         <div className="pc-contact">
           <p>
             ¿Tenés dudas sobre esta política?{" "}
-            <a href="/contacto" className="pc-contact-link">Contactanos</a>.
+            <a href="/contact" className="pc-contact-link">Contactanos</a>.
           </p>
         </div>
 
