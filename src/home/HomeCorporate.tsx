@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView } from 'framer-motion';
 import './homeCorporate.css';
 import { UseTheme } from '../contexts/ThemeContext';
-import videoHome from '../assets/5056237-hd_1920_1080_25fps.mp4';
 import img1 from '../assets/quinta.jpg';
 import img2 from '../assets/quinta2.jpg';
 import img3 from '../assets/quinta3.jpg';
@@ -129,7 +128,7 @@ const HomeCorporate: React.FC = () => {
           playsInline
           poster="/images/quinta-de-argos-poster.jpg"
         >
-          <source src={videoHome} type="video/mp4" />
+          <source src="https://res.cloudinary.com/cs9iys75/video/upload/v1790091260/5056237-hd_1920_1080_25fps.mp4" type="video/mp4" />
         </video>
 
         <div className="home-corporate-hero-overlay" />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import './Loader.css';
+import './loader.css';
 import { UseTheme } from '../contexts/ThemeContext';
 
 interface LoaderProps {

@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, animate, useInView } from 'framer-motion';
 import axios from 'axios';
-import './ContactCorporate.css';
+import './contactCorporate.css';
 import { UseTheme } from '../contexts/ThemeContext';
-// TODO (Angus): confirmá que este asset existe en tu carpeta (ya lo usás en HomeCorporate como img4).
 import imgPiscina from '../assets/quinta4.jpg';
 
 /**
@@ -192,7 +191,6 @@ const ContactCorporate: React.FC = () => {
 
           <div className="contact-corporate-info-email-block">
             <span className="contact-corporate-info-email-label">Email</span>
-            {/* TODO (Angus): reemplazar por el email real */}
             <a href="mailto:reservas@quintadeargos.com" className="contact-corporate-info-email-link">
               reservas@quintadeargos.com
             </a>
@@ -200,7 +198,6 @@ const ContactCorporate: React.FC = () => {
 
           <div className="contact-corporate-info-whatsapp-block">
             <span className="contact-corporate-info-whatsapp-label">WhatsApp</span>
-            {/* TODO (Angus): reemplazar por el número real */}
             <a href="https://wa.me/34000000000" className="contact-corporate-info-whatsapp-link">
               +34 000 00 00 00
             </a>
