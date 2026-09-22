@@ -4,7 +4,7 @@ import './experiences.css';
 import { UseTheme } from '../contexts/ThemeContext';
 import basilica from "/public/experiencias/basilica.jpg";
 import begastri from "/public/experiencias/begastri.jpg";
-import cañon from "/public/experiencias/cañon.jpg";
+import canon from "/public/experiencias/canon.jpg";
 import comidas from "/public/experiencias/comidas.jpg";
 import vino from "/public/experiencias/ruta-del-vino.jpg";
 import usero from "/public/experiencias/salto-del-usero.webp";
@@ -110,7 +110,7 @@ const EXPERIENCES: Experience[] = [
     title: 'Cañón de Almadenes',
     description:
       'Un desfiladero de 11 km tallado por el río Segura, con paredes de hasta 120 metros. La ruta circular de 10 km es la escapada de día completo para los más aventureros.',
-    image: cañon,
+    image: canon,
     distanceKm: 45,
     timeMinutes: 45,
     mode: 'En coche',
