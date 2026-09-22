@@ -117,7 +117,7 @@ const Reservations: React.FC = () => {
           </motion.h1>
           <motion.p className="reservas-corporate-paragraph-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
             Quinta de Argos recibe a muy pocos huéspedes por vez — hasta seis
-            personas en cada estancia. Elegí tus fechas y armá tu reserva a tu
+            personas en cada estancia. Elige tus fechas y armá tu reserva a tu
             manera, con los adicionales que quieras sumar.
           </motion.p>
           <motion.blockquote className="reservas-corporate-quote-hero" variants={fadeUp} transition={{ duration: 0.8 }}>
