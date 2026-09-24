@@ -9,21 +9,6 @@ import imgSalon from '../assets/quinta2.jpg';
 import imgBuhardilla from '../assets/quinta3.jpg';
 import imgBarbacoa from '../assets/quinta.jpg';
 
-/**
- * Gallery
- * ---------------------------------------------------------
- * Carrusel de avance automático (cada 5s) con efecto de página
- * que se dobla desde un extremo (perspective + rotateY, sin
- * librerías externas). Incluye:
- *  - Visualizador de miniaturas abajo (paginación) — clickear
- *    una salta directo a esa foto y pausa el auto-avance.
- *  - Botón para pausar / reanudar el avance automático.
- *  - Click en la imagen → pantalla completa real (Fullscreen
- *    API del navegador), con fallback a overlay CSS a pantalla
- *    completa en navegadores que no la soportan en elementos
- *    arbitrarios (ej. iOS Safari).
- */
-
 interface GalleryItem {
   id: string;
   src: string;
@@ -384,10 +369,10 @@ const Gallery: React.FC = () => {
           className="gallery-carousel-outro-inner"
         >
           <motion.span className="gallery-carousel-eyebrow-outro" variants={fadeUp} transition={{ duration: 0.6 }}>
-            ¿Te imaginás acá?
+            ¿Te imaginas acá?
           </motion.span>
           <motion.h2 className="gallery-carousel-heading-outro" variants={fadeUp} transition={{ duration: 0.7 }}>
-            Vení a conocerla en persona
+            Ven a conocerla en persona
           </motion.h2>
           <motion.a
             href="/reservations"

@@ -129,9 +129,7 @@ const ContactCorporate: React.FC = () => {
             Hablemos de tu estancia
           </motion.h1>
           <motion.p className="contact-corporate-paragraph-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
-            Contanos qué estás buscando y te respondemos en menos de 24 horas
-            con disponibilidad, tarifas y todo lo que necesites saber antes de
-            reservar.
+            Cuéntanos qué buscas y te responderemos en menos de 24 horas con la disponibilidad, las tarifas y todo lo que necesites saber antes de reservar.
           </motion.p>
         </motion.div>
       </section>
@@ -146,7 +144,7 @@ const ContactCorporate: React.FC = () => {
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.7 }}
         >
-          <span className="contact-corporate-eyebrow-info">Encontranos</span>
+          <span className="contact-corporate-eyebrow-info">Encuéntranos</span>
           <h2 className="contact-corporate-info-heading">Cehegín, Región de Murcia</h2>
 
           <motion.div
@@ -191,8 +189,8 @@ const ContactCorporate: React.FC = () => {
 
           <div className="contact-corporate-info-email-block">
             <span className="contact-corporate-info-email-label">Email</span>
-            <a href="mailto:reservas@quintadeargos.com" className="contact-corporate-info-email-link">
-              reservas@quintadeargos.com
+            <a href="mailto:quintadeargos@gmail.com" className="contact-corporate-info-email-link">
+              quintadeargos@gmail.com
             </a>
           </div>
 
@@ -330,7 +328,7 @@ const ContactCorporate: React.FC = () => {
               className="contact-corporate-field-message-textarea"
               value={formData.mensaje}
               onChange={handleChange}
-              placeholder="Contanos qué estás buscando: fechas, ocasión, cualquier duda..."
+              placeholder="Cuéntanos qué buscas: fechas, ocasión, cualquier duda..."
               rows={5}
             />
           </div>

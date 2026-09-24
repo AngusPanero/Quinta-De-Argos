@@ -59,8 +59,8 @@ const Footer = () => {
                     <ul className="footer-corporate-list">
                         <li>
                             {/* TODO (Angus): reemplazar por el email real */}
-                            <a href="mailto:reservas@quintadeargos.com" className="footer-corporate-link-highlight">
-                                reservas@quintadeargos.com
+                            <a href="mailto:quintadeargos@gmail.com" className="footer-corporate-link-highlight">
+                                quintadeargos@gmail.com
                             </a>
                         </li>
                         <li style={{ marginTop: "15px" }} className="footer-corporate-location">

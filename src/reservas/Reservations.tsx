@@ -117,7 +117,7 @@ const Reservations: React.FC = () => {
           </motion.h1>
           <motion.p className="reservas-corporate-paragraph-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
             Quinta de Argos recibe a muy pocos huéspedes por vez — hasta seis
-            personas en cada estancia. Elige tus fechas y armá tu reserva a tu
+            personas en cada estancia. Elige tus fechas y diseña tu reserva a tu
             manera, con los adicionales que quieras sumar.
           </motion.p>
           <motion.blockquote className="reservas-corporate-quote-hero" variants={fadeUp} transition={{ duration: 0.8 }}>
@@ -263,7 +263,7 @@ const Reservations: React.FC = () => {
                 transition={{ duration: 0.4, ease: [0.65, 0, 0.35, 1] }}
                 className="reservas-corporate-step-dates"
               >
-                <h2 className="reservas-corporate-step-heading-dates">Elegí tus fechas</h2>
+                <h2 className="reservas-corporate-step-heading-dates">Elige tus fechas</h2>
 
                 <BookingCalendar
                   checkin={checkin}
@@ -281,13 +281,13 @@ const Reservations: React.FC = () => {
                   <div className="reservas-corporate-dates-summary-checkin">
                     <span className="reservas-corporate-dates-summary-label-checkin">Llegada</span>
                     <span className="reservas-corporate-dates-summary-value-checkin">
-                      {checkin ? formatDateLong(checkin) : 'Elegí una fecha'}
+                      {checkin ? formatDateLong(checkin) : 'Elige una fecha'}
                     </span>
                   </div>
                   <div className="reservas-corporate-dates-summary-checkout">
                     <span className="reservas-corporate-dates-summary-label-checkout">Salida</span>
                     <span className="reservas-corporate-dates-summary-value-checkout">
-                      {checkout ? formatDateLong(checkout) : 'Elegí una fecha'}
+                      {checkout ? formatDateLong(checkout) : 'Elige una fecha'}
                     </span>
                   </div>
                   <div className="reservas-corporate-dates-summary-nights">

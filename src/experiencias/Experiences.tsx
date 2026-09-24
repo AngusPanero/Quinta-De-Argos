@@ -11,21 +11,6 @@ import usero from "/public/experiencias/salto-del-usero.webp";
 import viaVerde from "/public/experiencias//via-verde.jpg";
 import cueva from "/public/experiencias/cueva.jpg";
 
-/**
- * Experiences
- * ---------------------------------------------------------
- * Timeline vertical animado con actividades reales de la
- * Comarca del Noroeste de Murcia, cada una con categoría,
- * distancia y tiempo estimado desde la finca.
- *
- * TODO (Angus): las distancias/tiempos son estimaciones desde
- * el centro de Cehegín (no tengo la coordenada exacta de la
- * finca) — ajustalas si hace falta. También faltan las fotos
- * reales de cada lugar: dejé los src apuntando a
- * /images/experiencias/<slug>.jpg (carpeta public), agregalas
- * o cambiá por Cloudinary.
- */
-
 type Category = 'Gastronomía' | 'Naturaleza' | 'Cultura' | 'Vino';
 
 interface Experience {
