@@ -3,443 +3,295 @@
    Prefijo de clases: reservas-corporate-*
    ========================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 .reservas-corporate {
-  --qa-section-pad-y: 7rem;
-  --qa-section-pad-x: 6vw;
+  --qa-pine: #2a3626;
+  --qa-pine-deep: #1c2519;
+  --qa-cream: #f2ede1;
+  --qa-paper: #f8f4ea;
+  --qa-ink: #2c2a24;
+  --qa-clay: #b8763e;
+  --qa-sand: #d3a06c;
+  --qa-night: #201f1a;
+  --qa-night-raised: #29281f;
+
+  --qa-bg: var(--qa-cream);
+  --qa-surface: var(--qa-paper);
+  --qa-text: var(--qa-ink);
+  --qa-title: var(--qa-pine);
+  --qa-accent: var(--qa-clay);
+  --qa-line: rgba(42, 54, 38, 0.14);
+  --qa-muted: rgba(44, 42, 36, 0.62);
+
+  --qa-pad-x: clamp(1.25rem, 6vw, 6rem);
+  --qa-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   position: relative;
   width: 100%;
-  overflow-x: hidden;
-  background-color: #f2ede1;
-  color: #2c2a24;
+  /* clip (no hidden): hidden rompe position: sticky del recorrido */
+  overflow-x: clip;
+  background-color: var(--qa-bg);
+  color: var(--qa-text);
   font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 400;
 }
 
 .reservas-corporate.theme-dark {
-  background-color: #201f1a;
-  color: #ece4d3;
+  --qa-bg: var(--qa-night);
+  --qa-surface: var(--qa-night-raised);
+  --qa-text: #ece4d3;
+  --qa-title: var(--qa-sand);
+  --qa-accent: var(--qa-sand);
+  --qa-line: rgba(242, 237, 225, 0.12);
+  --qa-muted: rgba(236, 228, 211, 0.6);
 }
 
 .reservas-corporate * {
   box-sizing: border-box;
 }
 
-/* ============ HERO ============ */
-
-.reservas-corporate-hero {
-  padding: var(--qa-section-pad-y) var(--qa-section-pad-x) 3rem;
-  max-width: 760px;
+.reservas-corporate button:focus-visible {
+  outline: 2px solid var(--qa-accent);
+  outline-offset: 3px;
 }
 
-.reservas-corporate-eyebrow-hero {
-  display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+/* ==========================================================
+   RESERVA (arriba)
+   ========================================================== */
+
+.reservas-corporate-booking {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2.5rem, 6vw, 7rem);
+  align-items: start;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: clamp(6.5rem, 12vh, 9rem) var(--qa-pad-x) clamp(4rem, 9vh, 7rem);
+}
+
+.reservas-corporate-booking-intro {
+  position: sticky;
+  top: 7rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.reservas-corporate-kicker {
   font-weight: 500;
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #b8763e;
+  font-size: 0.95rem;
+  color: var(--qa-accent);
   margin-bottom: 1.25rem;
 }
 
 .reservas-corporate-heading-hero {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 600;
-  font-size: clamp(2.1rem, 4vw, 3.2rem);
-  line-height: 1.15;
-  margin: 0 0 1.25rem;
-  color: #2a3626;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-heading-hero {
-  color: #d3a06c;
+  font-size: clamp(2.6rem, 5.2vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--qa-title);
+  margin: 0 0 1.75rem;
+  max-width: 11ch;
 }
 
 .reservas-corporate-paragraph-hero {
   font-weight: 300;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   line-height: 1.7;
-  max-width: 54ch;
-  color: #2c2a24;
-  margin: 0 0 1.75rem;
+  max-width: 44ch;
+  margin: 0 0 2.5rem;
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-paragraph-hero {
-  color: #ece4d3;
+/* ---------- Ticket en vivo ---------- */
+
+.reservas-corporate-ticket {
+  border-top: 1px solid var(--qa-line);
+  border-bottom: 1px solid var(--qa-line);
+  padding: 1.25rem 0 1.1rem;
+  margin-bottom: 2.5rem;
+  max-width: 26rem;
+}
+
+.reservas-corporate-ticket-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.35rem;
+}
+
+.reservas-corporate-ticket-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.reservas-corporate-ticket-meta {
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--qa-muted);
+}
+
+.reservas-corporate-ticket-total {
+  position: relative;
+  overflow: hidden;
+  height: 3.4rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 2.6rem;
+  line-height: 3.4rem;
+  color: var(--qa-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.reservas-corporate-ticket-total span {
+  display: block;
 }
 
 .reservas-corporate-quote-hero {
   font-family: 'Playfair Display', Georgia, serif;
   font-style: italic;
   font-weight: 500;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   line-height: 1.5;
-  color: #b8763e;
-  border-left: 2px solid #b8763e;
-  padding-left: 1.25rem;
+  color: var(--qa-accent);
   margin: 0;
+  max-width: 30ch;
 }
 
-/* ============ SILENCIO Y CALMA ============ */
-
-.reservas-corporate-calm {
-  background-color: #1c2519;
-  padding: var(--qa-section-pad-y) var(--qa-section-pad-x);
-}
-
-.reservas-corporate-calm-inner {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.reservas-corporate-calm-eyebrow {
-  display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-weight: 500;
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: #d3a06c;
-  margin-bottom: 1.25rem;
-}
-
-.reservas-corporate-calm-heading {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 600;
-  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
-  line-height: 1.25;
-  color: #f2ede1;
-  margin: 0 0 2rem;
-}
-
-.reservas-corporate-calm-paragraph-one {
-  font-weight: 300;
-  font-size: 1.05rem;
-  line-height: 1.75;
-  color: #ece4d3;
-  max-width: 60ch;
-  margin: 0 0 1.5rem;
-}
-
-.reservas-corporate-calm-paragraph-two {
-  font-weight: 300;
-  font-size: 1.05rem;
-  line-height: 1.75;
-  color: #ece4d3;
-  max-width: 60ch;
-  margin: 0 0 1.5rem;
-}
-
-.reservas-corporate-calm-paragraph-three {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: 1.15rem;
-  line-height: 1.6;
-  color: #d3a06c;
-  max-width: 56ch;
-  margin: 0 0 2rem;
-}
-
-.reservas-corporate-calm-horizon {
-  display: block;
-  width: 100%;
-  max-width: 160px;
-  height: 1.5px;
-  background: linear-gradient(90deg, #b8763e 0%, transparent 100%);
-}
-
-/* ============ PANELES EDITORIALES ============ */
-
-.reservas-corporate-editorial {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-/* ---------- Piscina (imagen izquierda, texto derecha) ---------- */
-.reservas-corporate-editorial-piscina {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  align-items: center;
-}
-
-.reservas-corporate-editorial-piscina-image {
-  aspect-ratio: 16 / 11;
-  overflow: hidden;
-}
-
-.reservas-corporate-editorial-piscina-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  animation: qa-kenburns-a 22s ease-in-out infinite alternate;
-}
-
-.reservas-corporate-editorial-piscina-text {
-  padding: 4vw 6vw;
-}
-
-.reservas-corporate-editorial-piscina-eyebrow {
-  display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-weight: 500;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #b8763e;
-  margin-bottom: 1rem;
-}
-
-.reservas-corporate-editorial-piscina-paragraph {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 500;
-  font-size: 1.4rem;
-  line-height: 1.55;
-  color: #2a3626;
-  max-width: 32ch;
-  margin: 0;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-editorial-piscina-paragraph {
-  color: #d3a06c;
-}
-
-/* ---------- Buhardilla (texto izquierda, imagen derecha) ---------- */
-.reservas-corporate-editorial-buhardilla {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  align-items: center;
-}
-
-.reservas-corporate-editorial-buhardilla-image {
-  aspect-ratio: 16 / 11;
-  overflow: hidden;
-}
-
-.reservas-corporate-editorial-buhardilla-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  animation: qa-kenburns-b 26s ease-in-out infinite alternate;
-}
-
-.reservas-corporate-editorial-buhardilla-text {
-  padding: 4vw 6vw;
-}
-
-.reservas-corporate-editorial-buhardilla-eyebrow {
-  display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-weight: 500;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #b8763e;
-  margin-bottom: 1rem;
-}
-
-.reservas-corporate-editorial-buhardilla-paragraph {
-  font-weight: 300;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: #2c2a24;
-  max-width: 40ch;
-  margin: 0;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-editorial-buhardilla-paragraph {
-  color: #ece4d3;
-}
-
-/* ---------- Jardín (imagen izquierda, texto derecha) ---------- */
-.reservas-corporate-editorial-jardin {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  align-items: center;
-}
-
-.reservas-corporate-editorial-jardin-image {
-  aspect-ratio: 16 / 11;
-  overflow: hidden;
-}
-
-.reservas-corporate-editorial-jardin-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  animation: qa-kenburns-a 24s ease-in-out infinite alternate;
-}
-
-.reservas-corporate-editorial-jardin-text {
-  padding: 4vw 6vw;
-}
-
-.reservas-corporate-editorial-jardin-eyebrow {
-  display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-weight: 500;
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #b8763e;
-  margin-bottom: 1rem;
-}
-
-.reservas-corporate-editorial-jardin-paragraph {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 500;
-  font-size: 1.4rem;
-  line-height: 1.55;
-  color: #2a3626;
-  max-width: 32ch;
-  margin: 0;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-editorial-jardin-paragraph {
-  color: #d3a06c;
-}
-
-@keyframes qa-kenburns-a {
-  from { transform: scale(1); }
-  to { transform: scale(1.09); }
-}
-
-@keyframes qa-kenburns-b {
-  from { transform: scale(1.06); }
-  to { transform: scale(1); }
-}
-
-/* ============ WIZARD ============ */
+/* ==========================================================
+   WIZARD
+   ========================================================== */
 
 .reservas-corporate-wizard {
-  max-width: 620px;
-  margin: 0 auto;
-  padding: var(--qa-section-pad-y) var(--qa-section-pad-x);
+  background-color: var(--qa-surface);
+  border: 1px solid var(--qa-line);
+  border-radius: 6px;
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+  box-shadow: 0 40px 80px -48px rgba(28, 37, 25, 0.35);
+  scroll-margin-top: 6rem;
+}
+
+.reservas-corporate.theme-dark .reservas-corporate-wizard {
+  box-shadow: 0 40px 80px -48px rgba(0, 0, 0, 0.7);
 }
 
 /* ---------- Indicador de pasos ---------- */
 
-.reservas-corporate-steps-indicator {
+.reservas-corporate-steps {
+  margin-bottom: 2rem;
+}
+
+.reservas-corporate-steps-text {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 2.5rem;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
 }
 
-.reservas-corporate-step-dot {
+.reservas-corporate-steps-count {
+  font-size: 0.85rem;
+  color: var(--qa-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.reservas-corporate-steps-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--qa-title);
+  text-align: right;
+}
+
+.reservas-corporate-steps-bar {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.reservas-corporate-steps-segment {
+  position: relative;
   flex: 1;
-  height: 3px;
-  border-radius: 2px;
-  background-color: rgba(42, 54, 38, 0.15);
-  transition: background-color 0.4s ease;
+  height: 2px;
+  background-color: var(--qa-line);
+  overflow: hidden;
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-step-dot {
-  background-color: rgba(242, 237, 225, 0.15);
+.reservas-corporate-steps-segment::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--qa-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s var(--qa-ease);
 }
 
-.reservas-corporate-step-dot.is-done {
-  background-color: #b8763e;
+.reservas-corporate-steps-segment.is-done::after {
+  transform: scaleX(1);
 }
 
-.reservas-corporate-step-dot.is-current {
-  background-color: #2a3626;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-step-dot.is-current {
-  background-color: #d3a06c;
+.reservas-corporate-steps-segment.is-current::after {
+  background-color: var(--qa-title);
 }
 
 .reservas-corporate-step-viewport {
   position: relative;
-  min-height: 480px;
+  min-height: 460px;
 }
 
 /* ---------- Paso: fechas ---------- */
 
-.reservas-corporate-step-heading-dates {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 600;
-  font-size: 1.6rem;
-  color: #2a3626;
-  margin: 0 0 1.75rem;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-step-heading-dates {
-  color: #d3a06c;
-}
-
-/* ---------- Resumen de fechas ---------- */
-
 .reservas-corporate-dates-summary {
   display: grid;
-  grid-template-columns: 1fr 1fr 0.7fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
   padding: 1.25rem 0;
-  border-top: 1px solid rgba(42, 54, 38, 0.12);
-  border-bottom: 1px solid rgba(42, 54, 38, 0.12);
-  margin-bottom: 1.75rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--qa-line);
+  border-bottom: 1px solid var(--qa-line);
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-dates-summary {
-  border-color: rgba(242, 237, 225, 0.12);
-}
-
-.reservas-corporate-dates-summary-checkin,
-.reservas-corporate-dates-summary-checkout,
-.reservas-corporate-dates-summary-nights {
+.reservas-corporate-dates-cell {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.25rem;
 }
 
-.reservas-corporate-dates-summary-label-checkin,
-.reservas-corporate-dates-summary-label-checkout,
-.reservas-corporate-dates-summary-label-nights {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #b8763e;
+.reservas-corporate-dates-label {
+  font-size: 0.82rem;
+  color: var(--qa-muted);
 }
 
-.reservas-corporate-dates-summary-value-checkin,
-.reservas-corporate-dates-summary-value-checkout,
-.reservas-corporate-dates-summary-value-nights {
-  font-size: 0.85rem;
+.reservas-corporate-dates-value {
   font-weight: 500;
-  color: #2c2a24;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-dates-summary-value-checkin,
-.reservas-corporate.theme-dark .reservas-corporate-dates-summary-value-checkout,
-.reservas-corporate.theme-dark .reservas-corporate-dates-summary-value-nights {
-  color: #ece4d3;
+  font-size: 0.98rem;
 }
 
 /* ---------- Selector de huéspedes ---------- */
 
 .reservas-corporate-guests-selector {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
+  padding: 1.25rem 0 0;
+}
+
+.reservas-corporate-guests-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .reservas-corporate-guests-label {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
   font-weight: 500;
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #2a3626;
+  font-size: 0.98rem;
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-guests-label {
-  color: #d3a06c;
+.reservas-corporate-guests-max-note {
+  font-size: 0.82rem;
+  color: var(--qa-muted);
 }
 
 .reservas-corporate-guests-controls {
@@ -448,54 +300,36 @@
   gap: 1rem;
 }
 
-.reservas-corporate-guests-decrease,
-.reservas-corporate-guests-increase {
-  width: 32px;
-  height: 32px;
+.reservas-corporate-guests-button {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(42, 54, 38, 0.25);
+  border: 1px solid var(--qa-line);
   background: transparent;
-  color: #2a3626;
-  font-size: 1.1rem;
+  color: var(--qa-text);
+  font-size: 1.15rem;
   cursor: pointer;
-  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.3s var(--qa-ease), border-color 0.3s var(--qa-ease), color 0.3s var(--qa-ease);
 }
 
-.reservas-corporate-guests-decrease:hover,
-.reservas-corporate-guests-increase:hover {
-  background-color: #b8763e;
-  border-color: #b8763e;
-  color: #f2ede1;
+.reservas-corporate-guests-button:hover:not(:disabled) {
+  background-color: var(--qa-title);
+  border-color: var(--qa-title);
+  color: var(--qa-bg);
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-guests-decrease,
-.reservas-corporate.theme-dark .reservas-corporate-guests-increase {
-  border-color: rgba(242, 237, 225, 0.25);
-  color: #ece4d3;
+.reservas-corporate-guests-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .reservas-corporate-guests-count {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   min-width: 1.5rem;
   text-align: center;
-  color: #2c2a24;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-guests-count {
-  color: #ece4d3;
-}
-
-.reservas-corporate-guests-max-note {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.65rem;
-  color: #2c2a24;
-  opacity: 0.55;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-guests-max-note {
-  color: #ece4d3;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Paso: adicional ---------- */
@@ -503,100 +337,80 @@
 .reservas-corporate-step-addon {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 1rem;
+  padding-top: 1rem;
 }
 
-.reservas-corporate-addon-eyebrow {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-weight: 500;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #b8763e;
+.reservas-corporate-addon-note {
+  font-size: 0.85rem;
+  color: var(--qa-muted);
 }
 
 .reservas-corporate-addon-name {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 600;
-  font-size: 1.7rem;
-  color: #2a3626;
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--qa-title);
   margin: 0;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-addon-name {
-  color: #d3a06c;
 }
 
 .reservas-corporate-addon-description {
   font-weight: 300;
-  font-size: 1rem;
-  line-height: 1.65;
-  color: #2c2a24;
+  font-size: 1.05rem;
+  line-height: 1.7;
   max-width: 46ch;
   margin: 0;
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-addon-description {
-  color: #ece4d3;
+.reservas-corporate-addon-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--qa-line);
 }
 
 .reservas-corporate-addon-price {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 600;
-  font-size: 1.4rem;
-  color: #2a3626;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-addon-price {
-  color: #d3a06c;
+  font-size: 1.6rem;
+  color: var(--qa-title);
 }
 
 .reservas-corporate-addon-toggle {
-  align-self: flex-start;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: inherit;
   font-weight: 500;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #f2ede1;
-  background-color: #2a3626;
+  font-size: 0.95rem;
+  color: var(--qa-cream);
+  background-color: var(--qa-pine);
   border: none;
-  padding: 0.85rem 1.75rem;
-  border-radius: 2px;
+  padding: 0.95rem 1.6rem;
+  border-radius: 999px;
   cursor: pointer;
-  margin-top: 0.5rem;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.4s var(--qa-ease);
 }
 
 .reservas-corporate-addon-toggle:hover {
-  transform: translateY(-2px);
+  background-color: var(--qa-clay);
 }
 
 .reservas-corporate-addon-toggle.is-added {
-  background-color: #b8763e;
+  background-color: var(--qa-clay);
 }
 
 .reservas-corporate.theme-dark .reservas-corporate-addon-toggle {
-  background-color: #b8763e;
-  color: #201f1a;
+  background-color: var(--qa-sand);
+  color: var(--qa-night);
 }
 
 .reservas-corporate.theme-dark .reservas-corporate-addon-toggle.is-added {
   background-color: #6b7a55;
-  color: #f2ede1;
-}
-
-.reservas-corporate-addon-running-total {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.04em;
-  color: #2c2a24;
-  opacity: 0.6;
-  margin-top: 0.5rem;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-addon-running-total {
-  color: #ece4d3;
+  color: var(--qa-cream);
 }
 
 /* ---------- Paso: resumen ---------- */
@@ -606,129 +420,73 @@
   flex-direction: column;
 }
 
-.reservas-corporate-summary-heading {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 600;
-  font-size: 1.6rem;
-  color: #2a3626;
-  margin: 0 0 1.75rem;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-summary-heading {
-  color: #d3a06c;
-}
-
-.reservas-corporate-summary-row-dates,
-.reservas-corporate-summary-row-guests,
-.reservas-corporate-summary-row-nights,
-.reservas-corporate-summary-row-addon {
+.reservas-corporate-summary-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 0.9rem 0;
-  border-bottom: 1px solid rgba(42, 54, 38, 0.1);
-  font-size: 0.9rem;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--qa-line);
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-dates,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-guests,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-nights,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-addon {
-  border-bottom-color: rgba(242, 237, 225, 0.1);
+.reservas-corporate-summary-label {
+  font-size: 0.92rem;
+  color: var(--qa-muted);
 }
 
-.reservas-corporate-summary-row-dates-label,
-.reservas-corporate-summary-row-guests-label,
-.reservas-corporate-summary-row-nights-label,
-.reservas-corporate-summary-row-addon-label {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #2c2a24;
-  opacity: 0.65;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-dates-label,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-guests-label,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-nights-label,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-addon-label {
-  color: #ece4d3;
-}
-
-.reservas-corporate-summary-row-dates-value,
-.reservas-corporate-summary-row-guests-value,
-.reservas-corporate-summary-row-nights-value,
-.reservas-corporate-summary-row-addon-value {
+.reservas-corporate-summary-value {
   font-weight: 500;
-  color: #2c2a24;
+  font-size: 0.98rem;
   text-align: right;
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-dates-value,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-guests-value,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-nights-value,
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-addon-value {
-  color: #ece4d3;
-}
-
-.reservas-corporate-summary-row-total {
+.reservas-corporate-summary-total {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 1.5rem 0 2rem;
+  padding: 1.75rem 0 2rem;
 }
 
-.reservas-corporate-summary-row-total-label {
+.reservas-corporate-summary-total-label {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 600;
-  font-size: 1.15rem;
-  color: #2a3626;
+  font-size: 1.2rem;
+  color: var(--qa-title);
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-total-label {
-  color: #d3a06c;
-}
-
-.reservas-corporate-summary-row-total-value {
+.reservas-corporate-summary-total-value {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 700;
-  font-size: 1.75rem;
-  color: #2a3626;
-}
-
-.reservas-corporate.theme-dark .reservas-corporate-summary-row-total-value {
-  color: #d3a06c;
+  font-size: 2.2rem;
+  color: var(--qa-title);
+  font-variant-numeric: tabular-nums;
 }
 
 .reservas-corporate-pay-button {
   width: 100%;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #f2ede1;
-  background-color: #2a3626;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1.02rem;
+  color: var(--qa-cream);
+  background-color: var(--qa-pine);
   border: none;
-  padding: 1.15rem;
-  border-radius: 2px;
+  padding: 1.2rem;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.4s var(--qa-ease);
 }
 
 .reservas-corporate-pay-button:hover {
-  background-color: #b8763e;
-  transform: translateY(-2px);
+  background-color: var(--qa-clay);
 }
 
 .reservas-corporate.theme-dark .reservas-corporate-pay-button {
-  background-color: #b8763e;
-  color: #201f1a;
+  background-color: var(--qa-sand);
+  color: var(--qa-night);
 }
 
 .reservas-corporate.theme-dark .reservas-corporate-pay-button:hover {
-  background-color: #d3a06c;
+  background-color: var(--qa-cream);
 }
 
 /* ---------- Navegación del wizard ---------- */
@@ -736,61 +494,312 @@
 .reservas-corporate-wizard-nav {
   display: flex;
   justify-content: space-between;
-  margin-top: 2.5rem;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.reservas-corporate-wizard-nav-back,
+.reservas-corporate-wizard-nav-next {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.9rem 1.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.4s var(--qa-ease), border-color 0.4s var(--qa-ease), opacity 0.3s ease;
 }
 
 .reservas-corporate-wizard-nav-back {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-weight: 500;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #2a3626;
+  color: var(--qa-text);
   background: transparent;
-  border: 1px solid rgba(42, 54, 38, 0.25);
-  padding: 0.85rem 1.75rem;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: border-color 0.25s ease, opacity 0.25s ease;
+  border: 1px solid var(--qa-line);
 }
 
-.reservas-corporate-wizard-nav-back:disabled {
+.reservas-corporate-wizard-nav-back:hover:not(:disabled) {
+  border-color: var(--qa-title);
+}
+
+.reservas-corporate-wizard-nav-next {
+  color: var(--qa-cream);
+  background-color: var(--qa-pine);
+  border: 1px solid transparent;
+}
+
+.reservas-corporate-wizard-nav-next:hover:not(:disabled) {
+  background-color: var(--qa-clay);
+}
+
+.reservas-corporate.theme-dark .reservas-corporate-wizard-nav-next {
+  background-color: var(--qa-sand);
+  color: var(--qa-night);
+}
+
+.reservas-corporate-wizard-nav-back:disabled,
+.reservas-corporate-wizard-nav-next:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-wizard-nav-back {
+/* ==========================================================
+   MANIFIESTO
+   ========================================================== */
+
+.reservas-corporate-manifesto {
+  background-color: var(--qa-pine-deep);
   color: #ece4d3;
-  border-color: rgba(242, 237, 225, 0.25);
+  padding: clamp(6rem, 16vh, 11rem) var(--qa-pad-x);
 }
 
-.reservas-corporate-wizard-nav-next {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+.reservas-corporate-manifesto-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.reservas-corporate-manifesto-heading {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  font-size: 1.05rem;
+  color: var(--qa-sand);
+  margin: 0 0 2.5rem;
+}
+
+.reservas-corporate-manifesto-statement {
+  font-family: 'Playfair Display', Georgia, serif;
   font-weight: 500;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #f2ede1;
-  background-color: #2a3626;
+  font-size: clamp(1.9rem, 4.4vw, 3.9rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--qa-cream);
+  max-width: 24ch;
+  margin: 0 0 clamp(4rem, 10vh, 7rem);
+}
+
+.reservas-corporate-lit-word {
+  display: inline-block;
+}
+
+.reservas-corporate-manifesto-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  max-width: 900px;
+  margin-left: auto;
+}
+
+.reservas-corporate-manifesto-columns p {
+  font-weight: 300;
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: rgba(236, 228, 211, 0.82);
+  margin: 0;
+}
+
+/* ==========================================================
+   RECORRIDO INMERSIVO
+   ========================================================== */
+
+.reservas-corporate-stage {
+  position: relative;
+  height: calc(var(--qa-scenes, 3) * 130vh);
+  background-color: var(--qa-pine-deep);
+}
+
+.reservas-corporate-stage-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.reservas-corporate-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.reservas-corporate-scene-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  will-change: clip-path;
+}
+
+.reservas-corporate-scene-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+.reservas-corporate-scene-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(20, 26, 18, 0.82) 0%,
+    rgba(20, 26, 18, 0.35) 38%,
+    rgba(20, 26, 18, 0) 65%
+  );
+}
+
+.reservas-corporate-scene-caption {
+  position: absolute;
+  left: var(--qa-pad-x);
+  bottom: clamp(3rem, 9vh, 6rem);
+  max-width: min(640px, 80vw);
+  color: var(--qa-cream);
+}
+
+.reservas-corporate-scene-name {
+  overflow: hidden;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 7vw, 6.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.08em;
+}
+
+.reservas-corporate-scene-name span {
+  display: inline-block;
+}
+
+.reservas-corporate-scene-description {
+  font-weight: 300;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  line-height: 1.7;
+  max-width: 44ch;
+  color: rgba(242, 237, 225, 0.88);
+  margin: 0;
+}
+
+/* ---------- Navegación del recorrido ---------- */
+
+.reservas-corporate-stage-nav {
+  position: absolute;
+  z-index: 20;
+  right: var(--qa-pad-x);
+  bottom: clamp(3rem, 9vh, 6rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.reservas-corporate-stage-nav-item {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--qa-cream);
+  background: none;
   border: none;
-  padding: 0.85rem 1.75rem;
-  border-radius: 2px;
+  padding: 0.2rem 0;
   cursor: pointer;
-  transition: background-color 0.3s ease, opacity 0.3s ease;
+  opacity: 0.45;
+  transition: opacity 0.5s var(--qa-ease), transform 0.5s var(--qa-ease);
 }
 
-.reservas-corporate-wizard-nav-next:hover:not(:disabled) {
-  background-color: #b8763e;
+.reservas-corporate-stage-nav-item:hover {
+  opacity: 0.8;
 }
 
-.reservas-corporate-wizard-nav-next:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.reservas-corporate-stage-nav-item.is-active {
+  opacity: 1;
+  transform: translateX(-0.5rem);
 }
 
-.reservas-corporate.theme-dark .reservas-corporate-wizard-nav-next {
-  background-color: #b8763e;
-  color: #201f1a;
+.reservas-corporate-stage-progress {
+  position: absolute;
+  z-index: 20;
+  right: calc(var(--qa-pad-x) / 2);
+  top: 50%;
+  width: 1px;
+  height: 28vh;
+  transform: translateY(-50%);
+  background-color: rgba(242, 237, 225, 0.2);
+}
+
+.reservas-corporate-stage-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--qa-sand);
+  transform-origin: top;
+}
+
+/* ---------- Versión estática (reduced motion) ---------- */
+
+.reservas-corporate-stage-static {
+  background-color: var(--qa-pine-deep);
+  color: var(--qa-cream);
+}
+
+.reservas-corporate-stage-static-item {
+  position: relative;
+  margin: 0;
+}
+
+.reservas-corporate-stage-static-item img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.reservas-corporate-stage-static-item figcaption {
+  padding: 2.5rem var(--qa-pad-x) 4rem;
+}
+
+/* ==========================================================
+   CIERRE
+   ========================================================== */
+
+.reservas-corporate-outro {
+  padding: clamp(6rem, 16vh, 10rem) var(--qa-pad-x);
+}
+
+.reservas-corporate-outro-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.reservas-corporate-outro-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--qa-title);
+  margin: 0;
+  max-width: 12ch;
+}
+
+.reservas-corporate-outro-button {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--qa-cream);
+  background-color: var(--qa-pine);
+  border: none;
+  padding: 1.1rem 2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.4s var(--qa-ease);
+}
+
+.reservas-corporate-outro-button:hover {
+  background-color: var(--qa-clay);
+}
+
+.reservas-corporate.theme-dark .reservas-corporate-outro-button {
+  background-color: var(--qa-sand);
+  color: var(--qa-night);
 }
 
 /* ==========================================================
@@ -798,53 +807,90 @@
    ========================================================== */
 
 @media (max-width: 1024px) {
-  .reservas-corporate {
-    --qa-section-pad-y: 5.5rem;
-    --qa-section-pad-x: 7vw;
-  }
-
-  .reservas-corporate-editorial-piscina,
-  .reservas-corporate-editorial-buhardilla,
-  .reservas-corporate-editorial-jardin {
+  .reservas-corporate-booking {
     grid-template-columns: 1fr;
+    gap: 2.5rem;
   }
 
-  .reservas-corporate-editorial-buhardilla {
-    display: flex;
-    flex-direction: column-reverse;
+  .reservas-corporate-booking-intro {
+    position: static;
   }
 
-  .reservas-corporate-editorial-piscina-image,
-  .reservas-corporate-editorial-buhardilla-image,
-  .reservas-corporate-editorial-jardin-image {
-    aspect-ratio: 16 / 9;
+  .reservas-corporate-heading-hero {
+    max-width: 14ch;
+  }
+
+  .reservas-corporate-paragraph-hero {
+    margin-bottom: 2rem;
+  }
+
+  /* En tablet/mobile la cita va al final para no empujar el calendario */
+  .reservas-corporate-quote-hero {
+    display: none;
+  }
+
+  .reservas-corporate-ticket {
+    margin-bottom: 0;
+    max-width: none;
   }
 }
 
-@media (max-width: 640px) {
-  .reservas-corporate-calm-paragraph-one,
-  .reservas-corporate-calm-paragraph-two,
-  .reservas-corporate-calm-paragraph-three {
-    max-width: 100%;
+@media (max-width: 720px) {
+  .reservas-corporate-manifesto-columns {
+    grid-template-columns: 1fr;
+    margin-left: 0;
   }
 
-  .reservas-corporate-dates-summary {
-    grid-template-columns: 1fr 1fr;
+  .reservas-corporate-stage {
+    height: calc(var(--qa-scenes, 3) * 110vh);
   }
 
-  .reservas-corporate-dates-summary-nights {
-    grid-column: span 2;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 0.5rem;
+  .reservas-corporate-stage-nav {
+    display: none;
+  }
+
+  .reservas-corporate-stage-progress {
+    right: 1rem;
+    height: 20vh;
+  }
+
+  .reservas-corporate-scene-caption {
+    right: 2.5rem;
+    bottom: 2.5rem;
+  }
+
+  .reservas-corporate-step-viewport {
+    min-height: 420px;
+  }
+
+  .reservas-corporate-steps-text {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .reservas-corporate-steps-label {
+    text-align: left;
+  }
+
+  .reservas-corporate-outro-inner {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
 @media (max-width: 480px) {
+  .reservas-corporate-wizard {
+    padding: 1.25rem;
+    margin: 0 calc(var(--qa-pad-x) * -0.5);
+  }
+
   .reservas-corporate-wizard-nav-back,
   .reservas-corporate-wizard-nav-next {
     flex: 1;
-    text-align: center;
+  }
+
+  .reservas-corporate-dates-summary {
+    grid-template-columns: 1fr;
   }
 }
 

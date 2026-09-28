@@ -582,6 +582,11 @@
   outline-offset: 3px;
 }
 
+.home-corporate-hero-logo{
+  height: 350px;
+  width: auto;
+}
+
 /* ==========================================================
    RESPONSIVE
    ========================================================== */
@@ -608,6 +613,7 @@
 }
 
 @media (max-width: 768px) {
+  .home-corporate-hero-logo{ height: 200px; width: auto; }
   .home-corporate {
     --qa-section-pad-y: 5rem;
     --qa-section-pad-x: 6vw;

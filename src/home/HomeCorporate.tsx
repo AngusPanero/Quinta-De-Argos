@@ -139,12 +139,23 @@ const HomeCorporate: React.FC = () => {
           animate="visible"
           variants={staggerContainer}
         >
+          <motion.img
+            src="/logos/Logo Completo sin Dibujo sin Fondo.png"
+            alt="Quinta de Argos"
+            className="home-corporate-hero-logo"
+            variants={fadeUp}
+            transition={{ duration: 0.8 }}
+            height={"400px"}
+            width={"auto"}
+          />
           <motion.span className="home-corporate-eyebrow-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
             Cehegín, Murcia
           </motion.span>
-          <motion.h1 className="home-corporate-hero-title" variants={fadeUp} transition={{ duration: 0.8 }}>
+          {/* <motion.h1 className="home-corporate-hero-title" variants={fadeUp} transition={{ duration: 0.8 }}>
             Quinta de Argos
-          </motion.h1>
+          </motion.h1> */}
+          {/*LOGO IMG EN PUBLIC FOLDER*/}
+          
           <motion.p className="home-corporate-hero-subtitle" variants={fadeUp} transition={{ duration: 0.8 }}>
             El refugio de tus sueños. Privacidad y confort en plena naturaleza.
           </motion.p>

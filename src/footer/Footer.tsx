@@ -1,5 +1,6 @@
 import "./footer.css";
 import { UseTheme } from "../contexts/ThemeContext";
+import { motion } from "framer-motion";
 
 /**
  * Footer
@@ -19,7 +20,13 @@ const Footer = () => {
 
                 {/* BRAND */}
                 <div className="footer-corporate-brand">
-                    <h2 className="footer-corporate-logo">Quinta de Argos</h2>
+                    <motion.img
+                        src="/logos/Logo Completo sin Fondo.png"
+                        alt="Quinta de Argos"
+                        transition={{ duration: 0.8 }}
+                        height={"100px"}
+                        width={"auto"}
+                    />
                     <p className="footer-corporate-tagline">CEHEGÍN · REGIÓN DE MURCIA</p>
                     <p className="footer-corporate-description">
                         Una casa de campo de arquitectura nórdica, en la comarca del
