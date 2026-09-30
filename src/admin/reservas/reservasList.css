@@ -1,270 +1,304 @@
-/* ---------- Listado de reservas ---------- */
-.rl-wrap {
-    font-family: 'Jost', sans-serif;
-    color: #23281f;
-}
+/* ==========================================================
+   reservasList.css — Quinta de Argos (panel admin)
+   Prefijo de clases: rl-*
+   Usa los tokens --qa-* / --ar-* definidos en .ar-page
+   ========================================================== */
 
 .rl-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
 }
 
+/* ---------- Próximas / Pasadas / Canceladas ---------- */
+
 .rl-scopes {
-    display: flex;
-    border: 1px solid #d8d2c4;
-    border-radius: 999px;
-    padding: 3px;
-    background: #f7f5f0;
+  display: flex;
+  padding: 0.25rem;
+  border: 1px solid var(--qa-line);
+  border-radius: 999px;
+  background-color: var(--qa-surface);
 }
 
 .rl-scope {
-    font-family: 'Jost', sans-serif;
-    font-size: 15px;
-    padding: 7px 16px;
-    border: none;
-    border-radius: 999px;
-    background: none;
-    color: #6b6e63;
-    cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.92rem;
+  color: var(--qa-muted);
+  background: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.4s var(--qa-ease), color 0.4s var(--qa-ease);
 }
 
-.rl-scope--active {
-    background: #1F4A2C;
-    color: #f7f5f0;
+.rl-scope:hover {
+  color: var(--qa-title);
 }
+
+.rl-scope--active,
+.rl-scope--active:hover {
+  background-color: var(--qa-btn-bg);
+  color: var(--qa-btn-text);
+}
+
+/* ---------- Filtro por origen ---------- */
 
 .rl-sources {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .rl-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Jost', sans-serif;
-    font-size: 14px;
-    padding: 6px 12px;
-    border: 1px solid #d8d2c4;
-    border-radius: 999px;
-    background: #fbfaf7;
-    color: #23281f;
-    cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--qa-text);
+  background-color: transparent;
+  border: 1px solid var(--qa-line);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s var(--qa-ease), border-color 0.3s var(--qa-ease);
+}
+
+.rl-chip:hover {
+  border-color: var(--qa-title);
 }
 
 .rl-chip--on {
-    border-color: #23281f;
-    background: #eeeae2;
+  border-color: var(--qa-title);
+  background-color: var(--qa-surface-alt);
 }
 
 .rl-chip-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
 }
 
-.rl-chip--web .rl-chip-dot { background: #1F4A2C; }
-.rl-chip--airbnb .rl-chip-dot { background: #b04a52; }
-.rl-chip--booking .rl-chip-dot { background: #2c5b8c; }
-.rl-chip--owner .rl-chip-dot { background: #8E8E6C; }
-.rl-chip--direct .rl-chip-dot { background: #7a5c3e; }
+.rl-chip--web .rl-chip-dot { background-color: var(--ar-web); }
+.rl-chip--airbnb .rl-chip-dot { background-color: var(--ar-airbnb); }
+.rl-chip--booking .rl-chip-dot { background-color: var(--ar-booking); }
+.rl-chip--owner .rl-chip-dot { background-color: var(--ar-owner); }
+.rl-chip--direct .rl-chip-dot { background-color: var(--ar-direct); }
 
-.rl-scope:focus-visible,
-.rl-chip:focus-visible,
-.rl-row:focus-visible {
-    outline: 2px solid #8E8E6C;
-    outline-offset: 2px;
-}
+/* ---------- Estados ---------- */
 
 .rl-count {
-    margin: 0 0 10px;
-    font-size: 14px;
-    color: #6b6e63;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--qa-muted);
+  margin: 0 0 0.75rem;
 }
 
-.rl-empty,
-.rl-error {
-    margin: 24px 0;
-    font-size: 16px;
-    color: #6b6e63;
+.rl-empty {
+  font-weight: 300;
+  font-size: 1.02rem;
+  color: var(--qa-muted);
+  margin: 2rem 0;
 }
 
 .rl-error {
-    padding: 12px 16px;
-    border-left: 3px solid #a13d33;
-    background: #f6e9e6;
-    color: #7c2d25;
+  margin: 1.5rem 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 3px solid var(--qa-error);
+  background-color: var(--qa-error-bg);
+  color: var(--qa-error);
+  font-size: 0.95rem;
 }
+
+/* ---------- Lista ---------- */
 
 .rl-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border-top: 1px solid #d8d2c4;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--qa-line);
 }
 
 .rl-item {
-    border-bottom: 1px solid #d8d2c4;
-    border-left: 4px solid transparent;
+  border-bottom: 1px solid var(--qa-line);
+  border-left: 3px solid transparent;
+  transition: background-color 0.3s var(--qa-ease);
 }
 
-.rl-item--web { border-left-color: #1F4A2C; }
-.rl-item--airbnb { border-left-color: #b04a52; }
-.rl-item--booking { border-left-color: #2c5b8c; }
-.rl-item--owner { border-left-color: #8E8E6C; }
-.rl-item--direct { border-left-color: #7a5c3e; }
+.rl-item--web { border-left-color: var(--ar-web); }
+.rl-item--airbnb { border-left-color: var(--ar-airbnb); }
+.rl-item--booking { border-left-color: var(--ar-booking); }
+.rl-item--owner { border-left-color: var(--ar-owner); }
+.rl-item--direct { border-left-color: var(--ar-direct); }
 
 .rl-item--open {
-    background: #f7f5f0;
+  background-color: var(--qa-surface);
 }
 
 .rl-row {
-    display: grid;
-    grid-template-columns: minmax(200px, 1.3fr) minmax(140px, 1.4fr) auto 110px;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-    padding: 16px 18px;
-    border: none;
-    background: none;
-    font-family: 'Jost', sans-serif;
-    text-align: left;
-    color: inherit;
-    cursor: pointer;
+  display: grid;
+  grid-template-columns: minmax(210px, 1.3fr) minmax(140px, 1.4fr) auto 120px;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.1rem 1.25rem;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .rl-row:hover {
-    background: #f7f5f0;
+  background-color: var(--qa-surface);
 }
 
 .rl-dates {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .rl-dates-range {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: #1F4A2C;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--qa-title);
 }
 
 .rl-dates-nights {
-    font-size: 14px;
-    color: #6b6e63;
+  font-weight: 300;
+  font-size: 0.85rem;
+  color: var(--qa-muted);
 }
 
 .rl-guest {
-    font-size: 16px;
-    font-weight: 500;
+    text-transform: uppercase;
+  font-weight: 500;
+  font-size: 0.98rem;
 }
 
 .rl-pills {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
 .rl-pill {
-    font-size: 13px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    color: #fbfaf7;
+  font-weight: 500;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  color: var(--ar-on-source);
+  border: 1px solid transparent;
 }
 
-.rl-pill--web { background: #1F4A2C; }
-.rl-pill--airbnb { background: #b04a52; }
-.rl-pill--booking { background: #2c5b8c; }
-.rl-pill--owner { background: #8E8E6C; }
-.rl-pill--direct { background: #7a5c3e; }
+.rl-pill--web { background-color: var(--ar-web); }
+.rl-pill--airbnb { background-color: var(--ar-airbnb); }
+.rl-pill--booking { background-color: var(--ar-booking); }
+.rl-pill--owner { background-color: var(--ar-owner); }
+.rl-pill--direct { background-color: var(--ar-direct); }
 
 .rl-pill--cancelled {
-    background: none;
-    border: 1px solid #a13d33;
-    color: #a13d33;
+  background: none;
+  border-color: var(--qa-error);
+  color: var(--qa-error);
 }
 
 .rl-pill--request {
-    background: none;
-    border: 1px solid #7a5c3e;
-    color: #7a5c3e;
+  background: none;
+  border-color: var(--qa-accent);
+  color: var(--qa-accent);
 }
 
 .rl-price {
-    font-size: 16px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--qa-title);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Detalle desplegado ---------- */
+
 .rl-detail {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px 28px;
-    margin: 0;
-    padding: 4px 18px 22px 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1.1rem 2rem;
+  margin: 0;
+  padding: 0.25rem 1.25rem 1.6rem;
 }
 
 .rl-field {
-    margin: 0;
+  margin: 0;
 }
 
 .rl-field--wide {
-    grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
 .rl-field dt {
-    font-size: 13px;
-    color: #6b6e63;
-    margin-bottom: 3px;
+  font-size: 0.82rem;
+  color: var(--qa-muted);
+  margin-bottom: 0.2rem;
 }
 
 .rl-field dd {
-    margin: 0;
-    font-size: 15px;
-    line-height: 1.45;
+  margin: 0;
+  font-weight: 400;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .rl-net {
-    display: block;
-    font-size: 13px;
-    color: #6b6e63;
+  display: block;
+  font-weight: 300;
+  font-size: 0.82rem;
+  color: var(--qa-muted);
 }
 
 .rl-ref {
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 .rl-comments {
-    white-space: pre-line;
-    max-width: 75ch;
+  white-space: pre-line;
+  max-width: 75ch;
 }
 
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
 @media (max-width: 760px) {
-    .rl-row {
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "dates price"
-            "guest guest"
-            "pills pills";
-        gap: 6px 12px;
-    }
+  .rl-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "dates price"
+      "guest guest"
+      "pills pills";
+    gap: 0.4rem 0.75rem;
+  }
 
-    .rl-dates { grid-area: dates; }
-    .rl-guest { grid-area: guest; }
-    .rl-pills { grid-area: pills; }
-    .rl-price { grid-area: price; align-self: start; }
+  .rl-dates { grid-area: dates; }
+  .rl-guest { grid-area: guest; }
+  .rl-pills { grid-area: pills; }
+  .rl-price { grid-area: price; align-self: start; }
 
-    .rl-scopes {
-        width: 100%;
-    }
+  .rl-scopes {
+    width: 100%;
+  }
 
-    .rl-scope {
-        flex: 1;
-    }
+  .rl-scope {
+    flex: 1;
+  }
 }

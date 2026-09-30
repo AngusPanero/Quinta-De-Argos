@@ -5,12 +5,15 @@ import ReservasCalendar from "./ReservasCalendar";
 import type { SyncState } from "./reservasTypes";
 import { relativeTime } from "./reservasUtils";
 import "./adminReservas.css";
+import { UseTheme } from "../../contexts/ThemeContext";
 
 const API = import.meta.env.VITE_API_URL;
 
 type Tab = "calendario" | "listado";
 
 export default function AdminReservas() {
+    const { theme } = UseTheme();
+
     const [tab, setTab] = useState<Tab>("calendario");
     const [lastSync, setLastSync] = useState<SyncState | null>(null);
     const [syncing, setSyncing] = useState(false);
@@ -44,7 +47,8 @@ export default function AdminReservas() {
     };
 
     return (
-        <section className="ar-page">
+        <section className={`ar-page ${theme === "dark" ? "theme-dark" : ""}`}>
+          <div className="ar-inner">
             <header className="ar-header">
                 <div className="ar-heading">
                     <h1 className="ar-title">Reservas</h1>
@@ -89,6 +93,7 @@ export default function AdminReservas() {
                     ? <ReservasCalendar refreshKey={refreshKey} onSyncInfo={setLastSync} />
                     : <ReservasList refreshKey={refreshKey} onSyncInfo={setLastSync} />}
             </div>
+          </div>
         </section>
     );
 }

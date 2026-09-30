@@ -1,125 +1,230 @@
-/* ---------- Página de reservas (admin) ---------- */
+/* ==========================================================
+   adminReservas.css — Quinta de Argos (panel admin)
+   Prefijo de clases: ar-*
+   Los tokens se definen acá y los heredan el listado (rl-*)
+   y el calendario (rc-*), que se renderizan adentro.
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500&display=swap');
+
 .ar-page {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 40px 24px 64px;
-    font-family: 'Jost', sans-serif;
-    color: #23281f;
+  --qa-pine: #2a3626;
+  --qa-pine-deep: #1c2519;
+  --qa-cream: #f2ede1;
+  --qa-paper: #f8f4ea;
+  --qa-ink: #2c2a24;
+  --qa-clay: #b8763e;
+  --qa-sand: #d3a06c;
+  --qa-night: #201f1a;
+  --qa-night-raised: #29281f;
+
+  --qa-bg: var(--qa-cream);
+  --qa-surface: var(--qa-paper);
+  --qa-surface-alt: #ebe5d7;
+  --qa-text: var(--qa-ink);
+  --qa-title: var(--qa-pine);
+  --qa-accent: var(--qa-clay);
+  --qa-line: rgba(42, 54, 38, 0.14);
+  --qa-muted: rgba(44, 42, 36, 0.62);
+  --qa-hatch: rgba(42, 54, 38, 0.1);
+  --qa-error: #a13d33;
+  --qa-error-bg: rgba(161, 61, 51, 0.08);
+
+  /* Botón principal */
+  --qa-btn-bg: var(--qa-pine);
+  --qa-btn-text: var(--qa-cream);
+  --qa-btn-hover: var(--qa-clay);
+  --qa-btn-hover-text: var(--qa-cream);
+
+  /* Color de cada origen de reserva */
+  --ar-web: var(--qa-pine);
+  --ar-airbnb: #a4545b;
+  --ar-booking: #3b5d84;
+  --ar-owner: #8e8e6c;
+  --ar-direct: var(--qa-clay);
+  --ar-on-source: var(--qa-paper);
+
+  --qa-pad-x: clamp(1.25rem, 6vw, 6rem);
+  --qa-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  padding: clamp(6.5rem, 12vh, 9rem) var(--qa-pad-x) clamp(4rem, 9vh, 7rem);
+  background-color: var(--qa-bg);
+  color: var(--qa-text);
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
 }
 
+.ar-page.theme-dark {
+  --qa-bg: var(--qa-night);
+  --qa-surface: var(--qa-night-raised);
+  --qa-surface-alt: #302f25;
+  --qa-text: #ece4d3;
+  --qa-title: var(--qa-sand);
+  --qa-accent: var(--qa-sand);
+  --qa-line: rgba(242, 237, 225, 0.12);
+  --qa-muted: rgba(236, 228, 211, 0.6);
+  --qa-hatch: rgba(242, 237, 225, 0.07);
+  --qa-error: #e48b7f;
+  --qa-error-bg: rgba(228, 139, 127, 0.1);
+
+  --qa-btn-bg: var(--qa-sand);
+  --qa-btn-text: var(--qa-night);
+  --qa-btn-hover: var(--qa-cream);
+  --qa-btn-hover-text: var(--qa-night);
+
+  --ar-web: #5f7a52;
+  --ar-airbnb: #b9636a;
+  --ar-booking: #5679a1;
+  --ar-owner: #85856a;
+  --ar-direct: #b8763e;
+  --ar-on-source: var(--qa-paper);
+}
+
+.ar-page * {
+  box-sizing: border-box;
+}
+
+.ar-page button:focus-visible {
+  outline: 2px solid var(--qa-accent);
+  outline-offset: 3px;
+}
+
+.ar-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+/* ==========================================================
+   CABECERA
+   ========================================================== */
+
 .ar-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #d8d2c4;
-    padding-top: 80px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--qa-line);
 }
 
 .ar-title {
-    margin: 0;
-    font-family: 'Playfair Display', serif;
-    font-size: 40px;
-    font-weight: 500;
-    line-height: 1.1;
-    color: #1F4A2C;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 5.2vw, 4.2rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--qa-title);
+  margin: 0;
 }
 
 .ar-subtitle {
-    margin: 6px 0 0;
-    font-size: 16px;
-    color: #6b6e63;
+  font-weight: 300;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--qa-muted);
+  margin: 0.75rem 0 0;
 }
 
 .ar-sync {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
 .ar-sync-status {
-    margin: 0;
-    font-size: 14px;
-    color: #6b6e63;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: var(--qa-muted);
+  margin: 0;
 }
 
 .ar-sync-status--error {
-    color: #a13d33;
+  color: var(--qa-error);
 }
 
 .ar-sync-btn {
-    font-family: 'Jost', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    padding: 10px 20px;
-    border: 1px solid #1F4A2C;
-    border-radius: 999px;
-    background: #1F4A2C;
-    color: #f7f5f0;
-    cursor: pointer;
-    transition: background 0.2s ease;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--qa-btn-text);
+  background-color: var(--qa-btn-bg);
+  border: none;
+  padding: 0.9rem 1.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.4s var(--qa-ease), color 0.4s var(--qa-ease), opacity 0.3s ease;
 }
 
 .ar-sync-btn:hover:not(:disabled) {
-    background: #163821;
+  background-color: var(--qa-btn-hover);
+  color: var(--qa-btn-hover-text);
 }
 
 .ar-sync-btn:disabled {
-    opacity: 0.6;
-    cursor: wait;
-}
-
-.ar-sync-btn:focus-visible,
-.ar-tab:focus-visible {
-    outline: 2px solid #8E8E6C;
-    outline-offset: 3px;
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .ar-alert {
-    margin: 16px 0 0;
-    padding: 12px 16px;
-    border-left: 3px solid #a13d33;
-    background: #f6e9e6;
-    color: #7c2d25;
-    font-size: 15px;
+  margin: 1.25rem 0 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 3px solid var(--qa-error);
+  background-color: var(--qa-error-bg);
+  color: var(--qa-error);
+  font-size: 0.95rem;
 }
 
+/* ==========================================================
+   PESTAÑAS
+   ========================================================== */
+
 .ar-tabs {
-    display: flex;
-    gap: 28px;
-    margin: 24px 0 28px;
+  display: flex;
+  gap: 2rem;
+  margin: 2.25rem 0 2rem;
 }
 
 .ar-tab {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    padding: 0 0 6px;
-    border: none;
-    border-bottom: 2px solid transparent;
-    background: none;
-    color: #6b6e63;
-    cursor: pointer;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--qa-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0 0 0.4rem;
+  cursor: pointer;
+  transition: color 0.4s var(--qa-ease), border-color 0.4s var(--qa-ease);
+}
+
+.ar-tab:hover {
+  color: var(--qa-title);
 }
 
 .ar-tab--active {
-    color: #1F4A2C;
-    border-bottom-color: #1F4A2C;
+  color: var(--qa-title);
+  border-bottom-color: var(--qa-accent);
 }
 
-@media (max-width: 640px) {
-    .ar-page {
-        padding: 28px 16px 48px;
-    }
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
 
-    .ar-title {
-        font-size: 32px;
-    }
+@media (max-width: 720px) {
+  .ar-sync {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
 
-    .ar-sync {
-        width: 100%;
-        justify-content: space-between;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .ar-page * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
