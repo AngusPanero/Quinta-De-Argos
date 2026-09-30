@@ -1,0 +1,125 @@
+/* ---------- Página de reservas (admin) ---------- */
+.ar-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    font-family: 'Jost', sans-serif;
+    color: #23281f;
+}
+
+.ar-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #d8d2c4;
+    padding-top: 80px;
+}
+
+.ar-title {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: #1F4A2C;
+}
+
+.ar-subtitle {
+    margin: 6px 0 0;
+    font-size: 16px;
+    color: #6b6e63;
+}
+
+.ar-sync {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ar-sync-status {
+    margin: 0;
+    font-size: 14px;
+    color: #6b6e63;
+}
+
+.ar-sync-status--error {
+    color: #a13d33;
+}
+
+.ar-sync-btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border: 1px solid #1F4A2C;
+    border-radius: 999px;
+    background: #1F4A2C;
+    color: #f7f5f0;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.ar-sync-btn:hover:not(:disabled) {
+    background: #163821;
+}
+
+.ar-sync-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.ar-sync-btn:focus-visible,
+.ar-tab:focus-visible {
+    outline: 2px solid #8E8E6C;
+    outline-offset: 3px;
+}
+
+.ar-alert {
+    margin: 16px 0 0;
+    padding: 12px 16px;
+    border-left: 3px solid #a13d33;
+    background: #f6e9e6;
+    color: #7c2d25;
+    font-size: 15px;
+}
+
+.ar-tabs {
+    display: flex;
+    gap: 28px;
+    margin: 24px 0 28px;
+}
+
+.ar-tab {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    padding: 0 0 6px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: #6b6e63;
+    cursor: pointer;
+}
+
+.ar-tab--active {
+    color: #1F4A2C;
+    border-bottom-color: #1F4A2C;
+}
+
+@media (max-width: 640px) {
+    .ar-page {
+        padding: 28px 16px 48px;
+    }
+
+    .ar-title {
+        font-size: 32px;
+    }
+
+    .ar-sync {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
