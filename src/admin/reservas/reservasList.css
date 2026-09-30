@@ -1,0 +1,270 @@
+/* ---------- Listado de reservas ---------- */
+.rl-wrap {
+    font-family: 'Jost', sans-serif;
+    color: #23281f;
+}
+
+.rl-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.rl-scopes {
+    display: flex;
+    border: 1px solid #d8d2c4;
+    border-radius: 999px;
+    padding: 3px;
+    background: #f7f5f0;
+}
+
+.rl-scope {
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    padding: 7px 16px;
+    border: none;
+    border-radius: 999px;
+    background: none;
+    color: #6b6e63;
+    cursor: pointer;
+}
+
+.rl-scope--active {
+    background: #1F4A2C;
+    color: #f7f5f0;
+}
+
+.rl-sources {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rl-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    padding: 6px 12px;
+    border: 1px solid #d8d2c4;
+    border-radius: 999px;
+    background: #fbfaf7;
+    color: #23281f;
+    cursor: pointer;
+}
+
+.rl-chip--on {
+    border-color: #23281f;
+    background: #eeeae2;
+}
+
+.rl-chip-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.rl-chip--web .rl-chip-dot { background: #1F4A2C; }
+.rl-chip--airbnb .rl-chip-dot { background: #b04a52; }
+.rl-chip--booking .rl-chip-dot { background: #2c5b8c; }
+.rl-chip--owner .rl-chip-dot { background: #8E8E6C; }
+.rl-chip--direct .rl-chip-dot { background: #7a5c3e; }
+
+.rl-scope:focus-visible,
+.rl-chip:focus-visible,
+.rl-row:focus-visible {
+    outline: 2px solid #8E8E6C;
+    outline-offset: 2px;
+}
+
+.rl-count {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: #6b6e63;
+}
+
+.rl-empty,
+.rl-error {
+    margin: 24px 0;
+    font-size: 16px;
+    color: #6b6e63;
+}
+
+.rl-error {
+    padding: 12px 16px;
+    border-left: 3px solid #a13d33;
+    background: #f6e9e6;
+    color: #7c2d25;
+}
+
+.rl-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid #d8d2c4;
+}
+
+.rl-item {
+    border-bottom: 1px solid #d8d2c4;
+    border-left: 4px solid transparent;
+}
+
+.rl-item--web { border-left-color: #1F4A2C; }
+.rl-item--airbnb { border-left-color: #b04a52; }
+.rl-item--booking { border-left-color: #2c5b8c; }
+.rl-item--owner { border-left-color: #8E8E6C; }
+.rl-item--direct { border-left-color: #7a5c3e; }
+
+.rl-item--open {
+    background: #f7f5f0;
+}
+
+.rl-row {
+    display: grid;
+    grid-template-columns: minmax(200px, 1.3fr) minmax(140px, 1.4fr) auto 110px;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 16px 18px;
+    border: none;
+    background: none;
+    font-family: 'Jost', sans-serif;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+}
+
+.rl-row:hover {
+    background: #f7f5f0;
+}
+
+.rl-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rl-dates-range {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: #1F4A2C;
+}
+
+.rl-dates-nights {
+    font-size: 14px;
+    color: #6b6e63;
+}
+
+.rl-guest {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.rl-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.rl-pill {
+    font-size: 13px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    color: #fbfaf7;
+}
+
+.rl-pill--web { background: #1F4A2C; }
+.rl-pill--airbnb { background: #b04a52; }
+.rl-pill--booking { background: #2c5b8c; }
+.rl-pill--owner { background: #8E8E6C; }
+.rl-pill--direct { background: #7a5c3e; }
+
+.rl-pill--cancelled {
+    background: none;
+    border: 1px solid #a13d33;
+    color: #a13d33;
+}
+
+.rl-pill--request {
+    background: none;
+    border: 1px solid #7a5c3e;
+    color: #7a5c3e;
+}
+
+.rl-price {
+    font-size: 16px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.rl-detail {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px 28px;
+    margin: 0;
+    padding: 4px 18px 22px 18px;
+}
+
+.rl-field {
+    margin: 0;
+}
+
+.rl-field--wide {
+    grid-column: 1 / -1;
+}
+
+.rl-field dt {
+    font-size: 13px;
+    color: #6b6e63;
+    margin-bottom: 3px;
+}
+
+.rl-field dd {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.rl-net {
+    display: block;
+    font-size: 13px;
+    color: #6b6e63;
+}
+
+.rl-ref {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+
+.rl-comments {
+    white-space: pre-line;
+    max-width: 75ch;
+}
+
+@media (max-width: 760px) {
+    .rl-row {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "dates price"
+            "guest guest"
+            "pills pills";
+        gap: 6px 12px;
+    }
+
+    .rl-dates { grid-area: dates; }
+    .rl-guest { grid-area: guest; }
+    .rl-pills { grid-area: pills; }
+    .rl-price { grid-area: price; align-self: start; }
+
+    .rl-scopes {
+        width: 100%;
+    }
+
+    .rl-scope {
+        flex: 1;
+    }
+}
