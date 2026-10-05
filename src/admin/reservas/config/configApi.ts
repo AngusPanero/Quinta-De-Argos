@@ -1,6 +1,6 @@
 import axios from "axios";
 import type {
-    ApiError, CalendarPreview, CalendarRequest, CalendarSummary,
+    ApiError, CalendarPreview, CalendarRequest, CalendarSummary, CalendarViewResponse,
     ConfigResponse, FieldChange, FormSection, Values,
 } from "./configTypes";
 
@@ -45,5 +45,10 @@ export async function previewSection(section: FormSection, values: Values): Prom
 
 export async function applySection(section: FormSection, values: Values, pin: string): Promise<{ applied: number; config: ConfigResponse }> {
     const { data } = await axios.post(`${API}/api/admin/config/${section}`, { values, pin }, opts);
+    return data;
+}
+
+export async function fetchCalendarView(from: string, to: string): Promise<CalendarViewResponse> {
+    const { data } = await axios.get(`${API}/api/admin/config/calendario`, { ...opts, params: { from, to } });
     return data;
 }

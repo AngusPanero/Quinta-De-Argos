@@ -2,12 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import { UseTheme } from "../../../contexts/ThemeContext";
 import ConfigCalendario from "./ConfigCalendario";
 import ConfigForm from "./ConfigForm";
+import ConfigVista, { type ViewMonth } from "./ConfigVista";
 import { fetchConfig, toApiError } from "./configApi";
-import type { ConfigResponse } from "./configTypes";
+import type { ConfigResponse, DateRange } from "./configTypes";
 import "./configQuinta.css";
 
 const TABS = [
-    { id: "calendario", label: "Precios y fechas" },
+    { id: "vista", label: "Calendario" },
+    { id: "calendario", label: "Cambiar precios y fechas" },
     { id: "reglas", label: "Reglas de la casa" },
     { id: "propiedad", label: "Datos y políticas" },
 ] as const;
@@ -32,6 +34,13 @@ export default function ConfigQuinta() {
     const [config, setConfig] = useState<ConfigResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    // Mes que se ve en el calendario: se mantiene al cambiar de pestaña
+    const [viewMonth, setViewMonth] = useState<ViewMonth>(() => {
+        const now = new Date();
+        return { year: now.getFullYear(), month: now.getMonth() };
+    });
+    // Fechas que llegan desde "Cambiar este día"; el nonce reinicia el formulario
+    const [prefill, setPrefill] = useState<{ range: DateRange; nonce: number } | null>(null);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -54,6 +63,11 @@ export default function ConfigQuinta() {
         } catch {
             // Sin storage: cambia igual, solo no se recuerda
         }
+    };
+
+    const editRange = (range: DateRange) => {
+        setPrefill({ range, nonce: Date.now() });
+        selectTab("calendario");
     };
 
     return (
@@ -92,7 +106,25 @@ export default function ConfigQuinta() {
 
                 {config && (
                     <div role="tabpanel">
-                        {tab === "calendario" && <ConfigCalendario options={config.calendario} />}
+                        {tab === "vista" && (
+                            <ConfigVista
+                                today={config.calendario.today}
+                                defaults={{
+                                    minStay: typeof config.reglas.values.minStay === "number" ? config.reglas.values.minStay : null,
+                                    maxStay: typeof config.reglas.values.maxStay === "number" ? config.reglas.values.maxStay : null,
+                                }}
+                                month={viewMonth}
+                                onMonthChange={setViewMonth}
+                                onEdit={editRange}
+                            />
+                        )}
+                        {tab === "calendario" && (
+                            <ConfigCalendario
+                                key={prefill?.nonce ?? "base"}
+                                options={config.calendario}
+                                initialRange={prefill?.range ?? null}
+                            />
+                        )}
                         {tab === "reglas" && (
                             <ConfigForm
                                 section="reglas"

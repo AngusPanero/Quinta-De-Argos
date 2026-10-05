@@ -47,3 +47,46 @@ export function displayValue(field: FieldDef | undefined, value: FieldValue): st
 }
 
 export const toFormString = (value: FieldValue) => (value === null || value === undefined ? "" : String(value));
+
+// ---------- Vista mensual ----------
+const pad = (n: number) => String(n).padStart(2, "0");
+
+// month: 0-11
+export const toISO = (year: number, month: number, day: number) => `${year}-${pad(month + 1)}-${pad(day)}`;
+
+// Grilla del mes empezando en lunes, con las semanas justas
+export function monthGrid(year: number, month: number): string[] {
+    const first = new Date(Date.UTC(year, month, 1));
+    const offset = (first.getUTCDay() + 6) % 7;
+    const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    const cells = Math.ceil((offset + daysInMonth) / 7) * 7;
+    const start = addDays(toISO(year, month, 1), -offset);
+    return Array.from({ length: cells }, (_, i) => addDays(start, i));
+}
+
+const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+export const monthLabel = (year: number, month: number) => `${MONTHS[month]} ${year}`;
+
+const longFmt = new Intl.DateTimeFormat("es-ES", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
+});
+export const formatLongDate = (iso: string) => longFmt.format(new Date(`${iso}T00:00:00Z`));
+
+export const SOURCE_LABEL: Record<string, string> = {
+    web: "Web",
+    airbnb: "Airbnb",
+    booking: "Booking",
+    owner: "Uso propio",
+    direct: "Directa",
+};
+
+// Qué significa cada estado para el huésped
+export const OVERRIDE_HELP: Record<string, string> = {
+    none: "Se puede reservar.",
+    blackout: "No se puede reservar.",
+    noCheckIn: "No se puede llegar este día, pero sí quedarse si se llegó antes.",
+    noCheckOut: "No se puede salir este día.",
+    noCheckInOrCheckOut: "No se puede llegar ni salir este día.",
+};

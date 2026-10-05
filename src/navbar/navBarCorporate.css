@@ -83,10 +83,10 @@
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  font-family: var(--qa-font-display);
-  font-weight: 500;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  font-family: "helvetica neue";
+  font-weight: 400;
+  font-size: 0.76rem;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
   color: var(--qa-nav-text-soft);
   text-decoration: none;

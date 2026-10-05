@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import SignModal from "./SignModal";
 import { applyCalendar, previewCalendar, toApiError } from "./configApi";
 import { OVERRIDE_STATE, WEEKDAYS, addDays, formatDate, weekdayList } from "./configUtils";
-import type { CalendarOptions, CalendarPreview, CalendarRequest } from "./configTypes";
+import type { CalendarOptions, CalendarPreview, CalendarRequest, DateRange } from "./configTypes";
 
 type PriceMode = "none" | "fixed" | "percent";
 
@@ -14,12 +14,13 @@ const PRESETS = [
 
 interface Props {
     options: CalendarOptions;
+    initialRange?: DateRange | null;   // viene del calendario al tocar "Cambiar este día"
 }
 
-export default function ConfigCalendario({ options }: Props) {
+export default function ConfigCalendario({ options, initialRange }: Props) {
     const { today, limits, overrides } = options;
-    const [from, setFrom] = useState(today);
-    const [to, setTo] = useState(addDays(today, 6));
+    const [from, setFrom] = useState(initialRange?.from ?? today);
+    const [to, setTo] = useState(initialRange?.to ?? addDays(today, 6));
     const [weekdays, setWeekdays] = useState<number[]>([1, 2, 3, 4, 5, 6, 7]);
     const [priceMode, setPriceMode] = useState<PriceMode>("none");
     const [priceValue, setPriceValue] = useState("");

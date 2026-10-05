@@ -38,6 +38,14 @@
   --qa-btn-hover: var(--qa-clay);
   --qa-btn-hover-text: var(--qa-cream);
 
+  /* Color de cada origen de reserva (igual que en Reservas) */
+  --cq-web: var(--qa-pine);
+  --cq-airbnb: #a4545b;
+  --cq-booking: #3b5d84;
+  --cq-owner: #8e8e6c;
+  --cq-direct: var(--qa-clay);
+  --qa-hatch: rgba(42, 54, 38, 0.12);
+
   --qa-pad-x: clamp(1rem, 3vw, 2.5rem);
   --qa-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -77,6 +85,13 @@
   --qa-btn-text: var(--qa-night);
   --qa-btn-hover: var(--qa-cream);
   --qa-btn-hover-text: var(--qa-night);
+
+  --cq-web: #5f7a52;
+  --cq-airbnb: #b9636a;
+  --cq-booking: #5679a1;
+  --cq-owner: #85856a;
+  --cq-direct: #b8763e;
+  --qa-hatch: rgba(242, 237, 225, 0.08);
 }
 
 .cq-page *,
@@ -643,6 +658,336 @@
   margin-top: 1.5rem;
 }
 
+/* ---------- Calendario (vista mensual) ---------- */
+
+.cq-cv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.cq-cv-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cq-cv-month {
+  margin: 0;
+  min-width: 11rem;
+  text-align: center;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  letter-spacing: -0.01em;
+  color: var(--qa-title);
+}
+
+.cq-cv-month::first-letter {
+  text-transform: uppercase;
+}
+
+.cq-cv-nav-btn {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1px solid var(--qa-line-strong);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--qa-text);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.3s var(--qa-ease), color 0.3s var(--qa-ease), border-color 0.3s var(--qa-ease);
+}
+
+.cq-cv-nav-btn:hover {
+  background-color: var(--qa-title);
+  border-color: var(--qa-title);
+  color: var(--qa-bg);
+}
+
+.cq-cv-today {
+  padding: 0.55rem 1.2rem;
+}
+
+.cq-cv-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+  font-weight: 300;
+  font-size: 0.86rem;
+  color: var(--qa-muted);
+}
+
+.cq-cv-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.cq-cv-legend-item::before {
+  content: "";
+  width: 16px;
+  height: 11px;
+  border-radius: 2px;
+  border: 1px solid var(--qa-line);
+}
+
+.cq-cv-legend-item--heat::before {
+  background: linear-gradient(90deg, var(--qa-surface), color-mix(in srgb, var(--qa-accent) 40%, var(--qa-surface)));
+}
+
+.cq-cv-legend-item--booked::before {
+  background-color: var(--qa-surface);
+  box-shadow: inset 0 -4px 0 var(--cq-web);
+}
+
+.cq-cv-legend-item--restricted::before {
+  background-color: var(--qa-surface);
+  box-shadow: inset 3px 0 0 var(--qa-accent);
+}
+
+.cq-cv-legend-item--closed::before {
+  background:
+    repeating-linear-gradient(135deg, var(--qa-hatch) 0 3px, transparent 3px 6px),
+    var(--qa-surface);
+}
+
+.cq-cv-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid var(--qa-line);
+  border-left: 1px solid var(--qa-line);
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--qa-surface);
+  transition: opacity 0.3s ease;
+}
+
+.cq-cv-grid--loading {
+  opacity: 0.5;
+}
+
+.cq-cv-weekday {
+  padding: 0.5rem 0.6rem;
+  border-right: 1px solid var(--qa-line);
+  border-bottom: 1px solid var(--qa-line);
+  background-color: var(--qa-surface-alt);
+  font-weight: 500;
+  font-size: 0.82rem;
+  color: var(--qa-muted);
+}
+
+.cq-cv-cell {
+  --cq-heat: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  min-width: 0;
+  min-height: 92px;
+  padding: 0.45rem 0.55rem 0.6rem;
+  border: none;
+  border-right: 1px solid var(--qa-line);
+  border-bottom: 1px solid var(--qa-line);
+  background-color: var(--qa-surface);
+  background-color: color-mix(in srgb, var(--qa-accent) calc(var(--cq-heat) * 26%), var(--qa-surface));
+  color: var(--qa-text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.25s var(--qa-ease);
+}
+
+.cq-cv-cell:hover {
+  box-shadow: inset 0 0 0 1px var(--qa-line-strong);
+}
+
+.cq-cv-daynum {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--qa-muted);
+}
+
+.cq-cv-cell--today .cq-cv-daynum {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--qa-btn-bg);
+  color: var(--qa-btn-text);
+}
+
+.cq-cv-price {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.15;
+  color: var(--qa-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.cq-cv-min {
+  font-size: 0.8rem;
+  color: var(--qa-muted);
+}
+
+.cq-cv-flag {
+  margin-top: auto;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--qa-accent);
+  line-height: 1.2;
+}
+
+.cq-cv-cell--outside {
+  background-color: var(--qa-bg);
+}
+
+.cq-cv-cell--outside > * {
+  opacity: 0.4;
+}
+
+.cq-cv-cell--past > * {
+  opacity: 0.5;
+}
+
+.cq-cv-cell--restricted {
+  box-shadow: inset 3px 0 0 var(--qa-accent);
+}
+
+.cq-cv-cell--closed {
+  background:
+    repeating-linear-gradient(135deg, var(--qa-hatch) 0 4px, transparent 4px 8px),
+    var(--qa-surface);
+}
+
+.cq-cv-cell--closed .cq-cv-price {
+  color: var(--qa-muted);
+}
+
+/* Noche reservada: franja inferior del color del origen */
+.cq-cv-cell--booked::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background-color: var(--cq-web);
+}
+
+.cq-cv-cell--airbnb::after { background-color: var(--cq-airbnb); }
+.cq-cv-cell--booking::after { background-color: var(--cq-booking); }
+.cq-cv-cell--owner::after { background-color: var(--cq-owner); }
+.cq-cv-cell--direct::after { background-color: var(--cq-direct); }
+
+.cq-cv-cell--selected {
+  z-index: 1;
+  box-shadow: inset 0 0 0 2px var(--qa-title);
+}
+
+.cq-cv-cell--selected.cq-cv-cell--restricted {
+  box-shadow: inset 0 0 0 2px var(--qa-title), inset 5px 0 0 var(--qa-accent);
+}
+
+/* ---------- Detalle del día ---------- */
+
+.cq-cv-detail {
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--qa-line);
+  border-left: 3px solid var(--qa-accent);
+  border-radius: 6px;
+  background-color: var(--qa-surface);
+}
+
+.cq-cv-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cq-cv-detail-date {
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.35rem;
+  color: var(--qa-title);
+}
+
+.cq-cv-detail-date::first-letter {
+  text-transform: uppercase;
+}
+
+.cq-cv-close {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--qa-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cq-cv-close:hover {
+  background-color: var(--qa-surface-alt);
+}
+
+.cq-cv-detail-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+  gap: 1rem 1.75rem;
+  margin: 0;
+}
+
+.cq-cv-detail-list > div {
+  margin: 0;
+}
+
+.cq-cv-detail-wide {
+  grid-column: 1 / -1;
+}
+
+.cq-cv-detail-list dt {
+  margin-bottom: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--qa-muted);
+}
+
+.cq-cv-detail-list dd {
+  margin: 0;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.cq-cv-sub {
+  display: block;
+  margin-top: 0.15rem;
+  font-weight: 300;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--qa-muted);
+}
+
+.cq-cv-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
 /* ---------- Responsive (mide el contenedor, no la pantalla) ---------- */
 
 @container cq-page (max-width: 640px) {
@@ -665,6 +1010,38 @@
   .cq-input-wrap--short,
   .cq-input--short {
     max-width: none;
+  }
+
+  .cq-cv-month {
+    min-width: 0;
+    font-size: 1.2rem;
+  }
+
+  .cq-cv-cell {
+    min-height: 62px;
+    padding: 0.3rem 0.3rem 0.5rem;
+  }
+
+  .cq-cv-weekday {
+    padding: 0.4rem 0.2rem;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .cq-cv-daynum {
+    font-size: 0.75rem;
+  }
+
+  .cq-cv-price {
+    font-size: 0.82rem;
+  }
+
+  .cq-cv-min {
+    font-size: 0.68rem;
+  }
+
+  .cq-cv-flag {
+    display: none;
   }
 }
 

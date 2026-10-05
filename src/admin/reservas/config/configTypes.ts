@@ -105,3 +105,33 @@ export interface ApiError {
     errors?: Record<string, string>;
     remaining?: number;
 }
+
+// ---------- Vista mensual ----------
+export type BookingSource = "web" | "airbnb" | "booking" | "owner" | "direct";
+
+export interface CalendarViewDay extends CalendarDayState {
+    date: string;
+}
+
+export interface CalendarViewBooking {
+    beds24Id: number;
+    status: string;
+    source: BookingSource;
+    arrival: string;
+    departure: string;
+    nights: number;
+    numAdult: number;
+    numChild: number;
+    firstName?: string | null;
+    lastName?: string | null;
+}
+
+export interface CalendarViewResponse {
+    days: CalendarViewDay[];
+    bookings: CalendarViewBooking[];
+}
+
+export interface DateRange {
+    from: string;
+    to: string;
+}

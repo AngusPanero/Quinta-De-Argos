@@ -1,0 +1,186 @@
+/* ==========================================================
+   Calendario Visual Interactivo (Visor Mensual)
+   ========================================================== */
+
+.cq-cal-container {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 1px solid var(--qa-line);
+  border-radius: 10px;
+  background-color: var(--qa-surface);
+}
+
+.cq-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--qa-line);
+}
+
+.cq-cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cq-cal-title {
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--qa-title);
+}
+
+.cq-cal-nav-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  font-size: 1.2rem;
+  line-height: 1;
+  border-radius: 50%;
+}
+
+.cq-cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.cq-cal-weekday {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--qa-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0;
+}
+
+.cq-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.4rem;
+}
+
+.cq-cal-cell {
+  position: relative;
+  min-height: 72px;
+  padding: 0.4rem 0.45rem;
+  border: 1px solid var(--qa-line);
+  border-radius: 6px;
+  background-color: var(--qa-bg);
+  color: var(--qa-text);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s var(--qa-ease), border-color 0.2s var(--qa-ease), box-shadow 0.2s var(--qa-ease);
+}
+
+.cq-cal-cell--disabled {
+  opacity: 0.35;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+button.cq-cal-cell--active {
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+}
+
+button.cq-cal-cell--active:hover {
+  border-color: var(--qa-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cq-cal-day-num {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--qa-text);
+}
+
+.cq-cal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cq-cal-price {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--qa-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.cq-cal-noprice {
+  font-size: 0.75rem;
+  color: var(--qa-muted);
+  font-style: italic;
+}
+
+.cq-cal-minstay {
+  font-size: 0.72rem;
+  color: var(--qa-muted);
+  background-color: var(--qa-surface-alt);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  width: fit-content;
+}
+
+.cq-cal-modal {
+  width: min(480px, 100%);
+}
+
+.cq-cal-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.cq-cal-close {
+  padding: 0.2rem 0.6rem;
+  border-radius: 50%;
+  font-size: 0.9rem;
+}
+
+.cq-cal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--qa-line);
+  border-radius: 6px;
+  background-color: var(--qa-surface);
+}
+
+.cq-cal-detail-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.92rem;
+  border-bottom: 1px dashed var(--qa-line);
+  padding-bottom: 0.5rem;
+}
+
+.cq-cal-detail-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+@container cq-page (max-width: 640px) {
+  .cq-cal-cell {
+    min-height: 58px;
+    padding: 0.25rem;
+  }
+  .cq-cal-minstay {
+    display: none; /* Ocultar el tag en móviles muy pequeños */
+  }
+}
