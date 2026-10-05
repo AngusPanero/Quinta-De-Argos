@@ -263,6 +263,10 @@
   -webkit-box-orient: vertical;
 }
 
+span.rc-guest{
+  text-transform: uppercase;
+}
+
 /* ---------- Detalle de la reserva seleccionada ---------- */
 
 .rc-detail {
@@ -287,6 +291,7 @@
 }
 
 .rc-detail-name {
+  text-transform: uppercase;
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 600;
   font-size: 1.6rem;

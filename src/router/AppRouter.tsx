@@ -15,7 +15,7 @@ import Gallery from "../galeria/Gallery";
 import Experiences from "../experiencias/Experiences";
 import Cookies from "../cookies/Cookies";
 import Loader from "../loader/Loader";
-import AdminReservas from "../admin/reservas/AdminReservas";
+import AdminDashboard from "../admin/AdminDashboard";
 
 const AppRouter = () => {
     return (
@@ -36,8 +36,7 @@ const AppRouter = () => {
                     <Route path="/error" element={<Error errorMessage="Error 404: Página no encontrada" />} />
                     <Route path="/ok" element={<ProcessOk processMessage="Proceso completado con éxito" />} />
                     {/* Tiene Acceso solo el admin con la prop pasada */}
-                    <Route path="/admin" element={<PrivateRoute adminOnly={true}><AdminReservas /></PrivateRoute>} />
-                    {/* <Route path="/admin" element={<AdminDashboard />} /> */}
+                    <Route path="/admin" element={<PrivateRoute adminOnly={true}><AdminDashboard /></PrivateRoute>} />
                 </Routes>
                 <Footer />
             </SessionProvider>
