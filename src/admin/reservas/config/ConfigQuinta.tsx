@@ -3,6 +3,7 @@ import { UseTheme } from "../../../contexts/ThemeContext";
 import ConfigCalendario from "./ConfigCalendario";
 import ConfigForm from "./ConfigForm";
 import ConfigVista, { type ViewMonth } from "./ConfigVista";
+import ConfigCanales from "./ConfigCanales";
 import { fetchConfig, toApiError } from "./configApi";
 import type { ConfigResponse, DateRange } from "./configTypes";
 import "./configQuinta.css";
@@ -12,6 +13,7 @@ const TABS = [
     { id: "calendario", label: "Cambiar precios y fechas" },
     { id: "reglas", label: "Reglas de la casa" },
     { id: "propiedad", label: "Datos y políticas" },
+    { id: "canales", label: "Canales" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -134,6 +136,7 @@ export default function ConfigQuinta() {
                                 onApplied={setConfig}
                             />
                         )}
+                        {tab === "canales" && <ConfigCanales />}
                         {tab === "propiedad" && (
                             <ConfigForm
                                 section="propiedad"
