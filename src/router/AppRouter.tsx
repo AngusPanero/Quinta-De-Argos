@@ -16,6 +16,8 @@ import Experiences from "../experiencias/Experiences";
 import Cookies from "../cookies/Cookies";
 import Loader from "../loader/Loader";
 import AdminDashboard from "../admin/AdminDashboard";
+import PoliticaPrivacidad from "../Politicas Privacidad y Reservas/PoliticasPrivacidad";
+import CondicionesReserva from "../Politicas Privacidad y Reservas/CondicionesReserva";
 
 const AppRouter = () => {
     return (
@@ -30,7 +32,9 @@ const AppRouter = () => {
                     <Route path="/contact" element={<ContactCorporate />} />
                     <Route path="/reservations" element={<Reservations />} />
                     <Route path="/checkout" element={<Checkout />} />
-                    <Route path="/policy" element={<PoliticaCookiesCorporate />} />
+                    <Route path="/policy-cookies" element={<PoliticaCookiesCorporate />} />
+                    <Route path="/policy-privacy" element={<PoliticaPrivacidad />} />
+                    <Route path="/policy-terms" element={<CondicionesReserva />} />
                     <Route path="/*" element={<Error404 />} />
                     <Route path="/loader" element={<Loader />} />
                     <Route path="/error" element={<Error errorMessage="Error 404: Página no encontrada" />} />

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import './reservasWebTab.css';
 import ReservaDetalleModal from './ReservaDetalleModal';
+import { UseTheme } from '../../contexts/ThemeContext';
 import {
   API_BASE,
   API_CONFIG,
@@ -22,7 +23,8 @@ import {
  * página) se hacen aquí, en el front.
  *
  * Uso en el dashboard:
- *   <ReservasWebTab theme={theme} />
+ *   <ReservasWebTab />
+ * El tema (claro/oscuro) se lee de UseTheme, como en el resto de la web.
  *
  * Las peticiones usan API_CONFIG (reservasWebTypes.ts).
  */
@@ -88,11 +90,10 @@ function cumpleFiltros(r: ReservaWeb, f: Filtros): boolean {
   return true;
 }
 
-interface ReservasWebTabProps {
-  theme?: 'light' | 'dark';
-}
+const ReservasWebTab: React.FC = () => {
+  const themeContext = UseTheme() as { theme?: 'light' | 'dark' } | undefined;
+  const theme = themeContext?.theme ?? 'light';
 
-const ReservasWebTab: React.FC<ReservasWebTabProps> = ({ theme = 'light' }) => {
   const [reservas, setReservas] = useState<ReservaWeb[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

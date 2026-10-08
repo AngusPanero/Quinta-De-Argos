@@ -10,34 +10,7 @@ import { RESERVATION_STORAGE_KEY, type StoredReservation } from '../reservas/Res
 import { ADDONS, MAX_NIGHTS, MAX_GUESTS } from '../reservas/BookingConfig';
 import { formatDateLong, formatPrice, fromISODate, toISODate } from '../reservas/BookingDates';
 import { useAvailability, groupNightsByPrice } from '../reservas/useAvailability';
-import {
-  type DatosFacturacion,
-  type DireccionFacturacion,
-  DOCUMENTOS_POR_TIPO,
-  FACTURACION_VACIA,
-  PAISES,
-  type TipoDocumento,
-  type TipoFacturacion,
-  errorFacturacion,
-  esDocumentoValido,
-  normalizarDocumento,
-} from './datosFacturacion';
-
-/**
- * Checkout
- * ---------------------------------------------------------
- * Recibe la reserva armada en Reservations.tsx (por location.state
- * o, si el usuario refrescó la página, desde sessionStorage).
- * Permite editar fechas, huéspedes y adicionales antes de pagar.
- *
- * El precio que se muestra aquí es el que calcula el backend
- * (POST /api/reservas/presupuesto). Al pagar, el backend lo vuelve
- * a calcular en /intent con la disponibilidad en fresco de Beds24:
- * el front nunca envía importes.
- *
- * Pago con Stripe Payment Element (tarjeta, Link, etc. según lo
- * activado en el dashboard de Stripe).
- */
+import { type DatosFacturacion, type DireccionFacturacion, DOCUMENTOS_POR_TIPO, FACTURACION_VACIA, PAISES, type TipoDocumento, type TipoFacturacion, errorFacturacion, esDocumentoValido, normalizarDocumento } from './datosFacturacion';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -150,8 +123,8 @@ const SuccessMessage: React.FC<{ processing?: boolean; codigo?: string | null }>
 // TODO (Angus): poner aquí el titular real (nombre o razón social y NIF)
 // cuando tengamos la política de privacidad definitiva.
 const RESPONSABLE_TRATAMIENTO = 'el titular de Quinta de Argos';
-const URL_POLITICA_PRIVACIDAD = '/politica-privacidad';
-const URL_CONDICIONES_RESERVA = '/condiciones-reserva';
+const URL_POLITICA_PRIVACIDAD = '/policy-privacy';
+const URL_CONDICIONES_RESERVA = '/policy-terms';
 
 interface CheckoutFormProps {
   reservation: StoredReservation;
