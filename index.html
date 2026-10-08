@@ -2,30 +2,95 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logos/Isologo sin Fondo in Dibujo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <title>Quinta de Argos</title>
-<!--     <meta name="description" content="Quinta de Argos, tu inmobiliaria de confianza. Más de 10 años asesorando en compra, venta y alquiler de propiedades. Atención personalizada con Elizabeth Boggero, Martillera y Corredora Pública Mat. 1049." />
-    <meta name="keywords" content="inmobiliaria, propiedades, compra venta alquiler, casas, departamentos, terrenos, Elizabeth Boggero, martillera, corredora pública" /> -->
-    <meta name="author" content="Quinta de Argos" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://www.quintadeargos.com/" />
 
-    <!-- ── OPEN GRAPH (Facebook, WhatsApp, LinkedIn) ── -->
+    <!-- ── SEO básico ── -->
+    <title>Quinta de Argos · Finca con piscina infinity en Cehegín, Murcia</title>
+    <meta
+      name="description"
+      content="Finca rural de uso exclusivo en Cehegín (Murcia) para hasta 6 personas: piscina infinity, jardín de 7.000 m² y buhardilla con proyector. Reserva directa online."
+    />
+    <meta name="author" content="Quinta de Argos" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://www.quintadeargos.com/" />
+    <meta name="theme-color" content="#2a3626" />
+
+    <!-- ── Iconos (archivos en public/, sin espacios en el nombre) ── -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/logos/icon_logo_fav.jpeg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/logos/icon_logo_fav.jpeg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logos/icon_logo_fav.jpeg" />
+
+    <!-- ── Open Graph (WhatsApp, Facebook, LinkedIn) ── -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Quinta de Argos" />
-    <meta property="og:title" content="Quinta de Argos" />
-    <!-- <meta property="og:description" content="Más de 10 años asesorando en el mercado inmobiliario. Servicio profesional, claro y personalizado. Consultá sin compromiso." /> -->
-   <!--  <meta property="og:url" content="https://www.quintadeargos.com/" />
-    <meta property="og:image" content="https://www.quintadeargos.com/og-image.jpg" /> -->
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:url" content="https://www.quintadeargos.com/" />
+    <meta property="og:title" content="Quinta de Argos · Finca con piscina infinity en Cehegín, Murcia" />
+    <meta
+      property="og:description"
+      content="Una finca serena y de uso exclusivo para hasta 6 personas: piscina infinity, 7.000 m² de jardín y buhardilla con proyector. Reserva directa."
+    />
+    <meta property="og:image" content="https://www.quintadeargos.com/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="es_AR" />
-    <meta name="geo.region" content="AR" />
-    <meta name="geo.placename" content="[Ciudad], Argentina" />
+    <meta property="og:image:alt" content="Piscina infinity de Quinta de Argos con vistas al paisaje de Cehegín" />
+
+    <!-- ── Twitter / X ── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Quinta de Argos · Finca con piscina infinity en Cehegín, Murcia" />
+    <meta
+      name="twitter:description"
+      content="Finca de uso exclusivo para hasta 6 personas con piscina infinity y 7.000 m² de jardín en Cehegín (Murcia)."
+    />
+    <meta name="twitter:image" content="https://www.quintadeargos.com/og-image.jpg" />
+
+    <!-- ── Ubicación ── -->
+    <meta name="geo.region" content="ES-MU" />
+    <meta name="geo.placename" content="Cehegín, Murcia, España" />
+
+    <!-- ── Fuentes ── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- ── Datos estructurados (Google) ── -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LodgingBusiness",
+        "@id": "https://www.quintadeargos.com/#alojamiento",
+        "name": "Quinta de Argos",
+        "description": "Finca rural de uso exclusivo en Cehegín (Región de Murcia) para hasta 6 personas, con piscina infinity, jardín de 7.000 m² y buhardilla con proyector.",
+        "url": "https://www.quintadeargos.com/",
+        "image": ["https://www.quintadeargos.com/og-image.jpg"],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Cehegín",
+          "addressRegion": "Región de Murcia",
+          "postalCode": "30430",
+          "addressCountry": "ES"
+        },
+        "priceRange": "€€€",
+        "currenciesAccepted": "EUR",
+        "checkinTime": "17:00",
+        "checkoutTime": "12:00",
+        "amenityFeature": [
+          { "@type": "LocationFeatureSpecification", "name": "Piscina infinity", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Jardín de 7.000 m²", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Buhardilla con proyector", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Uso exclusivo de la finca", "value": true }
+        ],
+        "potentialAction": {
+          "@type": "ReserveAction",
+          "target": "https://www.quintadeargos.com/reservations"
+        }
+      }
+    </script>
   </head>
   <body>
+    <noscript>
+      Quinta de Argos es una finca rural de uso exclusivo en Cehegín (Murcia) para hasta 6 personas, con piscina
+      infinity y jardín de 7.000 m². Activa JavaScript para ver la web y reservar.
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

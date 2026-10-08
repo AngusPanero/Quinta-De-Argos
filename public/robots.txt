@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Páginas privadas o de proceso: no deben aparecer en Google
+Disallow: /checkout
+Disallow: /admin
+
+Sitemap: https://www.quintadeargos.com/sitemap.xml
