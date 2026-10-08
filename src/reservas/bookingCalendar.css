@@ -16,6 +16,8 @@
   border-color: rgba(242, 237, 225, 0.15);
 }
 
+/* ---------- Navegación de meses ---------- */
+
 .booking-calendar-nav {
   display: flex;
   align-items: center;
@@ -81,6 +83,8 @@
   color: #d3a06c;
 }
 
+/* ---------- Días de la semana ---------- */
+
 .booking-calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -101,10 +105,17 @@
   color: #ece4d3;
 }
 
+/* ---------- Rejilla ---------- */
+
 .booking-calendar-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
+}
+
+.booking-calendar-grid.is-loading .booking-calendar-day {
+  opacity: 0.35;
 }
 
 .booking-calendar-day-empty {
@@ -112,22 +123,33 @@
 }
 
 .booking-calendar-day {
+  position: relative;
   aspect-ratio: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: none;
+  gap: 1px;
+  border: 1px solid transparent;
   border-radius: 2px;
   background: transparent;
   font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
   font-size: 0.85rem;
+  line-height: 1.1;
   color: #2c2a24;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .theme-dark .booking-calendar-day {
   color: #ece4d3;
+}
+
+.booking-calendar-day-price {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.02em;
+  opacity: 0.55;
 }
 
 .booking-calendar-day:hover:not(.is-disabled) {
@@ -136,13 +158,86 @@
 }
 
 .booking-calendar-day.is-disabled {
-  color: rgba(44, 42, 36, 0.25);
   cursor: not-allowed;
 }
 
-.theme-dark .booking-calendar-day.is-disabled {
+/* ---------- Estados de disponibilidad ---------- */
+
+/* Ocupado: tachado sobre una trama diagonal suave */
+.booking-calendar-day.is-booked {
+  color: rgba(44, 42, 36, 0.38);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(42, 54, 38, 0.07) 0,
+    rgba(42, 54, 38, 0.07) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+}
+
+.booking-calendar-day.is-booked .booking-calendar-day-number {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.theme-dark .booking-calendar-day.is-booked {
+  color: rgba(236, 228, 211, 0.32);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(242, 237, 225, 0.06) 0,
+    rgba(242, 237, 225, 0.06) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+}
+
+/* Sin tarifa / dentro de las 72 h / fuera de rango: atenuados */
+.booking-calendar-day.is-no-rate,
+.booking-calendar-day.is-notice,
+.booking-calendar-day.is-out {
+  color: rgba(44, 42, 36, 0.25);
+}
+
+.booking-calendar-day.is-no-rate .booking-calendar-day-number {
+  text-decoration: underline dotted rgba(44, 42, 36, 0.35);
+  text-underline-offset: 3px;
+}
+
+.theme-dark .booking-calendar-day.is-no-rate,
+.theme-dark .booking-calendar-day.is-notice,
+.theme-dark .booking-calendar-day.is-out {
   color: rgba(236, 228, 211, 0.2);
 }
+
+.theme-dark .booking-calendar-day.is-no-rate .booking-calendar-day-number {
+  text-decoration-color: rgba(236, 228, 211, 0.3);
+}
+
+/* Libre pero inalcanzable como salida (estancia mínima, noches ocupadas en medio) */
+.booking-calendar-day.is-available.is-unreachable {
+  color: rgba(44, 42, 36, 0.3);
+}
+
+.theme-dark .booking-calendar-day.is-available.is-unreachable {
+  color: rgba(236, 228, 211, 0.28);
+}
+
+/* Ocupado o sin tarifa, pero válido como día de salida */
+.booking-calendar-day.is-departure-only {
+  color: #2c2a24;
+  border: 1px dashed #b8763e;
+}
+
+.booking-calendar-day.is-departure-only .booking-calendar-day-number {
+  text-decoration: none;
+}
+
+.theme-dark .booking-calendar-day.is-departure-only {
+  color: #ece4d3;
+  border-color: #d3a06c;
+}
+
+/* ---------- Selección ---------- */
 
 .booking-calendar-day.is-in-range {
   background-color: rgba(184, 118, 62, 0.12);
@@ -151,19 +246,189 @@
 .booking-calendar-day.is-checkin,
 .booking-calendar-day.is-checkout {
   background-color: #2a3626;
+  background-image: none;
+  border-color: #2a3626;
   color: #f2ede1;
   font-weight: 500;
+}
+
+.booking-calendar-day.is-checkin .booking-calendar-day-number,
+.booking-calendar-day.is-checkout .booking-calendar-day-number {
+  text-decoration: none;
 }
 
 .theme-dark .booking-calendar-day.is-checkin,
 .theme-dark .booking-calendar-day.is-checkout {
   background-color: #b8763e;
+  border-color: #b8763e;
   color: #201f1a;
 }
 
+/* ---------- Cargando ---------- */
+
+.booking-calendar-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2a3626;
+  pointer-events: none;
+}
+
+.theme-dark .booking-calendar-status {
+  color: #d3a06c;
+}
+
+/* ---------- Pista, error y aviso ---------- */
+
+.booking-calendar-hint {
+  margin: 1.1rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #2a3626;
+}
+
+.theme-dark .booking-calendar-hint {
+  color: #d3a06c;
+}
+
+.booking-calendar-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.1rem;
+  font-size: 0.85rem;
+  color: #9a4a34;
+}
+
+.theme-dark .booking-calendar-error {
+  color: #e0a08c;
+}
+
+.booking-calendar-error-retry {
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b8763e;
+  background: transparent;
+  border: 1px solid #b8763e;
+  border-radius: 2px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.booking-calendar-error-retry:hover {
+  background-color: #b8763e;
+  color: #f2ede1;
+}
+
+.booking-calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.booking-calendar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  color: #2c2a24;
+  opacity: 0.75;
+}
+
+.theme-dark .booking-calendar-legend-item {
+  color: #ece4d3;
+}
+
+.booking-calendar-legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+}
+
+.booking-calendar-legend-swatch.is-available {
+  background-color: rgba(184, 118, 62, 0.18);
+  border-color: rgba(184, 118, 62, 0.4);
+}
+
+.booking-calendar-legend-swatch.is-booked {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(42, 54, 38, 0.35) 0,
+    rgba(42, 54, 38, 0.35) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+.booking-calendar-legend-swatch.is-no-rate {
+  background-color: transparent;
+  border-style: dotted;
+}
+
+.theme-dark .booking-calendar-legend-swatch {
+  border-color: rgba(242, 237, 225, 0.3);
+}
+
+.theme-dark .booking-calendar-legend-swatch.is-booked {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(242, 237, 225, 0.35) 0,
+    rgba(242, 237, 225, 0.35) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+.booking-calendar-notice {
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(42, 54, 38, 0.1);
+  font-size: 0.8rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: #2c2a24;
+  opacity: 0.8;
+}
+
+.theme-dark .booking-calendar-notice {
+  color: #ece4d3;
+  border-top-color: rgba(242, 237, 225, 0.1);
+}
+
+/* ---------- Responsive ---------- */
+
 @media (max-width: 480px) {
+  .booking-calendar {
+    padding: 1rem;
+  }
+
   .booking-calendar-day {
     font-size: 0.75rem;
+  }
+
+  .booking-calendar-day-price {
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .booking-calendar-day-price {
+    display: none;
   }
 }
 

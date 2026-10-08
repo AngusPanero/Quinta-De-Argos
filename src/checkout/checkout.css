@@ -293,6 +293,44 @@
   color: #b8763e;
 }
 
+.checkout-summary-breakdown {
+  transition: opacity 0.25s ease;
+}
+
+.checkout-summary-breakdown.is-updating {
+  opacity: 0.5;
+}
+
+.checkout-summary-status {
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: #2c2a24;
+  opacity: 0.75;
+  margin: 0 0 1rem;
+}
+
+.checkout.theme-dark .checkout-summary-status {
+  color: #ece4d3;
+}
+
+.checkout-summary-status.is-error {
+  color: #9a4a34;
+  opacity: 1;
+  font-weight: 400;
+}
+
+.checkout.theme-dark .checkout-summary-status.is-error {
+  color: #e0a08c;
+}
+
+.checkout-summary-guests-decrease:disabled,
+.checkout-summary-guests-increase:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .checkout-summary-breakdown-row {
   display: flex;
   justify-content: space-between;
@@ -435,6 +473,13 @@
   border-color: rgba(242, 237, 225, 0.2);
 }
 
+/* Dos campos en fila (correo + teléfono) */
+.checkout-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 .checkout-error-message {
   font-size: 0.85rem;
   color: #9a4a34;
@@ -507,7 +552,254 @@
   color: #ece4d3;
 }
 
+/* ---------- Secciones del formulario ---------- */
+
+.checkout-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 1.75rem;
+  border: none;
+  border-bottom: 1px solid rgba(42, 54, 38, 0.1);
+}
+
+.checkout.theme-dark .checkout-fieldset {
+  border-bottom-color: rgba(242, 237, 225, 0.1);
+}
+
+.checkout-section-title {
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 0.25rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #2a3626;
+}
+
+.checkout-section-title + * {
+  clear: both;
+}
+
+.checkout.theme-dark .checkout-section-title {
+  color: #d3a06c;
+}
+
+/* ---------- Particular / Empresa ---------- */
+
+.checkout-billing-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid rgba(42, 54, 38, 0.25);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.checkout.theme-dark .checkout-billing-toggle {
+  border-color: rgba(242, 237, 225, 0.2);
+}
+
+.checkout-billing-toggle-option {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2a3626;
+  background: transparent;
+  border: none;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.checkout-billing-toggle-option + .checkout-billing-toggle-option {
+  border-left: 1px solid rgba(42, 54, 38, 0.25);
+}
+
+.checkout-billing-toggle-option.is-active {
+  background-color: #2a3626;
+  color: #f2ede1;
+}
+
+.checkout.theme-dark .checkout-billing-toggle-option {
+  color: #ece4d3;
+}
+
+.checkout.theme-dark .checkout-billing-toggle-option + .checkout-billing-toggle-option {
+  border-left-color: rgba(242, 237, 225, 0.2);
+}
+
+.checkout.theme-dark .checkout-billing-toggle-option.is-active {
+  background-color: #b8763e;
+  color: #201f1a;
+}
+
+/* ---------- Campos: select, error, pista ---------- */
+
+.checkout-field-select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #2a3626 50%),
+    linear-gradient(135deg, #2a3626 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 2.25rem;
+  cursor: pointer;
+}
+
+.checkout.theme-dark .checkout-field-select {
+  background-image: linear-gradient(45deg, transparent 50%, #ece4d3 50%),
+    linear-gradient(135deg, #ece4d3 50%, transparent 50%);
+}
+
+.checkout-field-name-input.is-invalid {
+  border-color: #9a4a34;
+}
+
+.checkout.theme-dark .checkout-field-name-input.is-invalid {
+  border-color: #e0a08c;
+}
+
+.checkout-field-hint {
+  margin: -0.6rem 0 0;
+  font-size: 0.8rem;
+  color: #2c2a24;
+  opacity: 0.7;
+}
+
+.checkout-field-hint.is-error {
+  color: #9a4a34;
+  opacity: 1;
+}
+
+.checkout.theme-dark .checkout-field-hint {
+  color: #ece4d3;
+}
+
+.checkout.theme-dark .checkout-field-hint.is-error {
+  color: #e0a08c;
+}
+
+/* ---------- Consentimientos ---------- */
+
+.checkout-consents {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.checkout-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.checkout-consent-checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0.15rem 0 0;
+  accent-color: #b8763e;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkout-consent-text {
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: #2c2a24;
+}
+
+.checkout.theme-dark .checkout-consent-text {
+  color: #ece4d3;
+}
+
+.checkout-consent-text a,
+.checkout-legal-info a {
+  color: #b8763e;
+  text-underline-offset: 3px;
+}
+
+.checkout.theme-dark .checkout-consent-text a,
+.checkout.theme-dark .checkout-legal-info a {
+  color: #d3a06c;
+}
+
+.checkout-consent-required {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+
+/* Primera capa informativa (art. 11 LOPDGDD) */
+.checkout-legal-info {
+  border: 1px solid rgba(42, 54, 38, 0.15);
+  border-radius: 2px;
+  padding: 0.8rem 1rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: #2c2a24;
+}
+
+.checkout.theme-dark .checkout-legal-info {
+  border-color: rgba(242, 237, 225, 0.15);
+  color: #ece4d3;
+}
+
+.checkout-legal-info summary {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2a3626;
+  cursor: pointer;
+}
+
+.checkout.theme-dark .checkout-legal-info summary {
+  color: #d3a06c;
+}
+
+.checkout-legal-info dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.45rem 1rem;
+  margin: 0.9rem 0 0.2rem;
+}
+
+.checkout-legal-info dt {
+  font-weight: 500;
+}
+
+.checkout-legal-info dd {
+  margin: 0;
+  font-weight: 300;
+}
+
 /* ---------- Éxito ---------- */
+
+.checkout-success-code {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: #2c2a24;
+  margin: 0 0 1rem;
+}
+
+.checkout-success-code strong {
+  color: #b8763e;
+  font-weight: 600;
+}
+
+.checkout.theme-dark .checkout-success-code {
+  color: #ece4d3;
+}
 
 .checkout-success {
   display: flex;
@@ -576,6 +868,26 @@
   .checkout-payment {
     padding: 1.5rem;
   }
+
+  .checkout-field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-legal-info dl {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+
+  .checkout-legal-info dd {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Vuelta de un pago con redirección: una sola columna */
+.checkout-content.checkout-content-single {
+  grid-template-columns: minmax(0, 560px);
+  justify-content: center;
+  padding-top: var(--qa-section-pad-y);
 }
 
 /* ---------- Reduced motion ---------- */

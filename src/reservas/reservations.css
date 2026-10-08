@@ -149,8 +149,7 @@
 }
 
 .reservas-corporate-quote-hero {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
+  font-family: 'Montserrat', Georgia, serif;
   font-weight: 500;
   font-size: 1.2rem;
   line-height: 1.5;
@@ -460,6 +459,19 @@
   font-size: 2.2rem;
   color: var(--qa-title);
   font-variant-numeric: tabular-nums;
+}
+
+.reservas-corporate-summary-note {
+  font-size: 0.82rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--qa-muted);
+  margin: -0.75rem 0 1.5rem;
+}
+
+.reservas-corporate-pay-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .reservas-corporate-pay-button {

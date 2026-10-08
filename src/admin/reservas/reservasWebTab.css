@@ -1,0 +1,643 @@
+/* ==========================================================
+   reservasWebTab.css — Quinta de Argos (panel)
+   Prefijo de clases: admin-reservas-web-*
+   Paleta de la marca: pino / crema / arcilla.
+   ========================================================== */
+
+.admin-reservas-web,
+.admin-reservas-web-overlay {
+  --arw-bg: #f2ede1;
+  --arw-surface: #f8f4ea;
+  --arw-surface-strong: #ffffff;
+  --arw-text: #2c2a24;
+  --arw-title: #2a3626;
+  --arw-accent: #b8763e;
+  --arw-muted: rgba(44, 42, 36, 0.62);
+  --arw-line: rgba(42, 54, 38, 0.14);
+  --arw-line-strong: rgba(42, 54, 38, 0.25);
+  --arw-danger: #9a4a34;
+  --arw-ok: #4f6b3a;
+  --arw-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--arw-text);
+}
+
+.admin-reservas-web.theme-dark,
+.admin-reservas-web-overlay.theme-dark {
+  --arw-bg: #201f1a;
+  --arw-surface: #29281f;
+  --arw-surface-strong: #262520;
+  --arw-text: #ece4d3;
+  --arw-title: #d3a06c;
+  --arw-accent: #d3a06c;
+  --arw-muted: rgba(236, 228, 211, 0.6);
+  --arw-line: rgba(242, 237, 225, 0.12);
+  --arw-line-strong: rgba(242, 237, 225, 0.22);
+  --arw-danger: #e0a08c;
+  --arw-ok: #a9c48f;
+}
+
+.admin-reservas-web *,
+.admin-reservas-web-overlay * {
+  box-sizing: border-box;
+}
+
+.admin-reservas-web {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 40px 300px 0 300px;
+}
+
+.admin-reservas-web-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Cabecera ---------- */
+
+.admin-reservas-web-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-reservas-web-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.7rem;
+  color: var(--arw-title);
+  margin: 0 0 0.35rem;
+}
+
+.admin-reservas-web-subtitle {
+  font-weight: 300;
+  font-size: 0.95rem;
+  color: var(--arw-muted);
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* ---------- Botones ---------- */
+
+.admin-reservas-web-button,
+.admin-reservas-web-button-ghost {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.88rem;
+  border-radius: 999px;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.3s var(--arw-ease), border-color 0.3s var(--arw-ease), color 0.3s var(--arw-ease),
+    opacity 0.3s ease;
+}
+
+.admin-reservas-web-button {
+  color: #f2ede1;
+  background-color: #2a3626;
+  border: 1px solid transparent;
+}
+
+.admin-reservas-web-button:hover:not(:disabled) {
+  background-color: #b8763e;
+}
+
+.theme-dark .admin-reservas-web-button {
+  background-color: #d3a06c;
+  color: #201f1a;
+}
+
+.theme-dark .admin-reservas-web-button:hover:not(:disabled) {
+  background-color: #f2ede1;
+}
+
+.admin-reservas-web-button-ghost {
+  color: var(--arw-text);
+  background: transparent;
+  border: 1px solid var(--arw-line-strong);
+}
+
+.admin-reservas-web-button-ghost:hover:not(:disabled) {
+  border-color: var(--arw-title);
+}
+
+.admin-reservas-web-button:disabled,
+.admin-reservas-web-button-ghost:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.admin-reservas-web-button-link {
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: var(--arw-accent);
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  align-self: end;
+  padding-bottom: 0.7rem;
+}
+
+.admin-reservas-web-button:focus-visible,
+.admin-reservas-web-button-ghost:focus-visible,
+.admin-reservas-web-button-link:focus-visible,
+.admin-reservas-web-input:focus-visible,
+.admin-reservas-web-modal-close:focus-visible {
+  outline: 2px solid var(--arw-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Filtros ---------- */
+
+.admin-reservas-web-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1rem;
+  padding: 1.25rem;
+  background-color: var(--arw-surface);
+  border: 1px solid var(--arw-line);
+  border-radius: 6px;
+}
+
+.admin-reservas-web-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.admin-reservas-web-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arw-muted);
+}
+
+.admin-reservas-web-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--arw-text);
+  background-color: var(--arw-surface-strong);
+  border: 1px solid var(--arw-line-strong);
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.admin-reservas-web-input:focus {
+  border-color: var(--arw-accent);
+}
+
+.theme-dark .admin-reservas-web-input {
+  color-scheme: dark;
+}
+
+.admin-reservas-web-textarea {
+  resize: vertical;
+  min-height: 8rem;
+  line-height: 1.55;
+}
+
+/* ---------- Estado vacío / error ---------- */
+
+.admin-reservas-web-empty {
+  padding: 3rem 1rem;
+  text-align: center;
+  font-weight: 300;
+  color: var(--arw-muted);
+  border: 1px dashed var(--arw-line-strong);
+  border-radius: 6px;
+}
+
+.admin-reservas-web-empty.is-error {
+  color: var(--arw-danger);
+}
+
+/* ---------- Tabla ---------- */
+
+.admin-reservas-web-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--arw-line);
+  border-radius: 6px;
+}
+
+.admin-reservas-web-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-reservas-web-table th,
+.admin-reservas-web-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--arw-line);
+}
+
+.admin-reservas-web-table thead th {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--arw-muted);
+  background-color: var(--arw-surface);
+  white-space: nowrap;
+}
+
+.admin-reservas-web-table tbody tr:last-child td,
+.admin-reservas-web-table tbody tr:last-child th {
+  border-bottom: none;
+}
+
+.admin-reservas-web-table tbody tr:hover {
+  background-color: rgba(184, 118, 62, 0.06);
+}
+
+.admin-reservas-web-table .is-number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.admin-reservas-web-table.is-compact th,
+.admin-reservas-web-table.is-compact td {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.admin-reservas-web-table.is-compact tbody th {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.admin-reservas-web-code,
+.admin-reservas-web-mono {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.admin-reservas-web-cell-main {
+  display: block;
+  font-weight: 500;
+}
+
+.admin-reservas-web-cell-sub {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--arw-muted);
+}
+
+.admin-reservas-web-ua {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Badges de estado ---------- */
+
+.admin-reservas-web-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+.admin-reservas-web-badge.is-pagada,
+.admin-reservas-web-badge.is-envio-enviado {
+  color: var(--arw-ok);
+}
+
+.admin-reservas-web-badge.is-pendiente_pago,
+.admin-reservas-web-badge.is-envio-pendiente_envio {
+  color: var(--arw-accent);
+}
+
+.admin-reservas-web-badge.is-pago_fallido,
+.admin-reservas-web-badge.is-envio-error {
+  color: var(--arw-danger);
+}
+
+.admin-reservas-web-badge.is-cancelada,
+.admin-reservas-web-badge.is-reembolsada {
+  color: var(--arw-muted);
+}
+
+/* ---------- Paginación ---------- */
+
+.admin-reservas-web-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-reservas-web-pagination-info,
+.admin-reservas-web-pagination-page {
+  font-size: 0.85rem;
+  color: var(--arw-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-reservas-web-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ==========================================================
+   MODAL DE DETALLE
+   ========================================================== */
+
+.admin-reservas-web-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: rgba(28, 37, 25, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.admin-reservas-web-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(980px, 100%);
+  max-height: calc(100vh - 3rem);
+  max-height: calc(100dvh - 3rem);
+  background-color: var(--arw-bg);
+  border: 1px solid var(--arw-line);
+  border-radius: 8px;
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.5);
+  outline: none;
+}
+
+.admin-reservas-web-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--arw-line);
+}
+
+.admin-reservas-web-modal-header > div {
+  flex: 1;
+}
+
+.admin-reservas-web-modal-title {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  color: var(--arw-title);
+  margin: 0.2rem 0 0;
+}
+
+.admin-reservas-web-modal-close {
+  width: 36px;
+  height: 36px;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--arw-text);
+  background: transparent;
+  border: 1px solid var(--arw-line-strong);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.admin-reservas-web-modal-close:hover {
+  border-color: var(--arw-title);
+}
+
+.admin-reservas-web-modal-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.admin-reservas-web-section {
+  min-width: 0;
+  padding: 1.1rem 1.25rem;
+  background-color: var(--arw-surface);
+  border: 1px solid var(--arw-line);
+  border-radius: 6px;
+}
+
+.admin-reservas-web-section.is-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-reservas-web-section-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--arw-title);
+  margin: 0 0 0.9rem;
+}
+
+.admin-reservas-web-dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.5rem 1rem;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.admin-reservas-web-dt {
+  color: var(--arw-muted);
+}
+
+.admin-reservas-web-dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-reservas-web-dd a {
+  color: var(--arw-accent);
+  text-underline-offset: 3px;
+}
+
+.admin-reservas-web-lines {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.admin-reservas-web-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--arw-line);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-reservas-web-line.is-total {
+  border-bottom: none;
+  padding-top: 0.8rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--arw-title);
+}
+
+.admin-reservas-web-muted {
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--arw-muted);
+  margin: 0;
+}
+
+.admin-reservas-web-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.admin-reservas-web-timeline-item {
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--arw-line-strong);
+}
+
+.admin-reservas-web-timeline-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.15rem;
+}
+
+.admin-reservas-web-timeline-text {
+  font-size: 0.86rem;
+  font-weight: 300;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  margin: 0.4rem 0 0;
+}
+
+.admin-reservas-web-timeline-text.is-error {
+  color: var(--arw-danger);
+}
+
+.admin-reservas-web-message {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-color: var(--arw-accent);
+}
+
+/* ---------- Pie con acciones ---------- */
+
+.admin-reservas-web-modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.1rem 1.5rem;
+  border-top: 1px solid var(--arw-line);
+}
+
+.admin-reservas-web-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.admin-reservas-web-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.admin-reservas-web-notice {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: 4px;
+  border: 1px solid currentColor;
+}
+
+.admin-reservas-web-notice.is-ok {
+  color: var(--arw-ok);
+}
+
+.admin-reservas-web-notice.is-info {
+  color: var(--arw-accent);
+}
+
+.admin-reservas-web-notice.is-error {
+  color: var(--arw-danger);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 760px) {
+  .admin-reservas-web {
+    padding: 40px 1rem 0 1rem;
+  }
+  .admin-reservas-web-modal-body {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .admin-reservas-web-overlay {
+    padding: 0.5rem;
+  }
+
+  .admin-reservas-web-modal {
+    max-height: calc(100vh - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+
+  .admin-reservas-web-actions > * {
+    flex: 1;
+  }
+
+  .admin-reservas-web-pagination {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-reservas-web *,
+  .admin-reservas-web-overlay * {
+    transition-duration: 0.01ms !important;
+  }
+}

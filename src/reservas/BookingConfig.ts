@@ -1,29 +1,31 @@
 /**
  * bookingConfig.ts — Quinta de Argos
  * ---------------------------------------------------------
- * Configuración de reservas compartida entre Reservations.tsx
- * y Checkout.tsx. Todo lo que afecta el precio vive acá para
- * que las dos pantallas nunca queden desincronizadas.
+ * Configuración de PRESENTACIÓN compartida entre Reservations.tsx
+ * y Checkout.tsx.
+ *
+ * ⚠️ Nada de lo que hay aquí decide lo que se cobra. Los precios por
+ * noche, la estancia mínima, la antelación de 72 h y el precio real de
+ * los adicionales los controla el backend (data/tarifas.js y
+ * config/reservasConfig.js). Si cambias un adicional, cámbialo también
+ * allí con el mismo id.
  */
 
 export interface Addon {
   id: string;
   nombre: string;
   descripcion: string;
-  precio: number;
+  precio: number; // solo para mostrar; el backend cobra el suyo
 }
 
-// 💶 Único lugar para cambiar el precio por noche.
-export const PRICE_PER_NIGHT = 220;
+// 📅 Máximo de noches (valor por defecto mientras carga la disponibilidad).
+export const MAX_NIGHTS = 30;
 
-// 📅 Máximo de noches que se pueden reservar de una vez.
-export const MAX_NIGHTS = 14;
-
-// 👥 Capacidad máxima de huéspedes.
+// 👥 Capacidad máxima (valor por defecto mientras carga la disponibilidad).
 export const MAX_GUESTS = 6;
 
-// 🔭 Hasta cuántos días hacia el futuro se puede reservar desde hoy.
-export const MAX_BOOKING_HORIZON_DAYS = 365;
+// ⏱️ Antelación mínima para reservar, en horas (solo para el texto informativo).
+export const MIN_NOTICE_HOURS = 72;
 
 // ✨ Adicionales contratables. Si este array queda vacío ([]),
 // el wizard de Reservations salta directo al botón de pago.
@@ -37,13 +39,13 @@ export const ADDONS: Addon[] = [
   {
     id: 'decoracion-especial',
     nombre: 'Decoración especial',
-    descripcion: 'Flores, velas y detalles para aniversarios, pedidas o cumpleaños.',
+    descripcion: 'Flores, velas y detalles para aniversarios, pedidas de mano o cumpleaños.',
     precio: 60,
   },
   {
     id: 'traslado',
     nombre: 'Traslado desde Caravaca de la Cruz',
-    descripcion: 'Te recogemos y llevamos de vuelta a la estación o terminal más cercana.',
+    descripcion: 'Te recogemos y te llevamos de vuelta a la estación o terminal más cercana.',
     precio: 40,
   },
   {

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   motion,
   AnimatePresence,
@@ -15,12 +15,22 @@ import BookingCalendar from './BookingCalendar';
 import imgPiscina from '../assets/quinta4.jpg';
 import imgBuhardilla from '../assets/quinta3.jpg';
 import imgJardin from '../assets/quinta5.jpg';
-import { ADDONS, PRICE_PER_NIGHT, MAX_NIGHTS, MAX_GUESTS, MAX_BOOKING_HORIZON_DAYS } from './BookingConfig';
-import { addDays, diffInDays, formatDateLong, formatPrice, startOfDay } from './BookingDates';
+import { ADDONS, MAX_NIGHTS, MAX_GUESTS } from './BookingConfig';
+import { formatDateLong, formatPrice, toISODate } from './BookingDates';
+import { useAvailability, estimateStay, groupNightsByPrice, checkDeparture, canArrive } from './useAvailability';
 
 // Clave de sessionStorage compartida con Checkout.tsx: si el usuario
 // refresca /checkout, la reserva sobrevive.
-export const RESERVATION_STORAGE_KEY = import.meta.env.VITE_RESERVATION_STORAGE_KEY;
+export const RESERVATION_STORAGE_KEY: string =
+  import.meta.env.VITE_RESERVATION_STORAGE_KEY || 'qa-reserva';
+
+// Lo que se guarda para pasar a /checkout. Las fechas van como "YYYY-MM-DD".
+export interface StoredReservation {
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  selectedAddons: Record<string, boolean>;
+}
 
 // Mismo easing que la galería, para que todo el sitio respire igual.
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -84,7 +94,7 @@ const MANIFESTO =
   'No es ostentoso. No es una villa de catálogo. Es una finca serena, estética y emocional — un lugar donde el descanso se convierte en ritual y cada rincón transmite una sensación de calma sofisticada, íntima y acogedora.';
 
 // ==========================================================
-// Manifiesto: las palabras se encienden a medida que scrolleás
+// Manifiesto: las palabras se encienden a medida que se hace scroll
 // ==========================================================
 
 const LitWord: React.FC<{ word: string; progress: MotionValue<number>; range: [number, number] }> = ({
@@ -259,15 +269,38 @@ const Reservations: React.FC = () => {
   const navigate = useNavigate();
   const wizardRef = useRef<HTMLDivElement>(null);
 
-  // ---------- Fechas ----------
-  const today = useMemo(() => startOfDay(new Date()), []);
-  const maxBookableDate = useMemo(() => addDays(today, MAX_BOOKING_HORIZON_DAYS), [today]);
+  // ---------- Disponibilidad (Beds24 + tarifas, desde el backend) ----------
+  const { data: availability, loading: availabilityLoading, error: availabilityError, reload } = useAvailability();
+  const maxGuests = availability?.reglas.maxHuespedes ?? MAX_GUESTS;
+  const maxNights = availability?.reglas.maxNoches ?? MAX_NIGHTS;
 
+  // ---------- Fechas ----------
   const [checkin, setCheckin] = useState<Date | null>(null);
   const [checkout, setCheckout] = useState<Date | null>(null);
   const [guests, setGuests] = useState<number>(2);
 
-  const nights = checkin && checkout ? diffInDays(checkout, checkin) : 0;
+  const checkinISO = checkin ? toISODate(checkin) : null;
+  const checkoutISO = checkout ? toISODate(checkout) : null;
+
+  // Estimación para pintar el ticket. El precio real lo calcula el backend al pagar.
+  const stay = checkinISO && checkoutISO ? estimateStay(availability, checkinISO, checkoutISO) : null;
+  const nights = stay?.nights ?? 0;
+
+  // Si la disponibilidad se actualiza y la selección ya no es válida
+  // (alguien reservó esas noches mientras tanto), la deshacemos.
+  useEffect(() => {
+    if (!availability || !checkinISO) return;
+    const arrivalOk = canArrive(availability, checkinISO);
+    const departureOk = !checkoutISO || checkDeparture(availability, checkinISO, checkoutISO, maxNights).ok;
+    if (!arrivalOk || !departureOk) {
+      setCheckin(null);
+      setCheckout(null);
+    }
+  }, [availability, checkinISO, checkoutISO, maxNights]);
+
+  useEffect(() => {
+    setGuests((g) => Math.min(g, maxGuests));
+  }, [maxGuests]);
 
   // ---------- Adicionales ----------
   const hasAddons = ADDONS.length > 0;
@@ -288,7 +321,7 @@ const Reservations: React.FC = () => {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
 
-  const canAdvanceFromDates = Boolean(checkin && checkout && guests >= 1);
+  const canAdvanceFromDates = Boolean(stay && guests >= 1);
 
   const goNext = () => {
     if (step === 0 && !canAdvanceFromDates) return;
@@ -301,8 +334,9 @@ const Reservations: React.FC = () => {
     setStep((s) => Math.max(s - 1, 0));
   };
 
-  const subtotal = nights * PRICE_PER_NIGHT;
+  const subtotal = stay?.subtotal ?? 0;
   const grandTotal = subtotal + addonsTotal;
+  const nightGroups = stay ? groupNightsByPrice(stay.prices) : [];
 
   const currentAddon = hasAddons && step >= 1 && step <= ADDONS.length ? ADDONS[step - 1] : null;
 
@@ -314,11 +348,13 @@ const Reservations: React.FC = () => {
 
   // ---------- Ir a checkout con todo lo capturado ----------
   const handleGoToCheckout = () => {
-    if (!checkin || !checkout) return;
+    if (!checkinISO || !checkoutISO || !stay) return;
 
-    const reservationData = {
-      checkin: checkin.toISOString(),
-      checkout: checkout.toISOString(),
+    // Fechas como "YYYY-MM-DD": toISOString() pasaría a UTC y en España
+    // podría guardar el día anterior.
+    const reservationData: StoredReservation = {
+      checkIn: checkinISO,
+      checkOut: checkoutISO,
       guests,
       selectedAddons,
     };
@@ -352,8 +388,8 @@ const Reservations: React.FC = () => {
             Diseña tu estancia perfecta
           </motion.h1>
           <motion.p className="reservas-corporate-paragraph-hero" variants={fadeUp} transition={{ duration: 0.9, ease: EASE }}>
-            Quinta de Argos recibe a muy pocos huéspedes por vez — hasta seis personas en cada estancia. Elige tus
-            fechas y diseña tu reserva a tu manera, con los adicionales que quieras sumar.
+            Quinta de Argos recibe a muy pocos huéspedes a la vez — hasta seis personas en cada estancia. Elige tus
+            fechas y diseña tu reserva a tu manera, con los adicionales que quieras añadir.
           </motion.p>
 
           {/* ---------- Ticket en vivo ---------- */}
@@ -387,7 +423,7 @@ const Reservations: React.FC = () => {
           </motion.div>
 
           <motion.blockquote className="reservas-corporate-quote-hero" variants={fadeUp} transition={{ duration: 1, ease: EASE }}>
-            "Quinta de Argos no solo se habita: se siente."
+            "Quinta de Argos no solo se habita, se siente."
           </motion.blockquote>
         </motion.div>
 
@@ -440,9 +476,11 @@ const Reservations: React.FC = () => {
                       setCheckin(newCheckin);
                       setCheckout(newCheckout);
                     }}
-                    minDate={today}
-                    maxDate={maxBookableDate}
-                    maxNights={MAX_NIGHTS}
+                    availability={availability}
+                    loading={availabilityLoading}
+                    error={availabilityError}
+                    onRetry={reload}
+                    maxNights={maxNights}
                   />
 
                   <div className="reservas-corporate-dates-summary">
@@ -463,7 +501,7 @@ const Reservations: React.FC = () => {
                   <div className="reservas-corporate-guests-selector">
                     <div className="reservas-corporate-guests-text">
                       <span className="reservas-corporate-guests-label">Huéspedes</span>
-                      <span className="reservas-corporate-guests-max-note">Máximo {MAX_GUESTS}</span>
+                      <span className="reservas-corporate-guests-max-note">Máximo {maxGuests}</span>
                     </div>
                     <div className="reservas-corporate-guests-controls">
                       <button
@@ -471,7 +509,7 @@ const Reservations: React.FC = () => {
                         className="reservas-corporate-guests-button"
                         onClick={() => setGuests((g) => Math.max(1, g - 1))}
                         disabled={guests <= 1}
-                        aria-label="Restar huésped"
+                        aria-label="Quitar huésped"
                       >
                         −
                       </button>
@@ -479,9 +517,9 @@ const Reservations: React.FC = () => {
                       <button
                         type="button"
                         className="reservas-corporate-guests-button"
-                        onClick={() => setGuests((g) => Math.min(MAX_GUESTS, g + 1))}
-                        disabled={guests >= MAX_GUESTS}
-                        aria-label="Sumar huésped"
+                        onClick={() => setGuests((g) => Math.min(maxGuests, g + 1))}
+                        disabled={guests >= maxGuests}
+                        aria-label="Añadir huésped"
                       >
                         +
                       </button>
@@ -514,7 +552,7 @@ const Reservations: React.FC = () => {
                       onClick={() => toggleAddon(currentAddon.id)}
                       aria-pressed={Boolean(selectedAddons[currentAddon.id])}
                     >
-                      {selectedAddons[currentAddon.id] ? 'Agregado ✓ — Quitar' : 'Sumar a mi reserva'}
+                      {selectedAddons[currentAddon.id] ? 'Añadido ✓ — Quitar' : 'Añadir a mi reserva'}
                     </button>
                   </div>
                 </motion.div>
@@ -544,12 +582,16 @@ const Reservations: React.FC = () => {
                     <span className="reservas-corporate-summary-value">{guests}</span>
                   </div>
 
-                  <div className="reservas-corporate-summary-row">
-                    <span className="reservas-corporate-summary-label">
-                      {nights} {nights === 1 ? 'noche' : 'noches'} × {formatPrice(PRICE_PER_NIGHT)}
-                    </span>
-                    <span className="reservas-corporate-summary-value">{formatPrice(subtotal)}</span>
-                  </div>
+                  {nightGroups.map((group) => (
+                    <div key={group.price} className="reservas-corporate-summary-row">
+                      <span className="reservas-corporate-summary-label">
+                        {group.count} {group.count === 1 ? 'noche' : 'noches'} × {formatPrice(group.price)}
+                      </span>
+                      <span className="reservas-corporate-summary-value">
+                        {formatPrice(group.count * group.price)}
+                      </span>
+                    </div>
+                  ))}
 
                   {hasAddons &&
                     ADDONS.filter((a) => selectedAddons[a.id]).map((addon) => (
@@ -564,7 +606,16 @@ const Reservations: React.FC = () => {
                     <span className="reservas-corporate-summary-total-value">{formatPrice(grandTotal)}</span>
                   </div>
 
-                  <button type="button" className="reservas-corporate-pay-button" onClick={handleGoToCheckout}>
+                  <p className="reservas-corporate-summary-note">
+                    El precio de cada noche depende de la fecha. El importe final se confirma en el paso de pago.
+                  </p>
+
+                  <button
+                    type="button"
+                    className="reservas-corporate-pay-button"
+                    onClick={handleGoToCheckout}
+                    disabled={!stay}
+                  >
                     Continuar al pago
                   </button>
                 </motion.div>
