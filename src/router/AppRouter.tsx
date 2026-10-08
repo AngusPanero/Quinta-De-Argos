@@ -16,8 +16,8 @@ import Experiences from "../experiencias/Experiences";
 import Cookies from "../cookies/Cookies";
 import Loader from "../loader/Loader";
 import AdminDashboard from "../admin/AdminDashboard";
-import PoliticaPrivacidad from "../Politicas Privacidad y Reservas/PoliticasPrivacidad";
-import CondicionesReserva from "../Politicas Privacidad y Reservas/CondicionesReserva";
+import PoliticaPrivacidad from "../PoliticasGenerales/PoliticasPrivacidad";
+import CondicionesReserva from "../PoliticasGenerales/CondicionesReserva";
 
 const AppRouter = () => {
     return (

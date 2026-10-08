@@ -1,0 +1,375 @@
+/* ==========================================================
+   legal.css — Quinta de Argos
+   Páginas legales: condiciones de reserva y política de privacidad.
+   Prefijo de clases: legal-*
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.legal {
+  --legal-bg: #f2ede1;
+  --legal-surface: #f8f4ea;
+  --legal-text: #2c2a24;
+  --legal-title: #2a3626;
+  --legal-accent: #b8763e;
+  --legal-muted: rgba(44, 42, 36, 0.62);
+  --legal-line: rgba(42, 54, 38, 0.14);
+  --legal-pad-x: clamp(1.25rem, 6vw, 6rem);
+
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--legal-bg);
+  color: var(--legal-text);
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+}
+
+.legal.theme-dark {
+  --legal-bg: #201f1a;
+  --legal-surface: #29281f;
+  --legal-text: #ece4d3;
+  --legal-title: #d3a06c;
+  --legal-accent: #d3a06c;
+  --legal-muted: rgba(236, 228, 211, 0.6);
+  --legal-line: rgba(242, 237, 225, 0.12);
+}
+
+.legal * {
+  box-sizing: border-box;
+}
+
+.legal a {
+  color: var(--legal-accent);
+  text-underline-offset: 3px;
+}
+
+.legal a:focus-visible {
+  outline: 2px solid var(--legal-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- Cabecera ---------- */
+
+.legal-hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(6.5rem, 12vh, 9rem) var(--legal-pad-x) clamp(2.5rem, 6vh, 4rem);
+}
+
+.legal-eyebrow {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--legal-accent);
+  margin-bottom: 1.25rem;
+}
+
+.legal-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--legal-title);
+  margin: 0 0 1.5rem;
+}
+
+.legal-intro p {
+  font-weight: 300;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  max-width: 62ch;
+  margin: 0;
+}
+
+.legal-meta {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--legal-muted);
+  margin: 1.75rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--legal-line);
+  max-width: 62ch;
+}
+
+/* ---------- Índice + contenido ---------- */
+
+.legal-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--legal-pad-x) clamp(5rem, 12vh, 8rem);
+}
+
+.legal-toc {
+  position: sticky;
+  top: 7rem;
+  max-height: calc(100vh - 9rem);
+  overflow-y: auto;
+}
+
+.legal-toc-title {
+  display: block;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--legal-title);
+  margin-bottom: 1rem;
+}
+
+.legal-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.legal .legal-toc-link {
+  display: flex;
+  gap: 0.65rem;
+  padding: 0.35rem 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--legal-text);
+  text-decoration: none;
+  opacity: 0.75;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.legal .legal-toc-link:hover {
+  opacity: 1;
+  color: var(--legal-accent);
+}
+
+.legal-toc-number {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.7rem;
+  padding-top: 0.15rem;
+  color: var(--legal-accent);
+}
+
+.legal-content {
+  min-width: 0;
+  max-width: 72ch;
+}
+
+/* ---------- Secciones ---------- */
+
+.legal-section {
+  padding: 2.25rem 0;
+  border-top: 1px solid var(--legal-line);
+  scroll-margin-top: 6rem;
+}
+
+.legal-section:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.legal-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.4rem, 2.4vw, 1.75rem);
+  line-height: 1.2;
+  color: var(--legal-title);
+  margin: 0 0 1.25rem;
+}
+
+.legal-section-number {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.78rem;
+  color: var(--legal-accent);
+}
+
+.legal-subtitle {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
+  font-size: 1.02rem;
+  color: var(--legal-title);
+  margin: 1.75rem 0 0.6rem;
+}
+
+.legal-section p {
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.75;
+  margin: 0 0 1rem;
+}
+
+.legal-section p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section strong {
+  font-weight: 500;
+}
+
+.legal-list {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+.legal-list li + li {
+  margin-top: 0.4rem;
+}
+
+.legal-list li::marker {
+  color: var(--legal-accent);
+}
+
+/* ---------- Datos del titular ---------- */
+
+.legal-dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.6rem 1.5rem;
+  margin: 0 0 1.25rem;
+  padding: 1.25rem 1.5rem;
+  background-color: var(--legal-surface);
+  border: 1px solid var(--legal-line);
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.legal-dl dt {
+  color: var(--legal-muted);
+}
+
+.legal-dl dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Tablas ---------- */
+
+.legal-table-wrap {
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--legal-line);
+  border-radius: 6px;
+}
+
+.legal-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.legal-table th,
+.legal-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--legal-line);
+}
+
+.legal-table thead th {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--legal-muted);
+  background-color: var(--legal-surface);
+}
+
+.legal-table tbody th {
+  font-weight: 500;
+  color: var(--legal-title);
+}
+
+.legal-table td {
+  font-weight: 300;
+}
+
+.legal-table tbody tr:last-child th,
+.legal-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---------- Datos pendientes (no publicar así) ---------- */
+
+.legal-pending {
+  background-color: rgba(184, 118, 62, 0.22);
+  color: inherit;
+  padding: 0.05em 0.35em;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.85em;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .legal-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .legal-toc {
+    position: static;
+    max-height: none;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--legal-surface);
+    border: 1px solid var(--legal-line);
+    border-radius: 6px;
+  }
+
+  .legal-content {
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .legal-dl {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+    padding: 1rem;
+  }
+
+  .legal-dl dd {
+    margin-bottom: 0.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legal * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .legal {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .legal-toc {
+    display: none;
+  }
+
+  .legal-layout {
+    grid-template-columns: 1fr;
+  }
+}
