@@ -197,7 +197,7 @@ const ContactCorporate: React.FC = () => {
           <div className="contact-corporate-info-whatsapp-block">
             <span className="contact-corporate-info-whatsapp-label">WhatsApp</span>
             <a href="https://wa.me/34000000000" className="contact-corporate-info-whatsapp-link">
-              +34 000 00 00 00
+              +34 633 49 18 25
             </a>
           </div>
 

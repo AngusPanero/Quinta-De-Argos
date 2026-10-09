@@ -43,14 +43,14 @@ const secciones: LegalSection[] = [
           <dd>
             <Dato valor={TITULAR.nombre} />
           </dd>
-          <dt>NIF</dt>
+          {/* <dt>NIF</dt>
           <dd>
             <Dato valor={TITULAR.nif} />
           </dd>
           <dt>Domicilio</dt>
           <dd>
             <Dato valor={TITULAR.domicilio} />
-          </dd>
+          </dd> */}
           <dt>Correo electrónico</dt>
           <dd>
             <Dato valor={TITULAR.email} />
@@ -322,9 +322,9 @@ const secciones: LegalSection[] = [
           que se deba a su culpa o negligencia, ni de interrupciones de suministros ajenas a su control, que
           procurará resolver con la mayor rapidez posible.
         </p>
-        <p>
+        {/* <p>
           El alojamiento cuenta con seguro de responsabilidad civil: <Dato valor={NORMAS.seguroRC} />.
-        </p>
+        </p> */}
       </>
     ),
   },

@@ -93,14 +93,14 @@ const secciones: LegalSection[] = [
           <dd>
             <Dato valor={TITULAR.nombre} />
           </dd>
-          <dt>NIF</dt>
+          {/* <dt>NIF</dt>
           <dd>
             <Dato valor={TITULAR.nif} />
           </dd>
           <dt>Domicilio</dt>
           <dd>
             <Dato valor={TITULAR.domicilio} />
-          </dd>
+          </dd> */}
           <dt>Correo electrónico</dt>
           <dd>
             <Dato valor={TITULAR.email} />
@@ -110,10 +110,6 @@ const secciones: LegalSection[] = [
             <Dato valor={TITULAR.telefono} />
           </dd>
         </dl>
-        <p>
-          Dada la naturaleza y el volumen del tratamiento, no se ha designado un delegado de protección de datos. Para
-          cualquier cuestión sobre privacidad puedes escribir al correo indicado.
-        </p>
       </>
     ),
   },
@@ -308,8 +304,7 @@ const secciones: LegalSection[] = [
     contenido: (
       <p>
         Aplicamos medidas técnicas y organizativas adecuadas para proteger los datos: conexión cifrada (HTTPS) en todo
-        el sitio, pagos a través de una pasarela certificada, acceso al panel de gestión restringido a personas
-        autorizadas con autenticación, y envío a cada proveedor solo de los datos imprescindibles para su servicio.
+        el sitio, pagos a través de una pasarela certificada, y envío a cada proveedor solo de los datos imprescindibles para su servicio.
       </p>
     ),
   },
