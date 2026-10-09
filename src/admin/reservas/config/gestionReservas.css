@@ -1,0 +1,153 @@
+/* ==========================================================
+   gestionReservas.css — Quinta de Argos
+   Prefijo de clases: gr-*
+   El resto de piezas (campos, botones, mensajes) reutiliza las
+   clases cq-* de configQuinta.css. Aquí solo va lo nuevo, con
+   currentColor para que funcione igual en tema claro y oscuro.
+   ========================================================== */
+
+.gr {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.gr-textarea {
+  resize: vertical;
+  min-height: 3.2rem;
+  font-family: inherit;
+}
+
+.gr-resumen {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+}
+
+/* ---------- Bloques de listado ---------- */
+
+.gr-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid currentColor;
+  border-top-color: color-mix(in srgb, currentColor 15%, transparent);
+}
+
+.gr-block-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.gr-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.gr-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.gr-fila--abierta {
+  padding-bottom: 1.1rem;
+}
+
+.gr-fila-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
+  min-width: 0;
+  flex: 1 1 260px;
+}
+
+.gr-fechas {
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+
+.gr-detalle {
+  flex-basis: 100%;
+  font-size: 0.82rem;
+  opacity: 0.7;
+  overflow-wrap: anywhere;
+}
+
+.gr-detalle--error {
+  opacity: 1;
+  color: #9a4a34;
+}
+
+/* ---------- Etiquetas de tipo ---------- */
+
+.gr-badge {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+}
+
+.gr-badge--web {
+  color: #b8763e;
+}
+
+.gr-badge--direct {
+  color: #6b7a55;
+}
+
+.gr-badge--owner {
+  opacity: 0.75;
+}
+
+.gr-cancelar {
+  flex-shrink: 0;
+}
+
+/* ---------- Panel de cancelación ---------- */
+
+.gr-cancel {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px dashed color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 2px;
+}
+
+.gr-cancel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .gr-cancel {
+    padding: 0.75rem;
+  }
+
+  .gr-cancel-actions .cq-btn {
+    width: 100%;
+  }
+}

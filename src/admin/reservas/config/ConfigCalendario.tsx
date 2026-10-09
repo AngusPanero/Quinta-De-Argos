@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import SignModal from "./SignModal";
+import GestionReservas from "./GestionReservas";
 import { applyCalendar, previewCalendar, toApiError } from "./configApi";
 import { OVERRIDE_STATE, WEEKDAYS, addDays, formatDate, weekdayList } from "./configUtils";
 import type { CalendarOptions, CalendarPreview, CalendarRequest, DateRange } from "./configTypes";
 
 type PriceMode = "none" | "fixed" | "percent";
+type Modo = "precios" | "reservas";
 
 const PRESETS = [
     { label: "Todos", days: [1, 2, 3, 4, 5, 6, 7] },
@@ -18,6 +20,31 @@ interface Props {
 }
 
 export default function ConfigCalendario({ options, initialRange }: Props) {
+    const [modo, setModo] = useState<Modo>("precios");
+
+    return (
+        <div className="cq-panel">
+            <div className="cq-segment" role="radiogroup" aria-label="Qué quieres hacer">
+                {([["precios", "Precios y disponibilidad"], ["reservas", "Reservas particulares y uso propio"]] as const).map(([valor, label]) => (
+                    <button key={valor} type="button" role="radio" aria-checked={modo === valor}
+                        className={`cq-segment-btn ${modo === valor ? "cq-segment-btn--on" : ""}`}
+                        onClick={() => setModo(valor)}>
+                        {label}
+                    </button>
+                ))}
+            </div>
+
+            {modo === "precios" ? (
+                <PreciosYDisponibilidad options={options} initialRange={initialRange} onIrAReservas={() => setModo("reservas")} />
+            ) : (
+                <GestionReservas today={options.today} initialFrom={initialRange?.from} initialTo={initialRange?.to} />
+            )}
+        </div>
+    );
+}
+
+// ---------- Precios, estancias y cierres por rango de fechas ----------
+function PreciosYDisponibilidad({ options, initialRange, onIrAReservas }: Props & { onIrAReservas: () => void }) {
     const { today, limits, overrides } = options;
     const [from, setFrom] = useState(initialRange?.from ?? today);
     const [to, setTo] = useState(initialRange?.to ?? addDays(today, 6));
@@ -86,7 +113,7 @@ export default function ConfigCalendario({ options, initialRange }: Props) {
             const n = result.applied.days;
             setMessage({
                 tone: "ok",
-                text: `${n === 1 ? "Se actualizó 1 día" : `Se actualizaron ${n} días`} en Beds24. Booking y Airbnb los reciben en unos minutos.`,
+                text: `${n === 1 ? "Se ha actualizado 1 día" : `Se han actualizado ${n} días`} en Beds24. Booking y Airbnb los reciben en unos minutos.`,
             });
             return null;
         } catch (err) {
@@ -113,9 +140,9 @@ export default function ConfigCalendario({ options, initialRange }: Props) {
     ];
 
     return (
-        <div className="cq-panel">
+        <div className="gr">
             <p className="cq-intro">
-                Elegí las fechas, los días de la semana y qué querés cambiar. Antes de aplicar vas a ver día por día cómo queda.
+                Elige las fechas, los días de la semana y qué quieres cambiar. Antes de aplicar verás día por día cómo queda.
             </p>
 
             <fieldset className="cq-fieldset">
@@ -180,7 +207,7 @@ export default function ConfigCalendario({ options, initialRange }: Props) {
                             <span className="cq-unit">{priceMode === "fixed" ? "€" : "%"}</span>
                         </div>
                     )}
-                    {priceMode === "percent" && <p className="cq-help">Usá un número negativo para bajar, por ejemplo −10. Se redondea al euro.</p>}
+                    {priceMode === "percent" && <p className="cq-help">Usa un número negativo para bajar, por ejemplo −10. Se redondea al euro.</p>}
                     {errors.price && <p className="cq-field-error">{errors.price}</p>}
                 </div>
 
@@ -226,6 +253,10 @@ export default function ConfigCalendario({ options, initialRange }: Props) {
                         {overrides.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
                     {errors.override && <p className="cq-field-error">{errors.override}</p>}
+                    <p className="cq-help">
+                        Cerrar solo bloquea las fechas, sin nombre ni precio. Si la casa está alquilada por tu cuenta o la vas a usar tú,{" "}
+                        <button type="button" className="cq-link" onClick={onIrAReservas}>créalo como reserva particular o uso propio</button>.
+                    </p>
                 </div>
             </fieldset>
 
