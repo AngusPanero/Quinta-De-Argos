@@ -53,7 +53,7 @@
   position: relative;
   width: 100%;
   max-width: 100%;
-  overflow-x: clip;
+  overflow-x: hidden;
   padding: 80px var(--qa-pad-x) 3rem;
   background-color: var(--qa-bg);
   color: var(--qa-text);
@@ -1124,6 +1124,236 @@
 
   .cq-cv-flag {
     display: none;
+  }
+
+  /* --- Móvil: tipografía y espacios --- */
+
+  .cq-tabs {
+    gap: 1.25rem;
+    margin: 1.25rem 0 1.5rem;
+  }
+
+  .cq-tab {
+    font-size: 1rem;
+  }
+
+  .cq-intro {
+    margin-bottom: 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .cq-legend {
+    font-size: 1.12rem;
+  }
+
+  .cq-fieldset {
+    margin-bottom: 1.5rem;
+  }
+
+  .cq-field--wide {
+    margin-top: 1rem;
+  }
+
+  /* 16px evita que el iPhone haga zoom al tocar un campo */
+  .cq-input {
+    min-height: 2.75rem;
+    font-size: 16px;
+  }
+
+  /* iOS: los campos de fecha se salen del ancho y centran el texto */
+  .cq-input[type="date"] {
+    display: block;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .cq-input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+  }
+
+  /* --- Selectores segmentados: una opción por fila, a todo el ancho --- */
+
+  .cq-segment {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-self: stretch;
+    width: 100%;
+    gap: 0.2rem;
+    border-radius: 12px;
+  }
+
+  .cq-segment-btn {
+    min-height: 2.75rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 9px;
+    line-height: 1.25;
+    text-align: center;
+    white-space: normal;
+  }
+
+  /* --- Días de la semana: los 7 en una fila --- */
+
+  .cq-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.3rem;
+  }
+
+  .cq-day {
+    min-width: 0;
+    min-height: 2.6rem;
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+  }
+
+  .cq-presets {
+    gap: 0.5rem 1rem;
+    margin-top: 0.35rem;
+  }
+
+  .cq-link {
+    padding: 0.2rem 0;
+  }
+
+  /* --- Casillas con textos largos: el check arriba, el texto ajustado --- */
+
+  .cq-check {
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+
+  .cq-check input {
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  /* --- Botones y mensajes --- */
+
+  .cq-btn {
+    min-height: 2.9rem;
+  }
+
+  .cq-message {
+    padding: 0.75rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  /* --- Vista previa: la fecha queda fija al desplazar la tabla --- */
+
+  .cq-review {
+    padding: 1rem;
+  }
+
+  .cq-review-title {
+    font-size: 1.08rem;
+  }
+
+  .cq-table-wrap {
+    max-height: 60vh;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .cq-table {
+    font-size: 0.82rem;
+  }
+
+  .cq-th,
+  .cq-td {
+    padding: 0.45rem 0.55rem;
+  }
+
+  .cq-th:first-child,
+  .cq-td:first-child {
+    position: sticky;
+    left: 0;
+    box-shadow: 1px 0 0 var(--qa-line);
+  }
+
+  .cq-th:first-child {
+    z-index: 2;
+  }
+
+  .cq-td:first-child {
+    z-index: 1;
+    background-color: var(--qa-surface);
+  }
+
+  /* --- Calendario, detalle del día y canales --- */
+
+  .cq-cv-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .cq-cv-nav {
+    flex: 1 1 100%;
+    justify-content: space-between;
+  }
+
+  .cq-cv-legend {
+    gap: 0.35rem 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  .cq-cv-detail {
+    padding: 1rem;
+  }
+
+  .cq-cv-detail-date {
+    font-size: 1.15rem;
+  }
+
+  .cq-cv-detail-actions .cq-btn {
+    flex: 1;
+  }
+
+  .cq-channel {
+    padding: 1rem;
+  }
+}
+
+/* Pantallas muy estrechas (≈ 360 px) */
+@container cq-page (max-width: 380px) {
+  .cq-day {
+    font-size: 0.78rem;
+  }
+
+  .cq-cv-cell {
+    min-height: 54px;
+    padding: 0.25rem 0.2rem 0.45rem;
+  }
+
+  .cq-cv-min {
+    display: none;
+  }
+}
+
+/* Modal de firma (va fijo sobre la pantalla: se mide la pantalla) */
+@media (max-width: 640px) {
+  .cq-modal-backdrop {
+    place-items: end center;
+    padding: 0;
+  }
+
+  .cq-modal {
+    width: 100%;
+    max-height: 92vh;
+    padding: 1.4rem 1.1rem calc(1.4rem + env(safe-area-inset-bottom));
+    border-radius: 14px 14px 0 0;
+  }
+
+  .cq-modal-title {
+    font-size: 1.3rem;
+  }
+
+  .cq-pin {
+    width: 100%;
+    min-height: 3.2rem;
+    font-size: 1.5rem;
+  }
+
+  .cq-modal-actions .cq-btn {
+    flex: 1;
+    min-height: 2.9rem;
   }
 }
 
