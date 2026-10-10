@@ -25,7 +25,13 @@ interface SessionContextType {
     handleUnbanUser: (uid: any) => Promise<void>
     handleBanUser: (email: any) => Promise<void>
     verifyIsAdmin: () => void
+    // true si la comprobación de sesión tarda (servidor de Render despertando)
+    slowServer: boolean
 }
+
+// Render (plan gratuito) duerme el servidor tras 15 min sin uso y tarda hasta ~50 s en despertar.
+const CHECK_AUTH_TIMEOUT_MS = 60_000; // nunca más de 1 minuto "pensando"
+const SLOW_SERVER_MS = 4_000;         // a partir de aquí se puede avisar al usuario
 
 export const SessionProvider = ({ children }: ProviderProps) => {
     const navigate = useNavigate()
@@ -35,6 +41,9 @@ export const SessionProvider = ({ children }: ProviderProps) => {
     const [ loading, setLoading ] = useState<string | boolean | null | number>(false)
     const [ user, setUser ] = useState<unknown>(null)
     const [ isAdmin, setIsAdmin ] = useState<boolean | null>(null)
+    const [ slowServer, setSlowServer ] = useState(false)
+    // Sube con cada login/logout: así una comprobación de sesión que llega tarde no pisa el estado nuevo
+    const sessionVersion = useRef(0)
 
     // Auto Logout
     useEffect(() => {
@@ -88,6 +97,7 @@ export const SessionProvider = ({ children }: ProviderProps) => {
     // Login
     const handleLogin = async (email: string, password: string) => {
     try {
+        sessionVersion.current += 1; // desde aquí manda el login, no la comprobación inicial
         setLoading(true);
         setError(null);
 
@@ -96,8 +106,7 @@ export const SessionProvider = ({ children }: ProviderProps) => {
 
         if (response.status === 200) {
             const { user, isAdmin } = response.data;
-            console.log("USER", user);        
-            
+
             setUser(user);
             setLoading(false);
 
@@ -131,6 +140,10 @@ export const SessionProvider = ({ children }: ProviderProps) => {
             return;
         }
 
+        if (serverCode === "auth/user-not-found" || error.response?.status === 404) {
+                setError("No existe ninguna cuenta registrada con ese email.");
+                return;
+            }
         if (serverCode === "auth/user-banned") {
             setError("Usuario baneado. Contactate con Boggero Propiedades.");
             return;
@@ -145,6 +158,7 @@ export const SessionProvider = ({ children }: ProviderProps) => {
     // Logout
     const handleLogout = async () => {
         try {
+            sessionVersion.current += 1;
             setError(false)
             setLoading(true);
             const idToken = await auth.currentUser?.getIdToken();
@@ -248,32 +262,60 @@ export const SessionProvider = ({ children }: ProviderProps) => {
     }
 
    // Refresh
+    // Comprueba la cookie al abrir la web y al volver a una pestaña restaurada.
+    // - Tiene tiempo máximo: si el servidor no contesta, el loading NO se queda pensando para siempre.
+    // - Si mientras tanto el usuario inicia o cierra sesión, la respuesta vieja se descarta
+    //   (antes podía llegar tarde y borrar la sesión recién iniciada).
     useEffect(() => {
+        let controller: AbortController | null = null;
+
         const checkSession = async () => {
+            controller?.abort();
+            controller = new AbortController();
+            const version = sessionVersion.current;
+            const slowTimer = setTimeout(() => setSlowServer(true), SLOW_SERVER_MS);
+
             try {
                 setLoading(true);
-                
-                // Llamamos a nuestro backend para ver si la cookie es válida
-                const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/check-auth`, { withCredentials: true });
 
-                if (data.authenticated) {
-                    setUser(data.user);
-                } else {
-                    setUser(null);
-                }
+                // Llamamos a nuestro backend para ver si la cookie es válida
+                const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/check-auth`, {
+                    withCredentials: true,
+                    timeout: CHECK_AUTH_TIMEOUT_MS,
+                    signal: controller.signal,
+                });
+
+                if (version !== sessionVersion.current) return; // ya hubo login/logout: no pisamos nada
+                setUser(data.authenticated ? data.user : null);
             } catch (error) {
+                if (axios.isCancel(error)) return;
+                if (version !== sessionVersion.current) return;
                 setUser(null);
                 console.error("Error checking session on refresh 🔴", error);
             } finally {
-                setLoading(false);
+                clearTimeout(slowTimer);
+                setSlowServer(false);
+                if (version === sessionVersion.current) setLoading(false);
             }
         };
 
         checkSession();
+
+        // Safari/Chrome pueden "congelar" la pestaña y restaurarla tal cual (con una
+        // petición a medias). En ese caso volvemos a comprobar la sesión.
+        const onPageShow = (event: PageTransitionEvent) => {
+            if (event.persisted) checkSession();
+        };
+        window.addEventListener("pageshow", onPageShow);
+
+        return () => {
+            window.removeEventListener("pageshow", onPageShow);
+            controller?.abort();
+        };
     }, []);
 
     return(
-        <SessionContext.Provider value={{ handleRegister , handleLogin, handleLogout, handleResetPassword, error, setError, loading, setLoading, user, setUser, handleUnbanUser, verifyIsAdmin, isAdmin, handleBanUser }}>
+        <SessionContext.Provider value={{ handleRegister , handleLogin, handleLogout, handleResetPassword, error, setError, loading, setLoading, user, setUser, handleUnbanUser, verifyIsAdmin, isAdmin, handleBanUser, slowServer }}>
             { children }
         </SessionContext.Provider>
     )

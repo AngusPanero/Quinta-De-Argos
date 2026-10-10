@@ -523,6 +523,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ reservation, quote, onQuote
           options={{
             layout: 'tabs',
             fields: { billingDetails: { name: 'never', email: 'never', phone: 'never', address: 'never' } },
+            wallets: { link: 'never' },
           }}
         />
       </fieldset>
