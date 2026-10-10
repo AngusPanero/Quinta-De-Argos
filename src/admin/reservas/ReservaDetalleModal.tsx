@@ -28,11 +28,22 @@ const PAIS_LABEL: Record<string, string> = {
 
 function errorDeApi(err: unknown, fallback: string): string {
   if (axios.isAxiosError(err)) {
-    const msg = (err.response?.data as { mensaje?: string } | undefined)?.mensaje;
-    if (msg) return msg;
+    const data = err.response?.data as { mensaje?: string; detail?: string } | undefined;
+    if (data?.mensaje) return data.mensaje;
+    if (data?.detail) return data.detail;
+    if (err.response?.status === 401) return 'Tu sesión ha caducado. Vuelve a iniciar sesión.';
   }
   return fallback;
 }
+
+// Código de error de la clave de firma (CLAVE_INCORRECTA, CLAVE_BLOQUEADA…).
+function codigoDeApi(err: unknown): string {
+  if (axios.isAxiosError(err)) return (err.response?.data as { message?: string } | undefined)?.message ?? '';
+  return '';
+}
+
+const TIPOS_FACTURA = 'application/pdf,image/jpeg,image/png';
+const MAX_FACTURA_MB = 5;
 
 const Dato: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <>
@@ -61,8 +72,14 @@ const FilaConsentimiento: React.FC<{ titulo: string; a?: Aceptacion }> = ({ titu
 const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, theme, onClose, onUpdated }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  // ---------- Factura ----------
-  const [confirmandoFactura, setConfirmandoFactura] = useState(false);
+  // ---------- Factura (la genera el propietario; aquí solo se adjunta y se envía) ----------
+  const [mostrarFactura, setMostrarFactura] = useState(false);
+  const [archivoFactura, setArchivoFactura] = useState<File | null>(null);
+  const [numeroFactura, setNumeroFactura] = useState(r.factura?.numero ?? '');
+  const [notaFactura, setNotaFactura] = useState('');
+  const [pin, setPin] = useState('');
+  const [errorFirma, setErrorFirma] = useState('');
+  const [firmaBloqueada, setFirmaBloqueada] = useState(false);
   const [enviandoFactura, setEnviandoFactura] = useState(false);
 
   // ---------- Mensaje ----------
@@ -89,7 +106,8 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
   }, [onClose]);
 
   const facturaNumero = r.factura?.numero ?? null;
-  const puedeFacturar = r.estado === 'pagada';
+  const facturaEnviada = Boolean(r.factura?.ultimoEnvio);
+  const puedeFacturar = r.estado !== 'pendiente_pago' && r.estado !== 'pago_fallido';
 
   const avisoEnvio = (envio: ResultadoEnvio, que: string) => {
     if (envio.enviado) setAviso({ tipo: 'ok', texto: `${que} enviado a ${r.contacto.email}.` });
@@ -101,21 +119,57 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
       });
   };
 
-  const enviarFactura = async () => {
-    setConfirmandoFactura(false);
+  const elegirArchivo = (file: File | null) => {
+    setAviso(null);
+    if (!file) return setArchivoFactura(null);
+    if (!TIPOS_FACTURA.split(',').includes(file.type)) {
+      setArchivoFactura(null);
+      setAviso({ tipo: 'error', texto: 'La factura tiene que ser un PDF, JPG o PNG.' });
+      return;
+    }
+    if (file.size > MAX_FACTURA_MB * 1024 * 1024) {
+      setArchivoFactura(null);
+      setAviso({ tipo: 'error', texto: `El archivo pesa demasiado (máximo ${MAX_FACTURA_MB} MB).` });
+      return;
+    }
+    setArchivoFactura(file);
+  };
+
+  const enviarFactura = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!archivoFactura || !pin) return;
     setEnviandoFactura(true);
+    setErrorFirma('');
     setAviso(null);
     try {
-      const { data } = await axios.post<{ reserva: ReservaWeb; envio: ResultadoEnvio; factura: { numero: string } }>(
-        `${API_BASE}/api/admin/reservas-web/${r._id}/factura`,
-        {},
+      const datos = new FormData();
+      datos.append('factura', archivoFactura);
+      datos.append('numero', numeroFactura.trim());
+      datos.append('nota', notaFactura.trim());
+      datos.append('pin', pin);
+
+      const { data } = await axios.post<{ reserva: ReservaWeb; envio: ResultadoEnvio; factura: { numero: string | null } }>(
+        `${API_BASE}/api/admin/reservas-web/${r._id}/factura-adjunta`,
+        datos,
         API_CONFIG
       );
       onUpdated(data.reserva);
-      avisoEnvio(data.envio, `Factura ${data.factura.numero}`);
+      avisoEnvio(data.envio, data.factura.numero ? `Factura ${data.factura.numero}` : 'Factura');
+      if (data.envio.enviado) {
+        setMostrarFactura(false);
+        setArchivoFactura(null);
+        setNotaFactura('');
+      }
     } catch (err) {
-      setAviso({ tipo: 'error', texto: errorDeApi(err, 'No se ha podido preparar la factura.') });
+      const codigo = codigoDeApi(err);
+      if (codigo === 'CLAVE_INCORRECTA' || codigo === 'CLAVE_BLOQUEADA') {
+        setErrorFirma(errorDeApi(err, 'Clave incorrecta.'));
+        setFirmaBloqueada(codigo === 'CLAVE_BLOQUEADA');
+      } else {
+        setAviso({ tipo: 'error', texto: errorDeApi(err, 'No se ha podido enviar la factura.') });
+      }
     } finally {
+      setPin('');
       setEnviandoFactura(false);
     }
   };
@@ -246,8 +300,10 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
                 {d.codigoPostal} {d.ciudad}
                 {d.provincia ? ` (${d.provincia})` : ''} · {PAIS_LABEL[d.pais] ?? d.pais}
               </Dato>
-              <Dato label="Nº de factura">
-                {facturaNumero ? `${facturaNumero} · emitida ${formatMomento(r.factura?.fechaEmision)}` : 'Sin emitir'}
+              <Dato label="Factura">
+                {facturaEnviada
+                  ? `${facturaNumero ? `${facturaNumero} · ` : ''}enviada ${formatMomento(r.factura?.ultimoEnvio)}`
+                  : 'Sin enviar'}
               </Dato>
             </dl>
           </section>
@@ -383,6 +439,98 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
               </div>
             </form>
           )}
+
+          {/* ---------- Formulario de factura ---------- */}
+          {mostrarFactura && (
+            <form className="admin-reservas-web-section is-wide admin-reservas-web-message" onSubmit={enviarFactura}>
+              <h4 className="admin-reservas-web-section-title">Enviar factura a {r.contacto.nombre}</h4>
+              <p className="admin-reservas-web-muted">
+                Adjunta la factura que has generado (PDF, JPG o PNG, máximo {MAX_FACTURA_MB} MB). Se enviará a{' '}
+                <strong>{r.contacto.email}</strong> con un correo de presentación de Quinta de Argos.
+              </p>
+
+              <label className="admin-reservas-web-field">
+                <span className="admin-reservas-web-label">Archivo de la factura</span>
+                <input
+                  type="file"
+                  accept={TIPOS_FACTURA}
+                  className="admin-reservas-web-input"
+                  onChange={(e) => elegirArchivo(e.target.files?.[0] ?? null)}
+                  required
+                />
+              </label>
+              {archivoFactura && (
+                <p className="admin-reservas-web-muted">
+                  {archivoFactura.name} · {(archivoFactura.size / 1024).toFixed(0)} KB
+                </p>
+              )}
+
+              <label className="admin-reservas-web-field">
+                <span className="admin-reservas-web-label">Nº de factura (opcional)</span>
+                <input
+                  className="admin-reservas-web-input"
+                  value={numeroFactura}
+                  onChange={(e) => setNumeroFactura(e.target.value)}
+                  maxLength={40}
+                  placeholder="Ej. 2026-015"
+                />
+              </label>
+
+              <label className="admin-reservas-web-field">
+                <span className="admin-reservas-web-label">Nota para el huésped (opcional)</span>
+                <textarea
+                  className="admin-reservas-web-input admin-reservas-web-textarea"
+                  value={notaFactura}
+                  onChange={(e) => setNotaFactura(e.target.value)}
+                  maxLength={2000}
+                  rows={3}
+                  placeholder="Por ejemplo: gracias por tu estancia, esperamos verte pronto."
+                />
+              </label>
+
+              <label className="admin-reservas-web-field">
+                <span className="admin-reservas-web-label">Clave de firma</span>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  className="admin-reservas-web-input"
+                  value={pin}
+                  onChange={(e) => {
+                    setPin(e.target.value);
+                    setErrorFirma('');
+                  }}
+                  maxLength={8}
+                  disabled={firmaBloqueada}
+                  aria-invalid={Boolean(errorFirma)}
+                  required
+                />
+              </label>
+              {errorFirma && (
+                <p className="admin-reservas-web-notice is-error" role="alert">
+                  {errorFirma}
+                </p>
+              )}
+
+              <div className="admin-reservas-web-actions">
+                <button
+                  type="button"
+                  className="admin-reservas-web-button-ghost"
+                  onClick={() => setMostrarFactura(false)}
+                  disabled={enviandoFactura}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="admin-reservas-web-button"
+                  disabled={enviandoFactura || !archivoFactura || !pin || firmaBloqueada}
+                >
+                  {enviandoFactura ? 'Enviando…' : 'Firmar y enviar'}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
 
         {/* ---------- Acciones ---------- */}
@@ -393,42 +541,25 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
             </p>
           )}
 
-          {confirmandoFactura ? (
-            <div className="admin-reservas-web-confirm">
-              <span>
-                Se emitirá una factura con número correlativo a nombre de <strong>{r.facturacion.nombre}</strong> y se
-                enviará a <strong>{r.contacto.email}</strong>. El número no se puede anular.
-              </span>
-              <div className="admin-reservas-web-actions">
-                <button type="button" className="admin-reservas-web-button-ghost" onClick={() => setConfirmandoFactura(false)}>
-                  Cancelar
-                </button>
-                <button type="button" className="admin-reservas-web-button" onClick={enviarFactura}>
-                  Emitir y enviar
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="admin-reservas-web-actions">
-              <button
-                type="button"
-                className="admin-reservas-web-button-ghost"
-                onClick={() => setMostrarMensaje((v) => !v)}
-                disabled={enviandoMensaje}
-              >
-                {mostrarMensaje ? 'Ocultar mensaje' : 'Enviar mensaje al huésped'}
-              </button>
-              <button
-                type="button"
-                className="admin-reservas-web-button"
-                onClick={() => (facturaNumero ? enviarFactura() : setConfirmandoFactura(true))}
-                disabled={!puedeFacturar || enviandoFactura}
-                title={puedeFacturar ? undefined : 'Solo se pueden facturar reservas pagadas'}
-              >
-                {enviandoFactura ? 'Preparando…' : facturaNumero ? 'Reenviar factura' : 'Enviar factura por email'}
-              </button>
-            </div>
-          )}
+          <div className="admin-reservas-web-actions">
+            <button
+              type="button"
+              className="admin-reservas-web-button-ghost"
+              onClick={() => setMostrarMensaje((v) => !v)}
+              disabled={enviandoMensaje}
+            >
+              {mostrarMensaje ? 'Ocultar mensaje' : 'Enviar mensaje al huésped'}
+            </button>
+            <button
+              type="button"
+              className="admin-reservas-web-button"
+              onClick={() => setMostrarFactura((v) => !v)}
+              disabled={!puedeFacturar || enviandoFactura}
+              title={puedeFacturar ? undefined : 'Esta reserva no llegó a cobrarse'}
+            >
+              {mostrarFactura ? 'Ocultar factura' : facturaEnviada ? 'Reenviar factura' : 'Enviar factura por email'}
+            </button>
+          </div>
         </footer>
       </div>
     </div>
