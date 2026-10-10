@@ -10,8 +10,8 @@ import ReservasWebTab from "./reservas/ReservasWebTab";
 // Para sumar una sección nueva, agregá un objeto acá y listo.
 const SECTIONS = [
     { id: "reservas", label: "Reservas", render: () => <AdminReservas /> },
+    { id: "historial", label: "Reservas Web", render: () => <ReservasWebTab /> },
     { id: "configuracion", label: "Configuración", render: () => <ConfigQuinta /> },
-    { id: "historial", label: "Historial Reservas Web", render: () => <ReservasWebTab /> },
 ] as const satisfies ReadonlyArray<{ id: string; label: string; render: () => ReactNode }>;
 
 type SectionId = (typeof SECTIONS)[number]["id"];

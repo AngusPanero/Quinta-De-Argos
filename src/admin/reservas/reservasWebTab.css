@@ -871,14 +871,96 @@
     height: 40px;
   }
 
+  /* Un solo desplazamiento para todo el detalle: cada sección con su altura natural */
   .admin-reservas-web-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    align-content: start;
+    grid-auto-rows: max-content;
     gap: 0.75rem;
     padding: 0.75rem;
+    -webkit-overflow-scrolling: touch;
   }
 
   .admin-reservas-web-section {
     padding: 1rem;
-    overflow-x: auto;
+    overflow: visible;
+  }
+
+  /* Tablas compactas del detalle (consentimientos, etc.): sin desplazamiento
+     lateral; cada fila se muestra como un bloque con sus datos uno tras otro */
+  .admin-reservas-web-section .admin-reservas-web-table-wrap {
+    overflow: visible;
+    border: none;
+    border-radius: 0;
+  }
+
+  .admin-reservas-web-table.is-compact,
+  .admin-reservas-web-table.is-compact tbody,
+  .admin-reservas-web-table.is-compact tr {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-reservas-web-table.is-compact thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .admin-reservas-web-table.is-compact tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.2rem 0.6rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--arw-line);
+  }
+
+  .admin-reservas-web-table.is-compact tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .admin-reservas-web-table.is-compact tbody tr:hover {
+    background-color: transparent;
+  }
+
+  .admin-reservas-web-table.is-compact th,
+  .admin-reservas-web-table.is-compact td {
+    display: block;
+    padding: 0;
+    border: none;
+    min-width: 0;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-reservas-web-table.is-compact tbody th,
+  .admin-reservas-web-table.is-compact tbody tr > :first-child {
+    flex: 1 1 100%;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: normal;
+  }
+
+  .admin-reservas-web-table.is-compact td {
+    font-size: 0.8rem;
+    color: var(--arw-muted);
+  }
+
+  /* Separador entre los datos de una misma fila */
+  .admin-reservas-web-table.is-compact td + td::before {
+    content: '·';
+    margin-right: 0.6rem;
+    color: var(--arw-line-strong);
+  }
+
+  .admin-reservas-web-table.is-compact .admin-reservas-web-ua {
+    max-width: 100%;
+    white-space: normal;
   }
 
   /* Pares dato/valor: el título arriba y el valor debajo */
@@ -930,4 +1012,4 @@
   }
 }
 
-input{ font-size: 16px !important;}
+input{ font-size: 16px !important; }
