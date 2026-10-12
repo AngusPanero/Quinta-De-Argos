@@ -318,7 +318,7 @@ const ReservasWebTab: React.FC = () => {
                     <td>
                       <span className={`admin-reservas-web-badge is-${r.estado}`}>{ESTADO_LABEL[r.estado]}</span>
                     </td>
-                    <td className="admin-reservas-web-cell-sub">{formatMomento(r.createdAt)}</td>
+                    <td className="admin-reservas-web-cell-sub-date">{formatMomento(r.createdAt)}</td>
                     <td>
                       <button
                         type="button"

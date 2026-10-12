@@ -247,7 +247,6 @@
   padding: 0.85rem 1rem;
   text-align: left;
   vertical-align: middle;
-  border-bottom: 1px solid var(--arw-line);
 }
 
 .admin-reservas-web-table thead th {
@@ -298,6 +297,13 @@
 .admin-reservas-web-cell-main {
   display: block;
   font-weight: 500;
+}
+
+.admin-reservas-web-cell-sub-date {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--arw-muted);
+  padding-top: 26px !important;
 }
 
 .admin-reservas-web-cell-sub {
