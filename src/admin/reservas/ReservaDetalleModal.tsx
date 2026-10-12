@@ -26,12 +26,37 @@ const PAIS_LABEL: Record<string, string> = {
   NL: 'Países Bajos', BE: 'Bélgica', CH: 'Suiza', AR: 'Argentina', US: 'Estados Unidos',
 };
 
+// Todos los tipos de correo que guarda el backend en reserva.comunicaciones.
+const TIPO_COMUNICACION_LABEL: Record<string, string> = {
+  confirmacion: 'Confirmación',
+  pago_pendiente: 'Pago pendiente',
+  pago_fallido: 'Pago no completado',
+  cancelacion: 'Cancelación',
+  reembolso: 'Reembolso',
+  factura: 'Factura',
+  mensaje: 'Mensaje',
+};
+
+// Rutas del backend (contactRouter.js).
+const rutaReserva = (id: string) => `${API_BASE}/api/admin/reservas-web/${id}`;
+
+// Para enviar archivos: misma sesión que API_CONFIG, pero como multipart.
+// (Si API_CONFIG fija "Content-Type: application/json", multer no recibiría el archivo.)
+const API_CONFIG_ARCHIVO = {
+  ...API_CONFIG,
+  headers: {
+    ...((API_CONFIG as { headers?: Record<string, string> }).headers ?? {}),
+    'Content-Type': 'multipart/form-data',
+  },
+};
+
 function errorDeApi(err: unknown, fallback: string): string {
   if (axios.isAxiosError(err)) {
     const data = err.response?.data as { mensaje?: string; detail?: string } | undefined;
     if (data?.mensaje) return data.mensaje;
     if (data?.detail) return data.detail;
     if (err.response?.status === 401) return 'Tu sesión ha caducado. Vuelve a iniciar sesión.';
+    if (err.response?.status === 404) return 'El servidor no encuentra esta acción. Revisa que el backend esté actualizado.';
   }
   return fallback;
 }
@@ -71,6 +96,7 @@ const FilaConsentimiento: React.FC<{ titulo: string; a?: Aceptacion }> = ({ titu
 
 const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, theme, onClose, onUpdated }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const inputArchivoRef = useRef<HTMLInputElement>(null);
 
   // ---------- Factura (la genera el propietario; aquí solo se adjunta y se envía) ----------
   const [mostrarFactura, setMostrarFactura] = useState(false);
@@ -93,7 +119,7 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
   // Escape para cerrar, foco inicial y bloqueo del scroll de fondo.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape' && !enviandoFactura && !enviandoMensaje) onClose();
     };
     document.addEventListener('keydown', onKey);
     const overflow = document.body.style.overflow;
@@ -103,7 +129,7 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
     };
-  }, [onClose]);
+  }, [onClose, enviandoFactura, enviandoMensaje]);
 
   const facturaNumero = r.factura?.numero ?? null;
   const facturaEnviada = Boolean(r.factura?.ultimoEnvio);
@@ -112,23 +138,24 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
   const avisoEnvio = (envio: ResultadoEnvio, que: string) => {
     if (envio.enviado) setAviso({ tipo: 'ok', texto: `${que} enviado a ${r.contacto.email}.` });
     else if (envio.error) setAviso({ tipo: 'error', texto: `${que}: no se ha podido enviar (${envio.error}).` });
-    else
-      setAviso({
-        tipo: 'info',
-        texto: `${que} preparado. El envío por email aún no está configurado: ha quedado registrado como pendiente.`,
-      });
+    else setAviso({ tipo: 'info', texto: `${que}: no se ha confirmado el envío. Revisa el historial de comunicaciones.` });
+  };
+
+  const limpiarArchivo = () => {
+    setArchivoFactura(null);
+    if (inputArchivoRef.current) inputArchivoRef.current.value = '';
   };
 
   const elegirArchivo = (file: File | null) => {
     setAviso(null);
     if (!file) return setArchivoFactura(null);
     if (!TIPOS_FACTURA.split(',').includes(file.type)) {
-      setArchivoFactura(null);
+      limpiarArchivo();
       setAviso({ tipo: 'error', texto: 'La factura tiene que ser un PDF, JPG o PNG.' });
       return;
     }
     if (file.size > MAX_FACTURA_MB * 1024 * 1024) {
-      setArchivoFactura(null);
+      limpiarArchivo();
       setAviso({ tipo: 'error', texto: `El archivo pesa demasiado (máximo ${MAX_FACTURA_MB} MB).` });
       return;
     }
@@ -137,11 +164,12 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
 
   const enviarFactura = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!archivoFactura || !pin) return;
+    if (!archivoFactura || !pin || enviandoFactura) return;
     setEnviandoFactura(true);
     setErrorFirma('');
     setAviso(null);
     try {
+      // El pin va DESPUÉS del archivo: el backend lee el archivo antes de comprobar la firma.
       const datos = new FormData();
       datos.append('factura', archivoFactura);
       datos.append('numero', numeroFactura.trim());
@@ -149,15 +177,15 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
       datos.append('pin', pin);
 
       const { data } = await axios.post<{ reserva: ReservaWeb; envio: ResultadoEnvio; factura: { numero: string | null } }>(
-        `${API_BASE}/api/admin/reservas-web/${r._id}/factura-adjunta`,
+        `${rutaReserva(r._id)}/factura-adjunta`,
         datos,
-        API_CONFIG
+        API_CONFIG_ARCHIVO
       );
       onUpdated(data.reserva);
       avisoEnvio(data.envio, data.factura.numero ? `Factura ${data.factura.numero}` : 'Factura');
       if (data.envio.enviado) {
         setMostrarFactura(false);
-        setArchivoFactura(null);
+        limpiarArchivo();
         setNotaFactura('');
       }
     } catch (err) {
@@ -176,20 +204,24 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
 
   const enviarMensaje = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (enviandoMensaje) return;
     setEnviandoMensaje(true);
     setAviso(null);
     try {
       const { data } = await axios.post<{ reserva: ReservaWeb; envio: ResultadoEnvio }>(
-        `${API_BASE}/api/admin/reservas-web/${r._id}/mensaje`,
-        { asunto, mensaje },
+        `${rutaReserva(r._id)}/mensaje`,
+        { asunto: asunto.trim(), mensaje: mensaje.trim() },
         API_CONFIG
       );
       onUpdated(data.reserva);
       avisoEnvio(data.envio, 'Mensaje');
-      setMensaje('');
-      setMostrarMensaje(false);
+      // Si falló, se conserva el texto para reintentar sin reescribirlo.
+      if (data.envio.enviado) {
+        setMensaje('');
+        setMostrarMensaje(false);
+      }
     } catch (err) {
-      setAviso({ tipo: 'error', texto: errorDeApi(err, 'No se ha podido preparar el mensaje.') });
+      setAviso({ tipo: 'error', texto: errorDeApi(err, 'No se ha podido enviar el mensaje.') });
     } finally {
       setEnviandoMensaje(false);
     }
@@ -206,7 +238,7 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
     <div
       className={`admin-reservas-web-overlay${theme === 'dark' ? ' theme-dark' : ''}`}
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget && !enviandoFactura && !enviandoMensaje) onClose();
       }}
     >
       <div
@@ -352,7 +384,7 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
             </div>
           </section>
 
-          {/* ---------- Comunicaciones ---------- */}
+          {/* ---------- Comunicaciones (automáticas y del panel) ---------- */}
           <section className="admin-reservas-web-section is-wide">
             <h4 className="admin-reservas-web-section-title">Comunicaciones</h4>
             {comunicaciones.length === 0 ? (
@@ -362,13 +394,14 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
                 {comunicaciones.map((c) => (
                   <li key={c._id} className="admin-reservas-web-timeline-item">
                     <div className="admin-reservas-web-timeline-head">
-                      <strong>{c.tipo === 'factura' ? 'Factura' : 'Mensaje'}</strong> · {c.asunto}
+                      <strong>{TIPO_COMUNICACION_LABEL[String(c.tipo)] ?? String(c.tipo)}</strong> · {c.asunto}
                       <span className={`admin-reservas-web-badge is-envio-${c.estado}`}>
                         {COMUNICACION_ESTADO_LABEL[c.estado]}
                       </span>
                     </div>
                     <span className="admin-reservas-web-cell-sub">
-                      {formatMomento(c.fecha)} · para {c.destinatario} · por {c.creadoPor}
+                      {formatMomento(c.fecha)} · para {c.destinatario} ·{' '}
+                      {c.creadoPor === 'sistema' ? 'automático' : `por ${c.creadoPor}`}
                     </span>
                     {c.mensaje && <p className="admin-reservas-web-timeline-text">{c.mensaje}</p>}
                     {c.error && <p className="admin-reservas-web-timeline-text is-error">{c.error}</p>}
@@ -398,6 +431,9 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
           {mostrarMensaje && (
             <form className="admin-reservas-web-section is-wide admin-reservas-web-message" onSubmit={enviarMensaje}>
               <h4 className="admin-reservas-web-section-title">Mensaje para {r.contacto.nombre}</h4>
+              <p className="admin-reservas-web-muted">
+                Se enviará a <strong>{r.contacto.email}</strong>. Si responde, la respuesta llega al correo de la finca.
+              </p>
               <label className="admin-reservas-web-field">
                 <span className="admin-reservas-web-label">Asunto</span>
                 <input
@@ -452,6 +488,7 @@ const ReservaDetalleModal: React.FC<ReservaDetalleModalProps> = ({ reserva: r, t
               <label className="admin-reservas-web-field">
                 <span className="admin-reservas-web-label">Archivo de la factura</span>
                 <input
+                  ref={inputArchivoRef}
                   type="file"
                   accept={TIPOS_FACTURA}
                   className="admin-reservas-web-input"

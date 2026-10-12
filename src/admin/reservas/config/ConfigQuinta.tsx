@@ -10,7 +10,7 @@ import "./configQuinta.css";
 
 const TABS = [
     { id: "vista", label: "Calendario" },
-    { id: "calendario", label: "Cambiar precios y fechas" },
+    { id: "calendario", label: "Gestionar precios y fechas" },
     { id: "reglas", label: "Reglas de la casa" },
     { id: "propiedad", label: "Datos y políticas" },
     { id: "canales", label: "Canales" },

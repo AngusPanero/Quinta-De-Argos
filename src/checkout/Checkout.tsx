@@ -122,7 +122,7 @@ const SuccessMessage: React.FC<{ processing?: boolean; codigo?: string | null }>
 
 // TODO (Angus): poner aquí el titular real (nombre o razón social y NIF)
 // cuando tengamos la política de privacidad definitiva.
-const RESPONSABLE_TRATAMIENTO = 'el titular de Quinta de Argos';
+const RESPONSABLE_TRATAMIENTO = 'Quinta de Argos';
 const URL_POLITICA_PRIVACIDAD = '/policy-privacy';
 const URL_CONDICIONES_RESERVA = '/policy-terms';
 
