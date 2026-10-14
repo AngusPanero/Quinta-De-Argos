@@ -421,6 +421,20 @@ export default function AdminSesHospedajes() {
     const [errors, setErrors] = useState<Errors>({});
     const [saving, setSaving] = useState(false);
 
+    const [probando, setProbando] = useState(false);
+    const probarConexion = async () => {
+        setProbando(true);
+        setNotice(null);
+        try {
+            const { data } = await axios.post(`${API}/api/admin/ses/probar`, {}, { withCredentials: true });
+            setNotice({ type: data?.ok ? "ok" : "error", text: data?.message || "Respuesta inesperada del servidor" });
+        } catch (err) {
+            setNotice({ type: "error", text: apiMessage(err, "No se ha podido probar la conexión") });
+        } finally {
+            setProbando(false);
+        }
+    };
+
     const changeSubTab = (t: SubTab) => {
         setSubTab(t);
         setNotice(null);
@@ -682,6 +696,11 @@ export default function AdminSesHospedajes() {
                                 {estadoSes.entorno === "produccion" ? "Producción" : "Entorno de pruebas"}
                             </span>
                             {estadoSes.establecimiento && <span className="sh-env-code">Establecimiento {estadoSes.establecimiento}</span>}
+                            {estadoSes.configurado && (
+                                <button className="sh-link" onClick={probarConexion} disabled={probando}>
+                                    {probando ? "Probando…" : "Probar conexión"}
+                                </button>
+                            )}
                         </div>
                     )}
                 </header>
