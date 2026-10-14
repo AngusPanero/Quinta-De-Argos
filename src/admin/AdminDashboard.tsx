@@ -4,6 +4,7 @@ import "./adminDashboard.css";
 import ConfigQuinta from "./reservas/config/ConfigQuinta";
 import { UseTheme } from "../contexts/ThemeContext";
 import ReservasWebTab from "./reservas/ReservasWebTab";
+import AdminSesHospedajes from "./reservas/AdminSesHospedajes";
 
 // Secciones del panel. El orden del array es el orden de las pestañas,
 // y la primera es la que se abre si no hay nada guardado.
@@ -11,12 +12,13 @@ import ReservasWebTab from "./reservas/ReservasWebTab";
 const SECTIONS = [
     { id: "reservas", label: "Reservas", render: () => <AdminReservas /> },
     { id: "historial", label: "Reservas Web", render: () => <ReservasWebTab /> },
+    { id: "viajeros", label: "Registro de viajeros", render: () => <AdminSesHospedajes /> },
     { id: "configuracion", label: "Configuración", render: () => <ConfigQuinta /> },
 ] as const satisfies ReadonlyArray<{ id: string; label: string; render: () => ReactNode }>;
 
 type SectionId = (typeof SECTIONS)[number]["id"];
 
-const STORAGE_KEY = "qa_admin_section";
+const STORAGE_KEY = import.meta.env.VITE_STORAGE_KEY;
 const DEFAULT_SECTION: SectionId = SECTIONS[0].id;
 
 const isSectionId = (value: unknown): value is SectionId =>

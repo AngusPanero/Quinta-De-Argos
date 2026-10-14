@@ -10,8 +10,10 @@ import vino from "/public/experiencias/ruta-del-vino.jpg";
 import usero from "/public/experiencias/salto-del-usero.webp";
 import viaVerde from "/public/experiencias//via-verde.jpg";
 import cueva from "/public/experiencias/cueva.jpg";
+import santuario from "/public/experiencias/santuario.jpg";
+import fuentes from "/public/experiencias/fuentes.jpg";
 
-type Category = 'Gastronomía' | 'Naturaleza' | 'Cultura' | 'Vino';
+type Category = 'Gastronomía' | 'Naturaleza' | 'Cultura' | 'Vino' | 'Religión';
 
 interface Experience {
   id?: string;
@@ -104,12 +106,36 @@ const EXPERIENCES: Experience[] = [
   {
     id: 'canon-almadenes',
     category: 'Naturaleza',
-    title: 'Cueva del Puerto (Calasparra),',
+    title: 'Cueva del Puerto (Calasparra)',
     description:
       'Un desfiladero de 11 km tallado por el río Segura, con paredes de hasta 120 metros. La ruta circular de 10 km es la escapada de día completo para los más aventureros.',
     image: cueva,
     distanceKm: 70,
     timeMinutes: 45,
+    mode: 'En coche',
+  },
+
+  {
+    id: 'Santuario-de-la-esperanza',
+    category: 'Religión',
+    title: 'Santuario de la Esperanza (Calasparra)',
+    description:
+      'Un santuario excavado en la roca a orillas del río Segura, hogar de la Virgen de la Esperanza, patrona de Calasparra. Rodeado de arrozales y bosque de ribera, es la escapada de media jornada ideal para toda la familia.',
+    image: santuario,
+    distanceKm: 20,
+    timeMinutes: 25,
+    mode: 'En coche',
+  },
+
+  {
+    id: 'Santuario-de-la-esperanza',
+    category: 'Naturaleza',
+    title: 'Fuentes del Marqués (Caravaca de la Cruz)',
+    description:
+      'Un paraje de manantiales cristalinos, nogales y álamos a las afueras de Caravaca, presidido por un torreón del siglo XVI. Sus senderos frescos y sombreados lo convierten en el paseo perfecto para una tarde tranquila en plena naturaleza.',
+    image: fuentes,
+    distanceKm: 13,
+    timeMinutes: 17,
     mode: 'En coche',
   }
 ];

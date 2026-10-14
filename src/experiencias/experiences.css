@@ -281,8 +281,7 @@
 }
 
 .experiences-corporate-outro-paragraph {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
+  font-family: "Montserrat", 'Playfair Display', Georgia, serif;
   font-weight: 500;
   font-size: 1.3rem;
   line-height: 1.55;
@@ -292,7 +291,7 @@
 
 .experiences-corporate-cta-outro {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: "Montserrat", 'Playfair Display', 'JetBrains Mono', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.16em;

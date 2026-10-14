@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ReservasList from "./ReservasList";
 import ReservasCalendar from "./ReservasCalendar";
+import ReservasFacturacion from "./ReservasFacturacion";
 import type { SyncState } from "./reservasTypes";
 import { relativeTime } from "./reservasUtils";
 import "./adminReservas.css";
@@ -9,7 +10,13 @@ import { UseTheme } from "../../contexts/ThemeContext";
 
 const API = import.meta.env.VITE_API_URL;
 
-type Tab = "calendario" | "listado";
+type Tab = "calendario" | "listado" | "facturacion";
+
+const TABS: { id: Tab; label: string }[] = [
+    { id: "calendario", label: "Calendario" },
+    { id: "listado", label: "Listado" },
+    { id: "facturacion", label: "Facturación" },
+];
 
 export default function AdminReservas() {
     const { theme } = UseTheme();
@@ -70,28 +77,23 @@ export default function AdminReservas() {
             {syncError && <p className="ar-alert" role="alert">{syncError}</p>}
 
             <nav className="ar-tabs" role="tablist">
-                <button
-                    role="tab"
-                    aria-selected={tab === "calendario"}
-                    className={`ar-tab ${tab === "calendario" ? "ar-tab--active" : ""}`}
-                    onClick={() => setTab("calendario")}
-                >
-                    Calendario
-                </button>
-                <button
-                    role="tab"
-                    aria-selected={tab === "listado"}
-                    className={`ar-tab ${tab === "listado" ? "ar-tab--active" : ""}`}
-                    onClick={() => setTab("listado")}
-                >
-                    Listado
-                </button>
+                {TABS.map((t) => (
+                    <button
+                        key={t.id}
+                        role="tab"
+                        aria-selected={tab === t.id}
+                        className={`ar-tab ${tab === t.id ? "ar-tab--active" : ""}`}
+                        onClick={() => setTab(t.id)}
+                    >
+                        {t.label}
+                    </button>
+                ))}
             </nav>
 
             <div className="ar-content">
-                {tab === "calendario"
-                    ? <ReservasCalendar refreshKey={refreshKey} onSyncInfo={setLastSync} />
-                    : <ReservasList refreshKey={refreshKey} onSyncInfo={setLastSync} />}
+                {tab === "calendario" && <ReservasCalendar refreshKey={refreshKey} onSyncInfo={setLastSync} />}
+                {tab === "listado" && <ReservasList refreshKey={refreshKey} onSyncInfo={setLastSync} />}
+                {tab === "facturacion" && <ReservasFacturacion refreshKey={refreshKey} onSyncInfo={setLastSync} />}
             </div>
           </div>
         </section>

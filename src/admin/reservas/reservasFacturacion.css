@@ -1,0 +1,517 @@
+/* ==========================================================
+   reservasFacturacion.css — Quinta de Argos (panel admin)
+   Prefijo de clases: rf-*
+   Usa los tokens --qa-* y --ar-* definidos en .ar-page
+   ========================================================== */
+
+.rf-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--qa-text);
+}
+
+.rf-wrap button:focus-visible,
+.rf-wrap input:focus-visible {
+  outline: 2px solid var(--qa-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Filtros ---------- */
+
+.rf-filters {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.4rem 1.5rem;
+  background-color: var(--qa-surface);
+  border: 1px solid var(--qa-line);
+  border-radius: 14px;
+}
+
+.rf-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.rf-group--dates {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  align-items: flex-end;
+}
+
+.rf-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--qa-muted);
+}
+
+.rf-presets,
+.rf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.rf-preset,
+.rf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--qa-text);
+  background-color: transparent;
+  border: 1px solid var(--qa-line);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s var(--qa-ease), border-color 0.3s var(--qa-ease), color 0.3s var(--qa-ease);
+}
+
+.rf-preset:hover,
+.rf-chip:hover {
+  border-color: var(--qa-accent);
+}
+
+.rf-preset--on,
+.rf-chip--on {
+  background-color: var(--qa-btn-bg);
+  border-color: var(--qa-btn-bg);
+  color: var(--qa-btn-text);
+}
+
+.rf-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background-color: var(--qa-muted);
+}
+
+.rf-chip--web .rf-dot,
+.rf-platform--web .rf-dot { background-color: var(--ar-web); }
+.rf-chip--airbnb .rf-dot,
+.rf-platform--airbnb .rf-dot { background-color: var(--ar-airbnb); }
+.rf-chip--booking .rf-dot,
+.rf-platform--booking .rf-dot { background-color: var(--ar-booking); }
+.rf-chip--direct .rf-dot,
+.rf-platform--direct .rf-dot { background-color: var(--ar-direct); }
+
+.rf-chip--on .rf-dot {
+  box-shadow: 0 0 0 2px var(--qa-btn-text);
+}
+
+.rf-date {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.rf-date input {
+  font-family: inherit;
+  font-size: 16px; /* evita el zoom en iOS */
+  color: var(--qa-text);
+  background-color: var(--qa-bg);
+  border: 1px solid var(--qa-line);
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  min-height: 44px;
+  color-scheme: light;
+}
+
+.ar-page.theme-dark .rf-date input {
+  color-scheme: dark;
+}
+
+.rf-segmented {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--qa-line);
+  border-radius: 999px;
+  background-color: var(--qa-bg);
+}
+
+.rf-seg {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--qa-muted);
+  background: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  min-height: 38px;
+  cursor: pointer;
+  transition: background-color 0.3s var(--qa-ease), color 0.3s var(--qa-ease);
+}
+
+.rf-seg--on {
+  background-color: var(--qa-btn-bg);
+  color: var(--qa-btn-text);
+}
+
+.rf-warning,
+.rf-error {
+  margin: 0;
+  padding: 0.9rem 1.1rem;
+  border-left: 3px solid var(--qa-error);
+  background-color: var(--qa-error-bg);
+  color: var(--qa-error);
+  font-size: 0.95rem;
+}
+
+/* ---------- Resultado principal ---------- */
+
+.rf-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 2rem 3rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background-color: var(--qa-surface);
+  border: 1px solid var(--qa-line);
+  border-top: 3px solid var(--qa-accent);
+  border-radius: 14px;
+  transition: opacity 0.3s ease;
+}
+
+.rf-hero--loading {
+  opacity: 0.55;
+}
+
+.rf-hero-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--qa-muted);
+}
+
+.rf-hero-amount {
+  margin: 0.4rem 0 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--qa-title);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.rf-hero-context {
+  margin: 0.75rem 0 0;
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--qa-muted);
+}
+
+.rf-iva {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.rf-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.rf-check input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--qa-accent);
+  cursor: pointer;
+}
+
+.rf-breakdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.15rem;
+  margin: 0;
+}
+
+.rf-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--qa-line);
+}
+
+.rf-line dt {
+  font-weight: 300;
+  color: var(--qa-muted);
+}
+
+.rf-line dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rf-line--minus dd {
+  color: var(--qa-muted);
+}
+
+.rf-line--sub dt,
+.rf-line--sub dd {
+  font-weight: 500;
+  color: var(--qa-text);
+}
+
+.rf-line--total {
+  border-bottom: none;
+  padding-top: 0.9rem;
+}
+
+.rf-line--total dt,
+.rf-line--total dd {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: var(--qa-title);
+}
+
+/* ---------- Indicadores ---------- */
+
+.rf-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.rf-stat {
+  padding: 1.15rem 1.25rem;
+  background-color: var(--qa-surface);
+  border: 1px solid var(--qa-line);
+  border-radius: 12px;
+}
+
+.rf-stat-label {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--qa-muted);
+}
+
+.rf-stat-value {
+  margin: 0.35rem 0 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  color: var(--qa-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.rf-stat-unit {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 300;
+  font-size: 1rem;
+  color: var(--qa-muted);
+}
+
+.rf-stat-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--qa-muted);
+}
+
+/* ---------- Secciones ---------- */
+
+.rf-section {
+  padding: 1.5rem;
+  background-color: var(--qa-surface);
+  border: 1px solid var(--qa-line);
+  border-radius: 14px;
+}
+
+.rf-section-title {
+  margin: 0 0 1.25rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: var(--qa-title);
+}
+
+.rf-section-hint {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+  color: var(--qa-muted);
+}
+
+.rf-bar {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background-color: var(--qa-hatch);
+  overflow: hidden;
+}
+
+.rf-bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background-color: var(--qa-accent);
+  transition: width 0.6s var(--qa-ease);
+}
+
+.rf-platforms {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rf-platform-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.rf-platform-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 500;
+}
+
+.rf-platform-amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.rf-platform--web .rf-bar-fill { background-color: var(--ar-web); }
+.rf-platform--airbnb .rf-bar-fill { background-color: var(--ar-airbnb); }
+.rf-platform--booking .rf-bar-fill { background-color: var(--ar-booking); }
+.rf-platform--direct .rf-bar-fill { background-color: var(--ar-direct); }
+
+.rf-platform-meta {
+  margin: 0.45rem 0 0;
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--qa-muted);
+}
+
+.rf-months {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rf-month {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rf-month-label {
+  font-size: 0.95rem;
+  text-transform: capitalize;
+}
+
+.rf-month-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rf-month-count {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--qa-muted);
+}
+
+.rf-empty {
+  margin: 0;
+  font-weight: 300;
+  color: var(--qa-muted);
+}
+
+.rf-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rf-notes p {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--qa-muted);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+  .rf-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .rf-filters,
+  .rf-section {
+    padding: 1.15rem;
+  }
+
+  .rf-group--dates {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rf-date input {
+    width: 100%;
+  }
+
+  .rf-segmented {
+    display: flex;
+  }
+
+  .rf-seg {
+    flex: 1;
+  }
+
+  .rf-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .rf-stat {
+    padding: 0.95rem 1rem;
+  }
+
+  .rf-stat-value {
+    font-size: 1.4rem;
+  }
+
+  .rf-month {
+    grid-template-columns: 70px minmax(0, 1fr) auto;
+    gap: 0.75rem;
+  }
+}
