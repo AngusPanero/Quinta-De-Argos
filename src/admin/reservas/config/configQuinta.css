@@ -1281,8 +1281,8 @@
 /* Lista de fechas con precio propio */
 .pw-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
-  gap: 0 1.5rem;
+  grid-template-columns: 1fr;
+  max-width: 680px;
   margin: 0.9rem 0 0;
   padding: 0;
   list-style: none;
@@ -1304,6 +1304,66 @@
   font-weight: 600;
   font-size: 1.05rem;
   color: var(--qa-title);
+}
+
+.pw-list-item {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+.pw-list-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.pw-list-dates {
+  flex: 1;
+  min-width: 0;
+}
+
+.pw-list-actions {
+  display: inline-flex;
+  gap: 0.85rem;
+  margin-left: 0.25rem;
+}
+
+.pw-link-danger {
+  color: var(--qa-error);
+}
+
+/* Tramo abierto para editar o quitar: ocupa todo el ancho */
+.pw-list-item--open {
+  grid-column: 1 / -1;
+  padding: 0.85rem 1rem 1rem;
+  margin: 0.4rem 0;
+  border: 1px solid var(--qa-line-strong);
+  border-left: 3px solid var(--qa-accent);
+  border-radius: 6px;
+  background-color: var(--qa-surface);
+}
+
+.pw-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.pw-edit .cq-help {
+  margin: 0;
+}
+
+.pw-edit .cq-review {
+  margin-top: 0;
+}
+
+.pw-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
 /* ---------- Responsive (mide el contenedor, no la pantalla) ---------- */
@@ -1566,6 +1626,19 @@
   }
 
   .pw-inline .cq-btn {
+    flex: 1;
+  }
+
+  .pw-list-row {
+    flex-wrap: wrap;
+  }
+
+  .pw-list-actions {
+    flex-basis: 100%;
+    margin: 0.3rem 0 0;
+  }
+
+  .pw-edit-actions .cq-btn {
     flex: 1;
   }
 }

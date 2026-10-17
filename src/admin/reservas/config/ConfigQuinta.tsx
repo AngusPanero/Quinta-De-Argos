@@ -4,15 +4,15 @@ import ConfigCalendario from "./ConfigCalendario";
 import ConfigForm from "./ConfigForm";
 import ConfigVista, { type ViewMonth } from "./ConfigVista";
 import ConfigCanales from "./ConfigCanales";
-import PreciosWeb from "./PreciosWeb";
+import PreciosWeb, { type WebModo } from "./PreciosWeb";
 import { fetchConfig, toApiError } from "./configApi";
 import type { ConfigResponse, DateRange, EditTarget } from "./configTypes";
 import "./configQuinta.css";
 
 const TABS = [
     { id: "vista", label: "Calendario" },
-    { id: "calendario", label: "Gestionar reservas, precios y fechas" },
-    { id: "web", label: "Precios de la web" },
+    { id: "calendario", label: "Booking y Airbnb: precios y fechas" },
+    { id: "web", label: "Web: precios y reservas" },
     { id: "reglas", label: "Reglas de la casa" },
     { id: "propiedad", label: "Datos y políticas" },
     { id: "canales", label: "Canales" },
@@ -44,7 +44,7 @@ export default function ConfigQuinta() {
         return { year: now.getFullYear(), month: now.getMonth() };
     });
     // Fechas que llegan desde "Cambiar este día"; el nonce reinicia el formulario
-    const [prefill, setPrefill] = useState<{ range: DateRange; nonce: number } | null>(null);
+    const [prefill, setPrefill] = useState<{ range: DateRange; nonce: number; webModo?: WebModo } | null>(null);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -73,6 +73,12 @@ export default function ConfigQuinta() {
     const editRange = (range: DateRange, target: EditTarget) => {
         setPrefill({ range, nonce: Date.now() });
         selectTab(target === "web" ? "web" : "calendario");
+    };
+
+    // "Créalo como reserva particular o uso propio" (desde Booking y Airbnb)
+    const goToReservas = (range: DateRange) => {
+        setPrefill({ range, nonce: Date.now(), webModo: "reservas" });
+        selectTab("web");
     };
 
     return (
@@ -128,6 +134,7 @@ export default function ConfigQuinta() {
                                 key={prefill?.nonce ?? "base"}
                                 options={config.calendario}
                                 initialRange={prefill?.range ?? null}
+                                onIrAReservas={goToReservas}
                             />
                         )}
                         {tab === "web" && (
@@ -135,6 +142,7 @@ export default function ConfigQuinta() {
                                 key={prefill?.nonce ?? "base"}
                                 today={config.calendario.today}
                                 initialRange={prefill?.range ?? null}
+                                initialModo={prefill?.webModo ?? "precios"}
                             />
                         )}
                         {tab === "reglas" && (

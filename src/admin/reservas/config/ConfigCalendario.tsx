@@ -1,12 +1,10 @@
 import { useMemo, useState } from "react";
 import SignModal from "./SignModal";
-import GestionReservas from "./GestionReservas";
 import { applyCalendar, previewCalendar, toApiError } from "./configApi";
 import { OVERRIDE_STATE, WEEKDAYS, addDays, formatDate, weekdayList } from "./configUtils";
 import type { CalendarOptions, CalendarPreview, CalendarRequest, DateRange } from "./configTypes";
 
 type PriceMode = "none" | "fixed" | "percent";
-type Modo = "precios" | "reservas";
 
 const PRESETS = [
     { label: "Todos", days: [1, 2, 3, 4, 5, 6, 7] },
@@ -17,34 +15,21 @@ const PRESETS = [
 interface Props {
     options: CalendarOptions;
     initialRange?: DateRange | null;   // viene del calendario al tocar "Cambiar este día"
+    // Las reservas particulares y de uso propio viven en "Precios y reservas de la web"
+    onIrAReservas?: (range: DateRange) => void;
 }
 
-export default function ConfigCalendario({ options, initialRange }: Props) {
-    const [modo, setModo] = useState<Modo>("precios");
-
+// Precios, estancias y cierres en Beds24 (Booking y Airbnb)
+export default function ConfigCalendario({ options, initialRange, onIrAReservas }: Props) {
     return (
         <div className="cq-panel">
-            <div className="cq-segment" role="radiogroup" aria-label="Qué quieres hacer">
-                {([["precios", "Precios y disponibilidad"], ["reservas", "Reservas particulares y uso propio"]] as const).map(([valor, label]) => (
-                    <button key={valor} type="button" role="radio" aria-checked={modo === valor}
-                        className={`cq-segment-btn ${modo === valor ? "cq-segment-btn--on" : ""}`}
-                        onClick={() => setModo(valor)}>
-                        {label}
-                    </button>
-                ))}
-            </div>
-
-            {modo === "precios" ? (
-                <PreciosYDisponibilidad options={options} initialRange={initialRange} onIrAReservas={() => setModo("reservas")} />
-            ) : (
-                <GestionReservas today={options.today} initialFrom={initialRange?.from} initialTo={initialRange?.to} />
-            )}
+            <PreciosYDisponibilidad options={options} initialRange={initialRange} onIrAReservas={onIrAReservas} />
         </div>
     );
 }
 
 // ---------- Precios, estancias y cierres por rango de fechas ----------
-function PreciosYDisponibilidad({ options, initialRange, onIrAReservas }: Props & { onIrAReservas: () => void }) {
+function PreciosYDisponibilidad({ options, initialRange, onIrAReservas }: Props) {
     const { today, limits, overrides } = options;
     const [from, setFrom] = useState(initialRange?.from ?? today);
     const [to, setTo] = useState(initialRange?.to ?? addDays(today, 6));
@@ -255,7 +240,13 @@ function PreciosYDisponibilidad({ options, initialRange, onIrAReservas }: Props 
                     {errors.override && <p className="cq-field-error">{errors.override}</p>}
                     <p className="cq-help">
                         Cerrar solo bloquea las fechas, sin nombre ni precio. Si la casa está alquilada por tu cuenta o la vas a usar tú,{" "}
-                        <button type="button" className="cq-link" onClick={onIrAReservas}>créalo como reserva particular o uso propio</button>.
+                        {onIrAReservas ? (
+                            <button type="button" className="cq-link" onClick={() => onIrAReservas({ from, to })}>
+                                créalo como reserva particular o uso propio
+                            </button>
+                        ) : (
+                            "créalo como reserva particular o uso propio en «Precios y reservas de la web»"
+                        )}.
                     </p>
                 </div>
             </fieldset>

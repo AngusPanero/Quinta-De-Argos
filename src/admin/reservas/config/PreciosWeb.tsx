@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SignModal from "./SignModal";
+import GestionReservas from "./GestionReservas";
 import {
     applyWebDiscount, applyWebPrices, fetchWebPrices, previewWebDiscount, previewWebPrices, toApiError,
 } from "./configApi";
@@ -24,14 +25,42 @@ const MODES: [WebPriceMode, string][] = [
 
 type Message = { tone: "ok" | "error"; text: string } | null;
 
+export type WebModo = "precios" | "reservas";
+
 const fmtPercent = (n: number) => `${String(n).replace(".", ",")} %`;
 
 interface Props {
     today: string;
     initialRange?: DateRange | null;   // viene del calendario al tocar "Cambiar este día" → "En la web"
+    initialModo?: WebModo;             // "reservas" cuando se llega desde "créalo como reserva particular"
 }
 
-export default function PreciosWeb({ today, initialRange }: Props) {
+export default function PreciosWeb({ today, initialRange, initialModo = "precios" }: Props) {
+    const [modo, setModo] = useState<WebModo>(initialModo);
+
+    return (
+        <div className="cq-panel">
+            <div className="cq-segment" role="radiogroup" aria-label="Qué quieres hacer">
+                {([["precios", "Precios de la web"], ["reservas", "Reservas particulares y uso propio"]] as const).map(([valor, label]) => (
+                    <button key={valor} type="button" role="radio" aria-checked={modo === valor}
+                        className={`cq-segment-btn ${modo === valor ? "cq-segment-btn--on" : ""}`}
+                        onClick={() => setModo(valor)}>
+                        {label}
+                    </button>
+                ))}
+            </div>
+
+            {modo === "precios" ? (
+                <Precios today={today} initialRange={initialRange ?? null} />
+            ) : (
+                <GestionReservas today={today} initialFrom={initialRange?.from} initialTo={initialRange?.to} />
+            )}
+        </div>
+    );
+}
+
+// ---------- Precios de la web ----------
+function Precios({ today, initialRange }: { today: string; initialRange: DateRange | null }) {
     const [state, setState] = useState<WebPricesState | null>(null);
     const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -57,15 +86,15 @@ export default function PreciosWeb({ today, initialRange }: Props) {
     if (!state) return <p className="cq-state">Cargando los precios de la web…</p>;
 
     return (
-        <div className="cq-panel pw">
+        <div className="pw">
             <p className="cq-intro">
                 Estos precios son solo para quien reserva en la web. Booking y Airbnb no cambian.
                 Si una noche no tiene precio propio, la web cobra el de Booking y Airbnb con el descuento general.
             </p>
 
             <Descuento state={state} onApplied={load} />
-            <PreciosPorFecha state={state} today={today} initialRange={initialRange ?? null} onApplied={load} />
-            <Manuales state={state} />
+            <PreciosPorFecha state={state} today={today} initialRange={initialRange} onApplied={load} />
+            <Manuales state={state} onApplied={load} />
         </div>
     );
 }
@@ -447,29 +476,190 @@ function PreviewTable({ preview }: { preview: WebPricePreview }) {
     );
 }
 
-// ---------- Fechas con precio propio ----------
-function Manuales({ state }: { state: WebPricesState }) {
-    const { manuales } = state;
+// ---------- Fechas con precio propio: editar o quitar ----------
+type Tramo = WebPricesState["manuales"][number];
+type Accion = "editar" | "quitar";
+
+const ALL_DAYS = [1, 2, 3, 4, 5, 6, 7];
+const tramoKey = (t: Tramo) => `${t.from}_${t.to}`;
+const tramoLabel = (t: Tramo) => (t.from === t.to ? formatDate(t.from) : `${formatDate(t.from)} – ${formatDate(t.to)}`);
+
+function Manuales({ state, onApplied }: { state: WebPricesState; onApplied: () => void }) {
+    const { manuales, limits } = state;
+    const [activo, setActivo] = useState<{ tramo: Tramo; accion: Accion } | null>(null);
+    const [valor, setValor] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const [preview, setPreview] = useState<WebPricePreview | null>(null);
+    const [checking, setChecking] = useState(false);
+    const [signing, setSigning] = useState(false);
+    const [message, setMessage] = useState<Message>(null);
+
+    const request = (t: Tramo, accion: Accion, v: string): WebPriceRequest =>
+        accion === "quitar"
+            ? { from: t.from, to: t.to, weekdays: ALL_DAYS, mode: "auto" }
+            : { from: t.from, to: t.to, weekdays: ALL_DAYS, mode: "fixed", value: v };
+
+    const revisar = async (t: Tramo, accion: Accion, v: string) => {
+        setChecking(true);
+        setError(null);
+        setMessage(null);
+        try {
+            const r = await previewWebPrices(request(t, accion, v));
+            if (!r.changes.length) {
+                setPreview(null);
+                setError("Ese tramo ya tiene ese precio. No hay nada para cambiar.");
+            } else {
+                setPreview(r);
+            }
+        } catch (err) {
+            const e = toApiError(err);
+            setPreview(null);
+            setError(e.errors?.value ?? e.errors?.from ?? e.errors?.to ?? e.detail);
+        } finally {
+            setChecking(false);
+        }
+    };
+
+    const abrir = (tramo: Tramo, accion: Accion) => {
+        setActivo({ tramo, accion });
+        setValor(String(tramo.precio));
+        setPreview(null);
+        setError(null);
+        setMessage(null);
+        // Quitar no necesita datos: se revisa directamente
+        if (accion === "quitar") revisar(tramo, "quitar", "");
+    };
+
+    const cerrar = () => {
+        setActivo(null);
+        setPreview(null);
+        setError(null);
+    };
+
+    const handleSign = async (pin: string) => {
+        if (!activo) return null;
+        try {
+            const r = await applyWebPrices(request(activo.tramo, activo.accion, valor), pin);
+            setSigning(false);
+            const n = r.applied.days;
+            const noches = n === 1 ? "1 noche" : `${n} noches`;
+            setMessage({
+                tone: "ok",
+                text: activo.accion === "quitar"
+                    ? `Precio propio quitado (${noches}): vuelven al precio automático de las reglas con el descuento general.`
+                    : `Precio actualizado en ${noches}.`,
+            });
+            cerrar();
+            onApplied();
+            return null;
+        } catch (err) {
+            const e = toApiError(err);
+            if (e.code === "CLAVE_INCORRECTA") return { message: e.detail };
+            if (e.code === "CLAVE_BLOQUEADA") return { message: e.detail, locked: true };
+            setSigning(false);
+            setPreview(null);
+            setError(e.detail);
+            return null;
+        }
+    };
+
+    const signLines = activo
+        ? [
+              `Tramo: ${tramoLabel(activo.tramo)}`,
+              activo.accion === "quitar"
+                  ? `Se quita el precio propio (${activo.tramo.precio} €): vuelve al automático (reglas con un ${fmtPercent(state.descuento)} de descuento)`
+                  : `Precio en la web: ${activo.tramo.precio} € → ${valor} € por noche`,
+              ...(preview ? [`Cambian ${preview.changes.length} ${preview.changes.length === 1 ? "noche" : "noches"}`] : []),
+              "Booking y Airbnb no se tocan.",
+          ]
+        : [];
+
     return (
         <section className="pw-block pw-block--last">
             <div className="pw-block-head">
                 <h3 className="cq-legend pw-title">Fechas con precio propio</h3>
                 <span className="pw-current">{manuales.length ? `${manuales.length} ${manuales.length === 1 ? "tramo" : "tramos"}` : "Ninguna"}</span>
             </div>
+
+            {message && (
+                <p className={`cq-message cq-message--${message.tone} pw-message`} role={message.tone === "error" ? "alert" : "status"}>
+                    {message.text}
+                </p>
+            )}
+
             {manuales.length === 0 ? (
                 <p className="cq-help pw-help">Todas las noches usan el precio automático.</p>
             ) : (
                 <ul className="pw-list">
-                    {manuales.map((m) => (
-                        <li key={m.from} className="pw-list-item">
-                            <span className="pw-list-dates">
-                                {m.from === m.to ? formatDate(m.from) : `${formatDate(m.from)} – ${formatDate(m.to)}`}
-                            </span>
-                            <span className="pw-list-price">{m.precio} €</span>
-                        </li>
-                    ))}
+                    {manuales.map((m) => {
+                        const abierto = activo && tramoKey(activo.tramo) === tramoKey(m) ? activo.accion : null;
+                        return (
+                            <li key={tramoKey(m)} className={`pw-list-item ${abierto ? "pw-list-item--open" : ""}`}>
+                                <div className="pw-list-row">
+                                    <span className="pw-list-dates">{tramoLabel(m)}</span>
+                                    <span className="pw-list-price">{m.precio} €</span>
+                                    {!abierto && (
+                                        <span className="pw-list-actions">
+                                            <button type="button" className="cq-link" onClick={() => abrir(m, "editar")}>Editar</button>
+                                            <button type="button" className="cq-link pw-link-danger" onClick={() => abrir(m, "quitar")}>Quitar</button>
+                                        </span>
+                                    )}
+                                </div>
+
+                                {abierto && (
+                                    <div className="pw-edit">
+                                        {abierto === "editar" ? (
+                                            <div className="pw-inline">
+                                                <div className="cq-input-wrap cq-input-wrap--short">
+                                                    <input className="cq-input" type="number" inputMode="decimal" autoFocus
+                                                        aria-label={`Nuevo precio para ${tramoLabel(m)}`}
+                                                        min={limits.precio.min} max={limits.precio.max}
+                                                        value={valor}
+                                                        onChange={(e) => { setValor(e.target.value); setPreview(null); setError(null); }}
+                                                        aria-invalid={!!error} />
+                                                    <span className="cq-unit">€</span>
+                                                </div>
+                                                {!preview && (
+                                                    <button type="button" className="cq-btn cq-btn--ghost"
+                                                        onClick={() => revisar(m, "editar", valor)}
+                                                        disabled={checking || !valor || Number(valor) === m.precio}>
+                                                        {checking ? "Revisando…" : "Revisar cambio"}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <p className="cq-help">
+                                                Al quitarlo, estas noches vuelven al precio automático: el de las reglas con el descuento general ({fmtPercent(state.descuento)}).
+                                                {checking && " Calculando…"}
+                                            </p>
+                                        )}
+
+                                        {error && <p className="cq-field-error">{error}</p>}
+                                        {preview && <PreviewTable preview={preview} />}
+
+                                        <div className="pw-edit-actions">
+                                            <button type="button" className="cq-btn cq-btn--ghost" onClick={cerrar}>Cancelar</button>
+                                            {preview && (
+                                                <button type="button" className="cq-btn" onClick={() => setSigning(true)}>
+                                                    {abierto === "quitar" ? "Firmar y quitar" : "Firmar y guardar"}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </li>
+                        );
+                    })}
                 </ul>
             )}
+
+            <SignModal
+                open={signing}
+                title={activo?.accion === "quitar" ? "Firmar: quitar precio propio" : "Firmar: cambiar precio propio"}
+                lines={signLines}
+                onSign={handleSign}
+                onClose={() => setSigning(false)}
+            />
         </section>
     );
 }
