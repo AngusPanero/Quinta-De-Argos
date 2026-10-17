@@ -210,6 +210,62 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Precios del día: Beds24 + web ---------- */
+
+.rc-prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.45rem;
+}
+
+.rc-prices .rc-price {
+  line-height: 1;
+}
+
+/* Precio web: pastilla con el color de las reservas web.
+   --ar-on-source es el texto que ya se usa sobre ese color, así se lee
+   bien en el tema claro y en el oscuro. */
+.rc-price-web {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.18rem 0.5rem 0.16rem;
+  border-radius: 999px;
+  background-color: var(--ar-web);
+  color: var(--ar-on-source);
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.78rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rc-price-web-label {
+  font-weight: 500;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* Leyenda de precios */
+.rc-legend-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.rc-legend-price .rc-price {
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.rc-legend-price .rc-price-web {
+  font-size: 0.74rem;
+}
+
 .rc-minstay {
   font-weight: 300;
   font-size: 0.75rem;
@@ -371,6 +427,25 @@ span.rc-guest{
 
   .rc-price {
     font-size: 0.78rem;
+  }
+
+  .rc-prices {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  .rc-price-web {
+    padding: 0.12rem 0.32rem;
+    font-size: 0.66rem;
+  }
+
+  .rc-price-web-label {
+    display: none;
+  }
+
+  .rc-legend-price .rc-price-web-label {
+    display: inline;
   }
 
   .rc-minstay {

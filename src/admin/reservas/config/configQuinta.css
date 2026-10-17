@@ -899,6 +899,125 @@
   box-shadow: inset 0 0 0 2px var(--qa-title), inset 5px 0 0 var(--qa-accent);
 }
 
+/* Precio de Beds24 + precio de la web en cada día */
+.cq-cv-prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.4rem;
+}
+
+/* Pastilla del precio web: verde de las reservas web.
+   Con precio propio pasa al color de acento para distinguirlo. */
+.cq-cv-web {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.16rem 0.45rem 0.14rem;
+  border-radius: 999px;
+  background-color: var(--cq-web);
+  color: var(--qa-cream);
+  font-weight: 500;
+  font-size: 0.74rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cq-cv-web--manual {
+  background-color: var(--qa-accent);
+  color: var(--qa-btn-text);
+}
+
+.cq-cv-web-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.cq-cv-legend-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.cq-cv-legend-price .cq-cv-price {
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+/* ---------- Pregunta: cambiar en la web o en Booking y Airbnb ---------- */
+
+.cq-choice {
+  width: min(480px, 100%);
+}
+
+.cq-choice .cq-modal-title {
+  margin-bottom: 0.2rem;
+}
+
+.cq-choice-date {
+  margin: 0 0 1.25rem;
+  font-weight: 300;
+  color: var(--qa-muted);
+}
+
+.cq-choice-date::first-letter {
+  text-transform: uppercase;
+}
+
+.cq-choice-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cq-choice-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--qa-line-strong);
+  border-radius: 8px;
+  background-color: var(--qa-surface);
+  color: var(--qa-text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.25s var(--qa-ease), box-shadow 0.25s var(--qa-ease);
+}
+
+.cq-choice-btn:hover {
+  border-color: var(--qa-accent);
+  box-shadow: inset 3px 0 0 var(--qa-accent);
+}
+
+.cq-choice-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cq-choice-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: var(--qa-title);
+}
+
+.cq-choice-sub {
+  font-weight: 300;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--qa-muted);
+}
+
+.cq-choice .cq-modal-actions {
+  margin-top: 1.25rem;
+}
+
 /* ---------- Detalle del día ---------- */
 
 .cq-cv-detail {
@@ -1070,6 +1189,123 @@
   color: var(--qa-title);
 }
 
+/* ---------- Precios de la web ---------- */
+
+.pw-block {
+  padding: 1.5rem 0 1.75rem;
+  border-top: 1px solid var(--qa-line);
+}
+
+.pw-block:first-of-type {
+  padding-top: 0.25rem;
+  border-top: none;
+}
+
+.pw-block--last {
+  padding-bottom: 0;
+}
+
+.pw-block-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+}
+
+.pw-title {
+  margin: 0;
+}
+
+.pw-current {
+  font-size: 0.92rem;
+  color: var(--qa-muted);
+}
+
+.pw-current strong {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--qa-title);
+}
+
+.pw-help {
+  margin: 0.35rem 0 1.1rem;
+  max-width: 62ch;
+}
+
+.pw-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pw-inline .cq-input-wrap--short {
+  flex: 0 1 160px;
+}
+
+.pw-message {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.pw-review {
+  margin-top: 1rem;
+}
+
+.pw-review .cq-old {
+  font-size: 0.88rem;
+}
+
+.pw-mode {
+  margin-top: 1.25rem;
+}
+
+/* Tipo de precio en la vista previa */
+.pw-tag {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--qa-line-strong);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--qa-muted);
+}
+
+.pw-tag--manual {
+  border-color: var(--cq-web);
+  background-color: var(--cq-web);
+  color: var(--qa-cream);
+}
+
+/* Lista de fechas con precio propio */
+.pw-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+  gap: 0 1.5rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.pw-list-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--qa-line);
+  font-size: 0.93rem;
+}
+
+.pw-list-price {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--qa-title);
+}
+
 /* ---------- Responsive (mide el contenedor, no la pantalla) ---------- */
 
 @container cq-page (max-width: 640px) {
@@ -1120,6 +1356,21 @@
 
   .cq-cv-min {
     font-size: 0.68rem;
+  }
+
+  .cq-cv-prices {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .cq-cv-web {
+    padding: 0.1rem 0.28rem;
+    font-size: 0.62rem;
+  }
+
+  .cq-cv-grid .cq-cv-web-label {
+    display: none;
   }
 
   .cq-cv-flag {
@@ -1308,6 +1559,14 @@
 
   .cq-channel {
     padding: 1rem;
+  }
+
+  .pw-inline .cq-input-wrap--short {
+    flex: 1 1 100%;
+  }
+
+  .pw-inline .cq-btn {
+    flex: 1;
   }
 }
 

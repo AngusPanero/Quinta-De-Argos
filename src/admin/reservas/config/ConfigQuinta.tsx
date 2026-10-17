@@ -4,13 +4,15 @@ import ConfigCalendario from "./ConfigCalendario";
 import ConfigForm from "./ConfigForm";
 import ConfigVista, { type ViewMonth } from "./ConfigVista";
 import ConfigCanales from "./ConfigCanales";
+import PreciosWeb from "./PreciosWeb";
 import { fetchConfig, toApiError } from "./configApi";
-import type { ConfigResponse, DateRange } from "./configTypes";
+import type { ConfigResponse, DateRange, EditTarget } from "./configTypes";
 import "./configQuinta.css";
 
 const TABS = [
     { id: "vista", label: "Calendario" },
-    { id: "calendario", label: "Gestionar precios y fechas" },
+    { id: "calendario", label: "Gestionar reservas, precios y fechas" },
+    { id: "web", label: "Precios de la web" },
     { id: "reglas", label: "Reglas de la casa" },
     { id: "propiedad", label: "Datos y políticas" },
     { id: "canales", label: "Canales" },
@@ -67,9 +69,10 @@ export default function ConfigQuinta() {
         }
     };
 
-    const editRange = (range: DateRange) => {
+    // "Cambiar este día": a Booking y Airbnb (Beds24) o solo a la web
+    const editRange = (range: DateRange, target: EditTarget) => {
         setPrefill({ range, nonce: Date.now() });
-        selectTab("calendario");
+        selectTab(target === "web" ? "web" : "calendario");
     };
 
     return (
@@ -124,6 +127,13 @@ export default function ConfigQuinta() {
                             <ConfigCalendario
                                 key={prefill?.nonce ?? "base"}
                                 options={config.calendario}
+                                initialRange={prefill?.range ?? null}
+                            />
+                        )}
+                        {tab === "web" && (
+                            <PreciosWeb
+                                key={prefill?.nonce ?? "base"}
+                                today={config.calendario.today}
                                 initialRange={prefill?.range ?? null}
                             />
                         )}

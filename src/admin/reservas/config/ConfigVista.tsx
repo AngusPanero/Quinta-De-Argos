@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { fetchCalendarView, toApiError } from "./configApi";
+import { fetchCalendarView, fetchWebPriceDays, toApiError } from "./configApi";
 import {
     OVERRIDE_HELP, OVERRIDE_STATE, SOURCE_LABEL, WEEKDAYS,
     formatDate, formatLongDate, monthGrid, monthLabel,
 } from "./configUtils";
-import type { CalendarViewBooking, CalendarViewDay, DateRange } from "./configTypes";
+import type { CalendarViewBooking, CalendarViewDay, DateRange, EditTarget, WebPriceDay } from "./configTypes";
 
 export interface ViewMonth {
     year: number;
@@ -16,7 +16,7 @@ interface Props {
     defaults: { minStay: number | null; maxStay: number | null };
     month: ViewMonth;
     onMonthChange: (m: ViewMonth) => void;
-    onEdit: (range: DateRange) => void;
+    onEdit: (range: DateRange, target: EditTarget) => void;
 }
 
 const guestName = (b: CalendarViewBooking) => {
@@ -35,6 +35,12 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
     const [error, setError] = useState<string | null>(null);
     const [selected, setSelected] = useState<string | null>(null);
     const [reload, setReload] = useState(0);
+    // Precio de la web por día (no viene de Beds24: lo calcula el backend con las reglas,
+    // el descuento general y los precios propios de "Precios de la web")
+    const [webDays, setWebDays] = useState<Map<string, WebPriceDay>>(new Map());
+    const [webDiscount, setWebDiscount] = useState<number | null>(null);
+    // Pregunta "¿dónde quieres cambiarlo?" al tocar "Cambiar este día"
+    const [choosing, setChoosing] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -54,6 +60,29 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
         })();
         return () => { cancelled = true; };
     }, [grid, reload]);
+
+    useEffect(() => {
+        let cancelled = false;
+        fetchWebPriceDays(grid[0], grid[grid.length - 1])
+            .then((data) => {
+                if (cancelled) return;
+                setWebDays(new Map(data.days.map((d) => [d.date, d])));
+                setWebDiscount(data.descuento);
+            })
+            .catch(() => {
+                // Sin precio web el calendario sigue funcionando con el de Beds24.
+                if (!cancelled) setWebDays(new Map());
+            });
+        return () => { cancelled = true; };
+    }, [grid, reload]);
+
+    // Escape cierra la pregunta
+    useEffect(() => {
+        if (!choosing) return;
+        const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setChoosing(false); };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [choosing]);
 
     const dayMap = useMemo(() => new Map(days.map((d) => [d.date, d])), [days]);
 
@@ -86,6 +115,13 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
     };
 
     const sel = selected ? dayMap.get(selected) : undefined;
+    const selWeb = selected ? webDays.get(selected) : undefined;
+
+    const chooseTarget = (target: EditTarget) => {
+        if (!selected) return;
+        setChoosing(false);
+        onEdit({ from: selected, to: selected }, target);
+    };
     const selBooking = selected ? bookingOn(selected) : undefined;
     const selDeparting = selected ? departingOn(selected) : undefined;
     const nights = (n: number | null) => `${n} ${n === 1 ? "noche" : "noches"}`;
@@ -123,6 +159,7 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
                     const booking = bookingOn(date);
                     const override = info?.override ?? "none";
                     const minStay = info?.minStay ?? defaults.minStay;
+                    const web = webDays.get(date);
                     const classes = [
                         "cq-cv-cell",
                         !date.startsWith(monthPrefix) && "cq-cv-cell--outside",
@@ -144,10 +181,20 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
                             style={style}
                             onClick={() => setSelected(date)}
                             aria-pressed={selected === date}
-                            aria-label={`${formatLongDate(date)}${info?.price != null ? `, ${info.price} euros` : ", sin precio"}${minStay != null ? `, mínimo ${minStay} noches` : ""}, ${OVERRIDE_STATE[override] ?? override}${booking ? ", reservada" : ""}`}
+                            aria-label={`${formatLongDate(date)}${info?.price != null ? `, ${info.price} euros` : ", sin precio"}${web?.price != null ? `, web ${web.price} euros` : ""}${minStay != null ? `, mínimo ${minStay} noches` : ""}, ${OVERRIDE_STATE[override] ?? override}${booking ? ", reservada" : ""}`}
                         >
                             <span className="cq-cv-daynum">{Number(date.slice(8, 10))}</span>
-                            <span className="cq-cv-price">{info?.price != null ? `${info.price} €` : "—"}</span>
+                            <span className="cq-cv-prices">
+                                <span className="cq-cv-price">{info?.price != null ? `${info.price} €` : "—"}</span>
+                                {web?.price != null && (
+                                    <span
+                                        className={`cq-cv-web ${web.manual ? "cq-cv-web--manual" : ""}`}
+                                        title={web.manual ? "Precio propio de la web" : "Precio de la web"}
+                                    >
+                                        <span className="cq-cv-web-label">Web</span>{web.price} €
+                                    </span>
+                                )}
+                            </span>
                             {minStay != null && <span className="cq-cv-min">mín. {minStay}</span>}
                             {override !== "none" && override !== "blackout" && (
                                 <span className="cq-cv-flag">{OVERRIDE_STATE[override]}</span>
@@ -176,10 +223,23 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
                                 </dd>
                             </div>
                             <div>
-                                <dt>Precio por noche</dt>
+                                <dt>Precio en Booking y Airbnb</dt>
                                 <dd>
                                     {sel.price != null ? `${sel.price} €` : "Sin precio"}
                                     {sel.price == null && <span className="cq-cv-sub">Sin precio no se puede reservar.</span>}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Precio en la web</dt>
+                                <dd>
+                                    {selWeb?.price != null ? `${selWeb.price} €` : "Sin precio"}
+                                    <span className="cq-cv-sub">
+                                        {selWeb?.price == null
+                                            ? "No se puede reservar en la web."
+                                            : selWeb.manual
+                                                ? "Precio propio, fijado en «Precios de la web»."
+                                                : `Automático${webDiscount != null ? `: ${String(webDiscount).replace(".", ",")} % menos que en las reglas` : ""}.`}
+                                    </span>
                                 </dd>
                             </div>
                             <div>
@@ -218,12 +278,46 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
 
                     {selected >= today && (
                         <div className="cq-cv-detail-actions">
-                            <button type="button" className="cq-btn" onClick={() => onEdit({ from: selected, to: selected })}>
+                            <button type="button" className="cq-btn" onClick={() => setChoosing(true)}>
                                 Cambiar este día
                             </button>
                         </div>
                     )}
                 </aside>
+            )}
+
+            {choosing && selected && (
+                <div className="cq-modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) setChoosing(false); }}>
+                    <div className="cq-modal cq-choice" role="dialog" aria-modal="true" aria-labelledby="cq-choice-title">
+                        <h2 id="cq-choice-title" className="cq-modal-title">¿Dónde quieres cambiarlo?</h2>
+                        <p className="cq-choice-date">{formatLongDate(selected)}</p>
+
+                        <div className="cq-choice-list">
+                            <button type="button" className="cq-choice-btn" onClick={() => chooseTarget("web")} autoFocus>
+                                <span className="cq-choice-head">
+                                    <span className="cq-choice-title">En la web</span>
+                                    {selWeb?.price != null && <span className="cq-cv-web">{selWeb.price} €</span>}
+                                </span>
+                                <span className="cq-choice-sub">
+                                    Solo el precio para quien reserva en quintadeargos.com. Booking y Airbnb no cambian.
+                                </span>
+                            </button>
+                            <button type="button" className="cq-choice-btn" onClick={() => chooseTarget("canales")}>
+                                <span className="cq-choice-head">
+                                    <span className="cq-choice-title">En Booking y Airbnb</span>
+                                    {sel?.price != null && <span className="cq-cv-price">{sel.price} €</span>}
+                                </span>
+                                <span className="cq-choice-sub">
+                                    Precio, estancia y disponibilidad en Beds24, que lo pasa a Booking y Airbnb. El precio de la web no cambia.
+                                </span>
+                            </button>
+                        </div>
+
+                        <div className="cq-modal-actions">
+                            <button type="button" className="cq-btn cq-btn--ghost" onClick={() => setChoosing(false)}>Cancelar</button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

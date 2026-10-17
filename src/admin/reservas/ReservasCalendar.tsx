@@ -11,6 +11,9 @@ const API = import.meta.env.VITE_API_URL;
 const WEEKDAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 const LEGEND: ReservaSource[] = ["web", "airbnb", "booking", "owner", "direct"];
 
+// webPrice lo añade el backend (precio de la web, con el descuento ya aplicado).
+type CalendarDayConWeb = CalendarDay & { webPrice?: number | null };
+
 type CalendarBooking = Pick<Reserva,
     "beds24Id" | "status" | "source" | "arrival" | "departure" | "nights" |
     "numAdult" | "numChild" | "firstName" | "lastName" | "price" | "commission" | "apiReference">;
@@ -24,11 +27,14 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
     const today = todayISO();
     const [year, setYear] = useState(() => Number(today.slice(0, 4)));
     const [month, setMonth] = useState(() => Number(today.slice(5, 7)) - 1);
-    const [days, setDays] = useState<CalendarDay[]>([]);
+    const [days, setDays] = useState<CalendarDayConWeb[]>([]);
     const [bookings, setBookings] = useState<CalendarBooking[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selected, setSelected] = useState<CalendarBooking | null>(null);
+    // Precio de la web por fecha (con el descuento ya aplicado), del mismo endpoint
+    // que usa el calendario público: así se ve exactamente lo que se cobra.
+    const [webPrices, setWebPrices] = useState<Map<string, number>>(new Map());
 
     const grid = useMemo(() => monthGrid(year, month), [year, month]);
     const monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
@@ -60,6 +66,26 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
         load();
         return () => { cancelled = true; };
     }, [grid, refreshKey, onSyncInfo]);
+
+    useEffect(() => {
+        let cancelled = false;
+        axios
+            .get(`${API}/api/reservas/disponibilidad`)
+            .then(({ data }) => {
+                if (cancelled) return;
+                const dias: Record<string, { estado?: string; precio?: number }> =
+                    data?.dias ?? data?.calendario?.dias ?? {};
+                const mapa = new Map<string, number>();
+                for (const [fecha, d] of Object.entries(dias)) {
+                    if (typeof d?.precio === "number") mapa.set(fecha, d.precio);
+                }
+                setWebPrices(mapa);
+            })
+            .catch(() => {
+                // Sin precios web el calendario sigue funcionando con los de Beds24.
+            });
+        return () => { cancelled = true; };
+    }, [refreshKey]);
 
     const dayMap = useMemo(() => new Map(days.map((d) => [d.date, d])), [days]);
 
@@ -95,6 +121,12 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
                     <li key={s} className={`rc-legend-item rc-legend-item--${s}`}>{SOURCE_LABEL[s]}</li>
                 ))}
                 <li className="rc-legend-item rc-legend-item--closed">No disponible</li>
+                <li className="rc-legend-price">
+                    <span className="rc-price">240 €</span>Beds24
+                </li>
+                <li className="rc-legend-price">
+                    <span className="rc-price-web"><span className="rc-price-web-label">Web</span>228 €</span>Precio web
+                </li>
             </ul>
 
             {error && <p className="rc-error" role="alert">{error}</p>}
@@ -109,6 +141,7 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
                     const isPast = date < today;
                     const isStart = !!booking && (booking.arrival === date || i % 7 === 0);
                     const closed = !booking && info && !info.available;
+                    const webPrice = info?.webPrice ?? webPrices.get(date) ?? null;
 
                     const classes = [
                         "rc-cell",
@@ -127,7 +160,18 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
                             {booking && isStart && <span className="rc-guest">{guestName(booking)}</span>}
                             {!booking && info && info.available && (
                                 <span className="rc-meta">
-                                    {info.price !== null && <span className="rc-price">{Math.round(info.price)} €</span>}
+                                    <span className="rc-prices">
+                                        {info.price !== null && (
+                                            <span className="rc-price" title="Precio en Beds24 (Booking y Airbnb)">
+                                                {Math.round(info.price)} €
+                                            </span>
+                                        )}
+                                        {webPrice !== null && (
+                                            <span className="rc-price-web" title="Precio en la web">
+                                                <span className="rc-price-web-label">Web</span>{webPrice} €
+                                            </span>
+                                        )}
+                                    </span>
                                     {info.minStay !== null && <span className="rc-minstay">mín. {info.minStay}</span>}
                                 </span>
                             )}

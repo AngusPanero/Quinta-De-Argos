@@ -20,7 +20,7 @@
   --arw-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
-  color: var(--arw-text);
+  color: var(--arw-text)
 }
 
 .admin-reservas-web.theme-dark,
@@ -47,7 +47,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 40px 300px 0 300px;
+  padding: 40px 300px 40px 300px;
 }
 
 .admin-reservas-web-sr-only {
