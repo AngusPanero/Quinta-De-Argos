@@ -35,7 +35,7 @@
 
 .gallery-carousel-eyebrow-cover {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.24em;
@@ -155,7 +155,7 @@
 
 .gallery-carousel-page-index {
   display: block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.68rem;
   letter-spacing: 0.14em;
@@ -258,7 +258,7 @@
 
 .gallery-carousel-play-toggle,
 .gallery-carousel-fullscreen-toggle {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.1em;
@@ -345,7 +345,7 @@
 .gallery-carousel-thumb-label {
   display: block;
   margin-top: 0.5rem;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.6rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -375,7 +375,7 @@
 
 .gallery-carousel-eyebrow-outro {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.22em;
@@ -394,7 +394,7 @@
 
 .gallery-carousel-cta-outro {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.16em;

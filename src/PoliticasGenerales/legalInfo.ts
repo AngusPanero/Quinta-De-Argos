@@ -41,7 +41,7 @@ export const ESTANCIA = {
 // Propuesta alineada con la política «Limitada» que la casa usa en Airbnb.
 // ⚠️ Confirmar con el cliente antes de publicar.
 export const CANCELACION = {
-  reembolsoTotalDiasAntes: 14, // cancelando con 14 días o más: 100 %
+  reembolsoTotalDiasAntes: 15, // cancelando con 14 días o más: 100 %
   reembolsoParcialDiasAntes: 7, // entre 7 y 14 días: 50 %
   porcentajeParcial: 50, // menos de 7 días: sin reembolso
 };

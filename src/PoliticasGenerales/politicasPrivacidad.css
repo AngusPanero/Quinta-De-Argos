@@ -60,7 +60,7 @@
 
 .legal-eyebrow {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.22em;
@@ -88,7 +88,7 @@
 }
 
 .legal-meta {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   color: var(--legal-muted);
@@ -119,7 +119,7 @@
 
 .legal-toc-title {
   display: block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 600;
   font-size: 0.68rem;
   letter-spacing: 0.14em;
@@ -155,7 +155,7 @@
 }
 
 .legal-toc-number {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.7rem;
   padding-top: 0.15rem;
   color: var(--legal-accent);
@@ -192,7 +192,7 @@
 }
 
 .legal-section-number {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.78rem;
   color: var(--legal-accent);
@@ -285,7 +285,7 @@
 }
 
 .legal-table thead th {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.66rem;
   letter-spacing: 0.1em;
@@ -315,7 +315,7 @@
   color: inherit;
   padding: 0.05em 0.35em;
   border-radius: 3px;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.85em;
 }
 

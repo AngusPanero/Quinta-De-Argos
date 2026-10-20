@@ -141,9 +141,12 @@
   background-color: var(--qa-surface);
 }
 
+/* Fechas | Nombre | Huéspedes y cuna | Origen | Reserva · Fianza · Total
+   Las columnas tienen ancho fijo o mínimo: aunque una reserva no sea web
+   y no tenga esos datos, la fila no se descoloca. */
 .rl-row {
   display: grid;
-  grid-template-columns: minmax(210px, 1.3fr) minmax(140px, 1.4fr) auto 120px;
+  grid-template-columns: minmax(190px, 1.2fr) minmax(130px, 1.1fr) minmax(140px, 1fr) minmax(90px, auto) 300px;
   align-items: center;
   gap: 1rem;
   width: 100%;
@@ -180,9 +183,39 @@
 }
 
 .rl-guest {
-    text-transform: uppercase;
+  text-transform: uppercase;
   font-weight: 500;
   font-size: 0.98rem;
+}
+
+/* ---------- Huéspedes y cuna (solo reservas web) ---------- */
+
+.rl-party {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 2.6rem;
+  justify-content: center;
+}
+
+.rl-party-text {
+  font-weight: 400;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.rl-party-crib {
+  min-height: 1.3rem;
+}
+
+.rl-tag {
+  display: inline-block;
+  font-weight: 500;
+  font-size: 0.74rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--qa-accent);
+  color: var(--qa-accent);
 }
 
 .rl-pills {
@@ -218,13 +251,43 @@
   color: var(--qa-accent);
 }
 
-.rl-price {
+/* ---------- Importes: reserva, fianza y total ---------- */
+
+.rl-amounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.rl-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.rl-amount-label {
+  font-weight: 400;
+  font-size: 0.74rem;
+  color: var(--qa-muted);
+  min-height: 1rem;
+}
+
+.rl-amount-value {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--qa-text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-height: 1.4rem;
+}
+
+.rl-amount--total .rl-amount-value {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 600;
   font-size: 1.1rem;
   color: var(--qa-title);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Detalle desplegado ---------- */
@@ -253,6 +316,7 @@
 
 .rl-field dd {
   margin: 0;
+  min-height: 1.45rem;
   font-weight: 400;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -260,6 +324,7 @@
 
 .rl-net {
   display: block;
+  min-height: 1.2rem;
   font-weight: 300;
   font-size: 0.82rem;
   color: var(--qa-muted);
@@ -279,20 +344,56 @@
    RESPONSIVE
    ========================================================== */
 
-@media (max-width: 760px) {
+@media (max-width: 1180px) {
   .rl-row {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(180px, 1.2fr) minmax(120px, 1fr) minmax(130px, 1fr) minmax(90px, auto);
     grid-template-areas:
-      "dates price"
-      "guest guest"
-      "pills pills";
-    gap: 0.4rem 0.75rem;
+      "dates guest party pills"
+      "amounts amounts amounts amounts";
+    row-gap: 0.75rem;
   }
 
   .rl-dates { grid-area: dates; }
   .rl-guest { grid-area: guest; }
+  .rl-party { grid-area: party; }
   .rl-pills { grid-area: pills; }
-  .rl-price { grid-area: price; align-self: start; }
+  .rl-amounts {
+    grid-area: amounts;
+    max-width: 360px;
+    margin-left: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .rl-row {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "dates"
+      "guest"
+      "party"
+      "pills"
+      "amounts";
+    gap: 0.4rem;
+  }
+
+  .rl-party {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 1.4rem;
+  }
+
+  .rl-amounts {
+    max-width: none;
+    margin-left: 0;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--qa-line);
+  }
+
+  .rl-amount {
+    align-items: flex-start;
+  }
 
   .rl-scopes {
     width: 100%;

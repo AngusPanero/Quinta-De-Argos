@@ -5,10 +5,10 @@
  * y Checkout.tsx.
  *
  * ⚠️ Nada de lo que hay aquí decide lo que se cobra. Los precios por
- * noche, la estancia mínima, la antelación de 72 h y el precio real de
- * los adicionales los controla el backend (data/tarifas.js y
- * config/reservasConfig.js). Si cambias un adicional, cámbialo también
- * allí con el mismo id.
+ * noche, la estancia mínima, la antelación de 72 h, la fianza y el precio
+ * real de los adicionales los controla el backend (data/tarifas.js,
+ * config/reservasConfig.js y services/reservasService.js). Si cambias un
+ * adicional o la fianza, cámbialo también allí.
  */
 
 export interface Addon {
@@ -21,16 +21,21 @@ export interface Addon {
 // 📅 Máximo de noches (valor por defecto mientras carga la disponibilidad).
 export const MAX_NIGHTS = 30;
 
-// 👥 Capacidad máxima (valor por defecto mientras carga la disponibilidad).
+// 👥 Capacidad máxima (adultos + menores; valor por defecto mientras carga la disponibilidad).
 export const MAX_GUESTS = 6;
 
 // ⏱️ Antelación mínima para reservar, en horas (solo para el texto informativo).
 export const MIN_NOTICE_HOURS = 72;
 
+// 🔐 Fianza por persona en € (solo para mostrar la estimación; el backend cobra la suya:
+// FIANZA_POR_PERSONA en services/reservasService.js). Se devuelve completa al terminar
+// la estancia si la casa no tiene daños.
+export const DEPOSIT_PER_GUEST = 60;
+
 // ✨ Adicionales contratables. Si este array queda vacío ([]),
 // el wizard de Reservations salta directo al botón de pago.
 export const ADDONS: Addon[] = [
-  {
+  /* {
     id: 'cena-privada',
     nombre: 'Cena privada en el porche',
     descripcion: 'Chef a domicilio para una cena exclusiva con vistas al atardecer.',
@@ -53,5 +58,5 @@ export const ADDONS: Addon[] = [
     nombre: 'Desayuno gourmet en el porche',
     descripcion: 'Selección de productos locales servida cada mañana de tu estancia.',
     precio: 25,
-  },
+  }, */
 ];

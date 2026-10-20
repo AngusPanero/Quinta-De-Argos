@@ -310,7 +310,7 @@
 
 .home-corporate-stat-suffix-jardin,
 .home-corporate-stat-suffix-caravaca {
-  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+  font-family: 'Helvetica Neue', 'Courier New', monospace !important;
   font-size: 1rem;
   color: #b8763e;
   margin-left: 0.2rem;
@@ -320,7 +320,7 @@
 .home-corporate-stat-label-huespedes,
 .home-corporate-stat-label-caravaca {
   display: block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+  font-family: 'Helvetica Neue', 'Courier New', monospace !important;
   font-weight: 500;
   font-size: 0.65rem;
   letter-spacing: 0.1em;

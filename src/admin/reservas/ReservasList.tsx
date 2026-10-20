@@ -15,6 +15,44 @@ const SCOPES: { id: ReservaScope; label: string }[] = [
 
 const SOURCES: ReservaSource[] = ["web", "airbnb", "booking", "owner", "direct"];
 
+// Datos de la reserva hecha en la web (los adjunta el backend; null si no es web).
+interface WebInfo {
+    codigo: string;
+    estado: string;
+    huespedes: number;
+    adultos: number | null; // null = reserva web antigua, sin desglose
+    menores: number;
+    cuna: boolean;
+    reserva: number; // estancia: alojamiento + adicionales
+    fianza: number;
+    fianzaPorPersona: number;
+    fianzaPersonas: number;
+    fianzaDevuelta: number;
+    total: number; // lo cobrado: reserva + fianza
+}
+
+type Row = Reserva & { web?: WebInfo | null };
+
+// Espacio en blanco que mantiene la altura de las celdas vacías.
+const VACIO = "\u00A0";
+
+function partyText(w: WebInfo): string {
+    if (w.adultos === null) return `${w.huespedes} ${w.huespedes === 1 ? "huésped" : "huéspedes"}`;
+    const parts = [`${w.adultos} ${w.adultos === 1 ? "adulto" : "adultos"}`];
+    if (w.menores > 0) parts.push(`${w.menores} ${w.menores === 1 ? "menor" : "menores"}`);
+    return parts.join(" · ");
+}
+
+function Amount({ label, value, strong = false }: { label: string; value: number | null; strong?: boolean }) {
+    const has = typeof value === "number";
+    return (
+        <span className={`rl-amount ${strong ? "rl-amount--total" : ""}`}>
+            <span className="rl-amount-label">{has ? label : VACIO}</span>
+            <span className="rl-amount-value">{has ? formatMoney(value as number) : VACIO}</span>
+        </span>
+    );
+}
+
 interface Props {
     refreshKey: number;
     onSyncInfo: (s: SyncState) => void;
@@ -23,7 +61,7 @@ interface Props {
 export default function ReservasList({ refreshKey, onSyncInfo }: Props) {
     const [scope, setScope] = useState<ReservaScope>("upcoming");
     const [sources, setSources] = useState<ReservaSource[]>([]);
-    const [bookings, setBookings] = useState<Reserva[]>([]);
+    const [bookings, setBookings] = useState<Row[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [openId, setOpenId] = useState<number | null>(null);
@@ -110,8 +148,17 @@ export default function ReservasList({ refreshKey, onSyncInfo }: Props) {
                     <ul className="rl-list">
                         {bookings.map((b) => {
                             const open = openId === b.beds24Id;
-                            const hasNet = b.source === "airbnb" && !!b.commission && typeof b.price === "number";
+                            const w = b.web ?? null;
+                            const hasNet = !w && b.source === "airbnb" && !!b.commission && typeof b.price === "number";
                             const contact = [b.email, b.phone || b.mobile].filter(Boolean);
+
+                            // Importes: en las reservas web, los de nuestra base (reserva + fianza = total).
+                            // En el resto, solo el total de Beds24; reserva y fianza quedan vacías.
+                            const beds24Price = typeof b.price === "number" && b.price > 0 ? b.price : null;
+                            const amountReserva = w ? w.reserva : null;
+                            const amountFianza = w ? w.fianza : null;
+                            const amountTotal = w ? w.total : beds24Price;
+
                             return (
                                 <li key={b.beds24Id} className={`rl-item rl-item--${b.source} ${open ? "rl-item--open" : ""}`}>
                                     <button
@@ -128,13 +175,21 @@ export default function ReservasList({ refreshKey, onSyncInfo }: Props) {
                                             </span>
                                         </span>
                                         <span className="rl-guest">{guestName(b)}</span>
+                                        <span className="rl-party">
+                                            <span className="rl-party-text">{w ? partyText(w) : VACIO}</span>
+                                            <span className="rl-party-crib">
+                                                {w?.cuna ? <span className="rl-tag">Cuna</span> : VACIO}
+                                            </span>
+                                        </span>
                                         <span className="rl-pills">
                                             <span className={`rl-pill rl-pill--${b.source}`}>{SOURCE_LABEL[b.source]}</span>
                                             {b.status === "cancelled" && <span className="rl-pill rl-pill--cancelled">Cancelada</span>}
                                             {b.status === "request" && <span className="rl-pill rl-pill--request">Pendiente</span>}
                                         </span>
-                                        <span className="rl-price">
-                                            {typeof b.price === "number" && b.price > 0 ? formatMoney(b.price) : ""}
+                                        <span className="rl-amounts">
+                                            <Amount label="Reserva" value={amountReserva} />
+                                            <Amount label="Fianza" value={amountFianza} />
+                                            <Amount label="Total" value={amountTotal} strong />
                                         </span>
                                     </button>
 
@@ -147,9 +202,13 @@ export default function ReservasList({ refreshKey, onSyncInfo }: Props) {
                                             {b.source !== "owner" && (
                                                 <div className="rl-field">
                                                     <dt>Huéspedes</dt>
-                                                    <dd>{guestsLabel(b.numAdult, b.numChild)}</dd>
+                                                    <dd>{w ? partyText(w) : guestsLabel(b.numAdult, b.numChild)}</dd>
                                                 </div>
                                             )}
+                                            <div className="rl-field">
+                                                <dt>Cuna para bebé</dt>
+                                                <dd>{w ? (w.cuna ? "Sí (gratuita)" : "No") : VACIO}</dd>
+                                            </div>
                                             {b.source !== "owner" && (
                                                 <div className="rl-field">
                                                     <dt>Contacto</dt>
@@ -162,19 +221,42 @@ export default function ReservasList({ refreshKey, onSyncInfo }: Props) {
                                                     </dd>
                                                 </div>
                                             )}
-                                            {typeof b.price === "number" && b.price > 0 && (
-                                                <div className="rl-field">
-                                                    <dt>Importe</dt>
-                                                    <dd>
-                                                        {formatMoney(b.price)}
-                                                        {hasNet && (
-                                                            <span className="rl-net">
-                                                                Neto {formatMoney((b.price as number) - (b.commission as number))} (comisión {formatMoney(b.commission as number)})
-                                                            </span>
-                                                        )}
-                                                    </dd>
-                                                </div>
-                                            )}
+
+                                            {/* ---------- Importes: reserva, fianza y total ---------- */}
+                                            <div className="rl-field">
+                                                <dt>Reserva</dt>
+                                                <dd>
+                                                    {w ? formatMoney(w.reserva) : VACIO}
+                                                    <span className="rl-net">{w ? "Alojamiento y adicionales" : VACIO}</span>
+                                                </dd>
+                                            </div>
+                                            <div className="rl-field">
+                                                <dt>Fianza</dt>
+                                                <dd>
+                                                    {w ? formatMoney(w.fianza) : VACIO}
+                                                    <span className="rl-net">
+                                                        {w && w.fianza > 0
+                                                            ? w.fianzaDevuelta > 0
+                                                                ? `Devuelta ${formatMoney(w.fianzaDevuelta)} de ${formatMoney(w.fianza)}`
+                                                                : `${w.fianzaPersonas} × ${formatMoney(w.fianzaPorPersona)} · pendiente de devolver`
+                                                            : VACIO}
+                                                    </span>
+                                                </dd>
+                                            </div>
+                                            <div className="rl-field">
+                                                <dt>Total</dt>
+                                                <dd>
+                                                    {amountTotal !== null ? formatMoney(amountTotal) : VACIO}
+                                                    <span className="rl-net">
+                                                        {w
+                                                            ? "Cobrado con Stripe"
+                                                            : hasNet
+                                                                ? `Neto ${formatMoney((b.price as number) - (b.commission as number))} (comisión ${formatMoney(b.commission as number)})`
+                                                                : VACIO}
+                                                    </span>
+                                                </dd>
+                                            </div>
+
                                             {b.apiReference && (
                                                 <div className="rl-field">
                                                     <dt>Nº en {SOURCE_LABEL[b.source]}</dt>

@@ -178,7 +178,7 @@
 }
 
 .admin-reservas-web-label {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.66rem;
   letter-spacing: 0.1em;
@@ -250,7 +250,7 @@
 }
 
 .admin-reservas-web-table thead th {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.66rem;
   letter-spacing: 0.1em;
@@ -275,6 +275,12 @@
   white-space: nowrap;
 }
 
+/* Total: el importe cobrado (reserva + fianza) se destaca sobre los otros dos */
+.admin-reservas-web-table .admin-reservas-web-total {
+  font-weight: 600;
+  color: var(--arw-title);
+}
+
 .admin-reservas-web-table.is-compact th,
 .admin-reservas-web-table.is-compact td {
   padding: 0.6rem 0.75rem;
@@ -288,7 +294,7 @@
 
 .admin-reservas-web-code,
 .admin-reservas-web-mono {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.8rem;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -312,6 +318,22 @@
   color: var(--arw-muted);
 }
 
+/* Etiqueta "Cuna" junto a los huéspedes */
+.admin-reservas-web-cuna {
+  display: inline-block;
+  margin-left: 0.45rem;
+  padding: 0.05rem 0.45rem;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
+  font-weight: 500;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--arw-accent);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  vertical-align: 1px;
+}
+
 .admin-reservas-web-ua {
   max-width: 220px;
   overflow: hidden;
@@ -323,7 +345,7 @@
 
 .admin-reservas-web-badge {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.66rem;
   letter-spacing: 0.06em;
@@ -419,7 +441,7 @@
 }
 
 .admin-reservas-web-modal-title {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 600;
   font-size: 1.15rem;
   letter-spacing: 0.04em;
@@ -719,6 +741,8 @@
 
   /* ---------- Listado: cada reserva pasa a ser una tarjeta ---------- */
   /* (solo la tabla principal; las tablas compactas del detalle no cambian) */
+  /* Columnas: 1 código · 2 estancia · 3 huésped · 4 reserva · 5 fianza ·
+     6 total · 7 estado · 8 creada · 9 ver */
 
   .admin-reservas-web > .admin-reservas-web-table-wrap {
     overflow: visible;
@@ -748,13 +772,14 @@
 
   .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table tbody tr {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-template-areas:
-      'codigo estado'
-      'estancia estancia'
-      'huesped huesped'
-      'creada total'
-      'ver ver';
+      'codigo codigo estado'
+      'estancia estancia estancia'
+      'huesped huesped huesped'
+      'reserva fianza total'
+      'creada creada creada'
+      'ver ver ver';
     gap: 0.6rem 0.75rem;
     padding: 1rem;
     background-color: var(--arw-surface);
@@ -789,31 +814,58 @@
     overflow-wrap: anywhere;
   }
 
+  /* Importes: tres columnas con su etiqueta encima */
   .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(4) {
-    grid-area: total;
-    align-self: end;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-weight: 600;
-    font-size: 1.15rem;
-    color: var(--arw-title);
+    grid-area: reserva;
   }
 
   .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(5) {
+    grid-area: fianza;
+  }
+
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(6) {
+    grid-area: total;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.15rem;
+  }
+
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(4),
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(5),
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(6) {
+    text-align: left;
+    white-space: normal;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--arw-line);
+  }
+
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.2rem;
+    font-family: 'Helvetica Neue', 'Courier New', monospace;
+    font-weight: 500;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--arw-muted);
+  }
+
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(7) {
     grid-area: estado;
     align-self: center;
     justify-self: end;
   }
 
-  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(6) {
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(8) {
     grid-area: creada;
-    align-self: end;
+    padding-top: 0 !important;
   }
 
-  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(7) {
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(9) {
     grid-area: ver;
   }
 
-  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(7) .admin-reservas-web-button-ghost {
+  .admin-reservas-web > .admin-reservas-web-table-wrap .admin-reservas-web-table td:nth-child(9) .admin-reservas-web-button-ghost {
     width: 100%;
     min-height: 2.75rem;
   }

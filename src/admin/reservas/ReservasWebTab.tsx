@@ -55,6 +55,44 @@ const FILTROS_VACIOS: Filtros = {
   estado: '',
 };
 
+// ---------- Datos nuevos de la reserva (huéspedes, cuna y fianza) ----------
+// Las reservas anteriores a la fianza no los tienen: por eso son opcionales.
+// (Cuando se actualice reservasWebTypes.ts, este tipo puede pasar allí.)
+interface FianzaReserva {
+  porPersona: number;
+  personas: number;
+  total: number;
+  totalCentimos: number;
+}
+
+type ReservaConFianza = ReservaWeb & {
+  estancia: ReservaWeb['estancia'] & { adultos?: number | null; menores?: number; cuna?: boolean };
+  importes: ReservaWeb['importes'] & { fianza?: FianzaReserva };
+  devolucionFianza?: { centimos?: number } | null;
+};
+
+/** "2 adultos, 1 menor"; en reservas antiguas, "2 huéspedes". */
+function huespedesTexto(r: ReservaConFianza): string {
+  const { adultos, menores = 0, huespedes } = r.estancia;
+  if (typeof adultos !== 'number' || adultos < 1) return `${huespedes} ${huespedes === 1 ? 'huésped' : 'huéspedes'}`;
+  const partes = [`${adultos} ${adultos === 1 ? 'adulto' : 'adultos'}`];
+  if (menores > 0) partes.push(`${menores} ${menores === 1 ? 'menor' : 'menores'}`);
+  return partes.join(', ');
+}
+
+const fianzaDe = (r: ReservaConFianza): number => r.importes.fianza?.total ?? 0;
+const reservaSinFianza = (r: ReservaConFianza): number => Math.round((r.importes.total - fianzaDe(r)) * 100) / 100;
+
+function estadoFianza(r: ReservaConFianza): string {
+  const fianza = fianzaDe(r);
+  if (fianza <= 0) return '';
+  const devuelta = (r.devolucionFianza?.centimos ?? 0) / 100;
+  if (devuelta >= fianza) return 'Devuelta';
+  if (devuelta > 0) return `Devuelta ${formatEuros(devuelta)}`;
+  if (r.estado === 'cancelada' || r.estado === 'reembolsada') return 'Con la cancelación';
+  return 'Pendiente';
+}
+
 // Fecha de creación en hora de España como "YYYY-MM-DD", para comparar con los inputs de fecha.
 function fechaCreacionISO(value: string): string {
   return new Intl.DateTimeFormat('en-CA', {
@@ -123,7 +161,7 @@ const ReservasWebTab: React.FC = () => {
 
   const totalPaginas = Math.max(1, Math.ceil(filtradas.length / POR_PAGINA));
   const paginaActual = Math.min(pagina, totalPaginas);
-  const visibles = filtradas.slice((paginaActual - 1) * POR_PAGINA, paginaActual * POR_PAGINA);
+  const visibles = filtradas.slice((paginaActual - 1) * POR_PAGINA, paginaActual * POR_PAGINA) as ReservaConFianza[];
   const desde = filtradas.length === 0 ? 0 : (paginaActual - 1) * POR_PAGINA + 1;
   const hasta = Math.min(paginaActual * POR_PAGINA, filtradas.length);
 
@@ -288,6 +326,12 @@ const ReservasWebTab: React.FC = () => {
                   <th scope="col">Estancia</th>
                   <th scope="col">Huésped</th>
                   <th scope="col" className="is-number">
+                    Reserva
+                  </th>
+                  <th scope="col" className="is-number">
+                    Fianza
+                  </th>
+                  <th scope="col" className="is-number">
                     Total
                   </th>
                   <th scope="col">Estado</th>
@@ -298,38 +342,51 @@ const ReservasWebTab: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {visibles.map((r) => (
-                  <tr key={r._id}>
-                    <td className="admin-reservas-web-code">{r.codigo}</td>
-                    <td>
-                      <span className="admin-reservas-web-cell-main">
-                        {formatFechaCalendario(r.estancia.checkIn)} → {formatFechaCalendario(r.estancia.checkOut)}
-                      </span>
-                      <span className="admin-reservas-web-cell-sub">
-                        {r.estancia.noches} {r.estancia.noches === 1 ? 'noche' : 'noches'} · {r.estancia.huespedes}{' '}
-                        {r.estancia.huespedes === 1 ? 'huésped' : 'huéspedes'}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="admin-reservas-web-cell-main">{r.contacto.nombre}</span>
-                      <span className="admin-reservas-web-cell-sub">{r.contacto.email}</span>
-                    </td>
-                    <td className="is-number">{formatEuros(r.importes.total)}</td>
-                    <td>
-                      <span className={`admin-reservas-web-badge is-${r.estado}`}>{ESTADO_LABEL[r.estado]}</span>
-                    </td>
-                    <td className="admin-reservas-web-cell-sub-date">{formatMomento(r.createdAt)}</td>
-                    <td>
-                      <button
-                        type="button"
-                        className="admin-reservas-web-button-ghost"
-                        onClick={() => setSeleccionadaId(r._id)}
-                      >
-                        Ver
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {visibles.map((r) => {
+                  const fianza = fianzaDe(r);
+                  const estadoDeLaFianza = estadoFianza(r);
+                  return (
+                    <tr key={r._id}>
+                      <td className="admin-reservas-web-code">{r.codigo}</td>
+                      <td>
+                        <span className="admin-reservas-web-cell-main">
+                          {formatFechaCalendario(r.estancia.checkIn)} → {formatFechaCalendario(r.estancia.checkOut)}
+                        </span>
+                        <span className="admin-reservas-web-cell-sub">
+                          {r.estancia.noches} {r.estancia.noches === 1 ? 'noche' : 'noches'} · {huespedesTexto(r)}
+                          {r.estancia.cuna && <span className="admin-reservas-web-cuna">Cuna</span>}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="admin-reservas-web-cell-main">{r.contacto.nombre}</span>
+                        <span className="admin-reservas-web-cell-sub">{r.contacto.email}</span>
+                      </td>
+                      <td className="is-number" data-label="Reserva">
+                        {formatEuros(reservaSinFianza(r))}
+                      </td>
+                      <td className="is-number" data-label="Fianza">
+                        <span className="admin-reservas-web-cell-main">{fianza > 0 ? formatEuros(fianza) : '—'}</span>
+                        <span className="admin-reservas-web-cell-sub">{estadoDeLaFianza || '\u00A0'}</span>
+                      </td>
+                      <td className="is-number admin-reservas-web-total" data-label="Total">
+                        {formatEuros(r.importes.total)}
+                      </td>
+                      <td>
+                        <span className={`admin-reservas-web-badge is-${r.estado}`}>{ESTADO_LABEL[r.estado]}</span>
+                      </td>
+                      <td className="admin-reservas-web-cell-sub-date">{formatMomento(r.createdAt)}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="admin-reservas-web-button-ghost"
+                          onClick={() => setSeleccionadaId(r._id)}
+                        >
+                          Ver
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

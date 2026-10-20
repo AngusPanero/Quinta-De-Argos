@@ -35,7 +35,7 @@
 
 .experiences-corporate-eyebrow-hero {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.24em;
@@ -188,7 +188,7 @@
 
 .experiences-corporate-card-category {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.65rem;
   letter-spacing: 0.14em;
@@ -227,7 +227,7 @@
   gap: 0.5rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(42, 54, 38, 0.1);
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
 }
 
 .experiences-corporate.theme-dark .experiences-corporate-card-distance {
@@ -291,7 +291,7 @@
 
 .experiences-corporate-cta-outro {
   display: inline-block;
-  font-family: "Montserrat", 'Playfair Display', 'JetBrains Mono', 'Courier New', monospace;
+  font-family: "Montserrat", 'Playfair Display', 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.75rem;
   letter-spacing: 0.16em;

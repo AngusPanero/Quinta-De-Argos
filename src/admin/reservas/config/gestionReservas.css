@@ -97,7 +97,7 @@
 /* ---------- Etiquetas de tipo ---------- */
 
 .gr-badge {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -119,11 +119,16 @@
   opacity: 0.75;
 }
 
+/* Fianza de una estancia ya terminada: lista para devolver */
+.gr-badge--terminada {
+  color: #6b7a55;
+}
+
 .gr-cancelar {
   flex-shrink: 0;
 }
 
-/* ---------- Panel de cancelación ---------- */
+/* ---------- Panel de cancelación / devolución ---------- */
 
 .gr-cancel {
   flex-basis: 100%;
@@ -142,12 +147,122 @@
   gap: 1rem;
 }
 
+/* Explicación del cálculo según la política de cancelación */
+.gr-politica {
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  border-left: 3px solid color-mix(in srgb, currentColor 25%, transparent);
+  background-color: color-mix(in srgb, currentColor 4%, transparent);
+  opacity: 0.75;
+  transition: opacity 0.25s ease, border-color 0.25s ease;
+}
+
+.gr-politica--on {
+  opacity: 1;
+  border-left-color: #b8763e;
+}
+
+/* ---------- Acciones de la fila (Cambiar fechas · Cancelar) ---------- */
+
+.gr-fila-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+/* Link de pago de una ampliación sin pagar */
+.gr-pendiente {
+  flex-basis: 100%;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  padding: 0.35rem 0.6rem;
+  border-left: 3px solid #b8763e;
+  background-color: color-mix(in srgb, #b8763e 8%, transparent);
+}
+
+/* ---------- Panel de cambio de fechas ---------- */
+
+.gr-mod-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gr-mod-linea {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.gr-noches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gr-noches-titulo {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+}
+
+.gr-noches-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.25rem 1rem;
+}
+
+.gr-noches-lista li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.84rem;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.gr-mod-bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+
+/* Link de pago recién creado */
+.gr-link {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.gr-link-url {
+  flex: 1 1 260px;
+  min-width: 0;
+  font-size: 0.82rem;
+}
+
 @media (max-width: 480px) {
   .gr-cancel {
     padding: 0.75rem;
   }
 
   .gr-cancel-actions .cq-btn {
+    width: 100%;
+  }
+
+  .gr-link .cq-btn {
     width: 100%;
   }
 }

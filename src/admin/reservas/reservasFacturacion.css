@@ -371,6 +371,15 @@
   transition: width 0.6s var(--qa-ease);
 }
 
+.rf-bar-fill-mes{
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background-color: rgb(81, 109, 39);
+  transition: width 0.6s var(--qa-ease);
+}
+
 .rf-platforms {
   display: flex;
   flex-direction: column;

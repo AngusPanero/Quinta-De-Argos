@@ -21,7 +21,7 @@
   --qa-nav-surface: #1c2519;
 
   --qa-font-display: 'Playfair Display', Georgia, serif;
-  --qa-font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --qa-font-mono: 'Helvetica Neue', 'Courier New', monospace;
 
   position: fixed;
   top: 0;

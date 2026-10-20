@@ -37,7 +37,7 @@
 
 .checkout-eyebrow-hero {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.22em;
@@ -105,7 +105,7 @@
 }
 
 .checkout-summary-dates-title {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 600;
   font-size: 0.68rem;
   letter-spacing: 0.14em;
@@ -118,7 +118,7 @@
 }
 
 .checkout-summary-edit-dates-button {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.68rem;
   letter-spacing: 0.08em;
@@ -155,7 +155,7 @@
 }
 
 .checkout-summary-dates-nights {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.72rem;
   color: #2c2a24;
   opacity: 0.6;
@@ -165,10 +165,12 @@
   color: #ece4d3;
 }
 
+/* ---------- Huéspedes (adultos, menores y cuna) ---------- */
+
 .checkout-summary-guests-block {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1.1rem;
   padding: 1.5rem 0;
   border-top: 1px solid rgba(42, 54, 38, 0.1);
   border-bottom: 1px solid rgba(42, 54, 38, 0.1);
@@ -179,8 +181,15 @@
   border-color: rgba(242, 237, 225, 0.1);
 }
 
+.checkout-summary-guests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
 .checkout-summary-guests-title {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 600;
   font-size: 0.68rem;
   letter-spacing: 0.14em;
@@ -190,6 +199,58 @@
 
 .checkout.theme-dark .checkout-summary-guests-title {
   color: #d3a06c;
+}
+
+.checkout-summary-guests-max {
+  font-size: 0.78rem;
+  font-weight: 300;
+  opacity: 0.65;
+}
+
+.checkout-summary-guests-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.checkout-summary-crib-row {
+  flex-wrap: wrap;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(42, 54, 38, 0.1);
+}
+
+.checkout.theme-dark .checkout-summary-crib-row {
+  border-top-color: rgba(242, 237, 225, 0.1);
+}
+
+.checkout-summary-guests-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.checkout-summary-guests-label {
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+
+.checkout-summary-guests-note {
+  font-size: 0.78rem;
+  font-weight: 300;
+  opacity: 0.65;
+}
+
+.checkout-summary-crib-select {
+  width: auto;
+  min-width: 13rem;
+  font-size: 0.88rem;
+  padding: 0.6rem 2.25rem 0.6rem 0.85rem;
+}
+
+.checkout-summary-crib-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .checkout-summary-guests-controls {
@@ -243,7 +304,7 @@
 
 .checkout-summary-addons-title {
   display: block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 600;
   font-size: 0.68rem;
   letter-spacing: 0.14em;
@@ -288,7 +349,7 @@
 }
 
 .checkout-summary-addon-price {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.78rem;
   color: #b8763e;
 }
@@ -334,6 +395,7 @@
 .checkout-summary-breakdown-row {
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
   padding: 0.6rem 0;
   font-size: 0.85rem;
   color: #2c2a24;
@@ -342,6 +404,20 @@
 
 .checkout.theme-dark .checkout-summary-breakdown-row {
   color: #ece4d3;
+}
+
+.checkout-summary-breakdown-value {
+  text-align: right;
+}
+
+.checkout-summary-breakdown-row.is-deposit {
+  color: #b8763e;
+  font-weight: 500;
+  opacity: 1;
+}
+
+.checkout.theme-dark .checkout-summary-breakdown-row.is-deposit {
+  color: #d3a06c;
 }
 
 .checkout-summary-total-row {
@@ -379,6 +455,52 @@
   color: #d3a06c;
 }
 
+/* ---------- Aviso de fianza ---------- */
+
+.checkout-deposit {
+  margin-top: 1.5rem;
+  padding: 1rem 1.15rem;
+  background-color: #f8f4ea;
+  border: 1px solid rgba(42, 54, 38, 0.15);
+  border-left: 3px solid #b8763e;
+  border-radius: 2px;
+}
+
+.checkout.theme-dark .checkout-deposit {
+  background-color: #262520;
+  border-color: rgba(242, 237, 225, 0.15);
+  border-left-color: #d3a06c;
+}
+
+.checkout-deposit-title {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.02rem;
+  color: #2a3626;
+  margin-bottom: 0.35rem;
+}
+
+.checkout.theme-dark .checkout-deposit-title {
+  color: #d3a06c;
+}
+
+.checkout-deposit-text {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #2c2a24;
+}
+
+.checkout.theme-dark .checkout-deposit-text {
+  color: #ece4d3;
+}
+
+.checkout-deposit-text strong {
+  font-weight: 500;
+}
+
 /* ---------- Columna pago ---------- */
 
 .checkout-payment {
@@ -404,7 +526,7 @@
 }
 
 .checkout-field-name-label {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.68rem;
   letter-spacing: 0.1em;
@@ -449,7 +571,7 @@
 }
 
 .checkout-field-card-label {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.68rem;
   letter-spacing: 0.1em;
@@ -490,9 +612,22 @@
   color: #e0a08c;
 }
 
+/* Recordatorio de la fianza justo encima del botón de pagar */
+.checkout-pay-note {
+  margin: 0 0 -0.5rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #b8763e;
+}
+
+.checkout.theme-dark .checkout-pay-note {
+  color: #d3a06c;
+}
+
 .checkout-pay-button {
   width: 100%;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 600;
   font-size: 0.8rem;
   letter-spacing: 0.14em;
@@ -527,7 +662,7 @@
 
 .checkout-secure-note {
   text-align: center;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.68rem;
   color: #2c2a24;
   opacity: 0.55;
@@ -603,7 +738,7 @@
 }
 
 .checkout-billing-toggle-option {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.1em;
@@ -731,7 +866,7 @@
 }
 
 .checkout-consent-required {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.66rem;
   letter-spacing: 0.04em;
   opacity: 0.6;
@@ -753,7 +888,7 @@
 }
 
 .checkout-legal-info summary {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.68rem;
   letter-spacing: 0.08em;
@@ -785,7 +920,7 @@
 /* ---------- Éxito ---------- */
 
 .checkout-success-code {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-size: 0.8rem;
   letter-spacing: 0.06em;
   color: #2c2a24;
@@ -871,6 +1006,11 @@
 
   .checkout-field-row {
     grid-template-columns: 1fr;
+  }
+
+  .checkout-summary-crib-select {
+    width: 100%;
+    min-width: 0;
   }
 
   .checkout-legal-info dl {

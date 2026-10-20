@@ -6,8 +6,8 @@ import axios from 'axios';
 import './checkout.css';
 import { UseTheme } from '../contexts/ThemeContext';
 import BookingCalendar from '../reservas/BookingCalendar';
-import { RESERVATION_STORAGE_KEY, type StoredReservation } from '../reservas/Reservations';
-import { ADDONS, MAX_NIGHTS, MAX_GUESTS } from '../reservas/BookingConfig';
+import { RESERVATION_STORAGE_KEY, type StoredReservation, guestsText } from '../reservas/Reservations';
+import { ADDONS, MAX_NIGHTS, MAX_GUESTS, DEPOSIT_PER_GUEST } from '../reservas/BookingConfig';
 import { formatDateLong, formatPrice, fromISODate, toISODate } from '../reservas/BookingDates';
 import { useAvailability, groupNightsByPrice } from '../reservas/useAvailability';
 import { type DatosFacturacion, type DireccionFacturacion, DOCUMENTOS_POR_TIPO, FACTURACION_VACIA, PAISES, type TipoDocumento, type TipoFacturacion, errorFacturacion, esDocumentoValido, normalizarDocumento } from './datosFacturacion';
@@ -21,12 +21,23 @@ interface Quote {
   checkOut: string;
   noches: number;
   guests: number;
+  adultos?: number;
+  menores?: number;
   desglose: { fecha: string; precio: number }[];
   alojamiento: number;
   adicionales: { id: string; nombre: string; precio: number }[];
   totalAdicionales: number;
+  totalEstancia?: number;
+  fianza?: { porPersona: number; personas: number; total: number; totalCentimos: number };
   total: number;
   totalCentimos: number;
+}
+
+// Reserva completa que maneja el checkout (adultos, menores y cuna siempre definidos).
+interface CheckoutReservation extends StoredReservation {
+  adults: number;
+  minors: number;
+  crib: boolean;
 }
 
 function apiErrorMessage(err: unknown, fallback: string): string {
@@ -96,6 +107,21 @@ function stripeAppearance(theme: 'light' | 'dark'): Appearance {
 }
 
 // ==========================================================
+// Aviso de fianza (bien visible en el resumen)
+// ==========================================================
+
+const DepositNotice: React.FC<{ total: number; perGuest: number; guests: number }> = ({ total, perGuest, guests }) => (
+  <div className="checkout-deposit" role="note">
+    <span className="checkout-deposit-title">Fianza reembolsable de {formatPrice(total)}</span>
+    <p className="checkout-deposit-text">
+      El total incluye una fianza de <strong>{formatPrice(perGuest)} por persona</strong> ({guests}{' '}
+      {guests === 1 ? 'persona' : 'personas'}). Al terminar tu estancia, si la casa no presenta ningún daño,{' '}
+      <strong>te devolvemos la fianza completa</strong> al mismo medio de pago.
+    </p>
+  </div>
+);
+
+// ==========================================================
 // Pantallas de resultado
 // ==========================================================
 
@@ -127,7 +153,7 @@ const URL_POLITICA_PRIVACIDAD = '/policy-privacy';
 const URL_CONDICIONES_RESERVA = '/policy-terms';
 
 interface CheckoutFormProps {
-  reservation: StoredReservation;
+  reservation: CheckoutReservation;
   quote: Quote;
   onQuoteChanged: (quote: Quote) => void;
   onPaid: (processing: boolean, codigo: string | null) => void;
@@ -186,6 +212,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ reservation, quote, onQuote
   const documentoInvalido = documentoEscrito && !esDocumentoValido(facturacion.tipoDocumento, facturacion.documento);
   const puedePagar = aceptaPrivacidad && aceptaCondiciones;
 
+  const fianzaTotal = quote.fianza?.total ?? 0;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!stripe || !elements) return;
@@ -213,13 +241,16 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ reservation, quote, onQuote
       }
 
       // 2) El backend valida todo, guarda la reserva con los consentimientos
-      //    (antes de cobrar), recalcula el precio y crea el pago.
+      //    (antes de cobrar), recalcula el precio (con la fianza) y crea el pago.
       const { data } = await axios.post<{ clientSecret: string; codigo: string; presupuesto: Quote }>(
         `${API_BASE}/intent`,
         {
           checkIn: reservation.checkIn,
           checkOut: reservation.checkOut,
-          guests: reservation.guests,
+          guests: reservation.adults + reservation.minors,
+          adultos: reservation.adults,
+          menores: reservation.minors,
+          cuna: reservation.minors > 0 && reservation.crib,
           adicionales: Object.keys(reservation.selectedAddons).filter((id) => reservation.selectedAddons[id]),
           contacto: { nombre, email, telefono },
           facturacion: facturacionFinal,
@@ -613,6 +644,13 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ reservation, quote, onQuote
         </p>
       )}
 
+      {fianzaTotal > 0 && (
+        <p className="checkout-pay-note">
+          El importe incluye {formatPrice(fianzaTotal)} de fianza, que te devolvemos completa al terminar la estancia
+          si la casa no presenta daños.
+        </p>
+      )}
+
       <button
         type="submit"
         className="checkout-pay-button"
@@ -672,7 +710,13 @@ const Checkout: React.FC = () => {
 
   const [checkin, setCheckin] = useState<Date | null>(fromISODate(initial?.checkIn));
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(fromISODate(initial?.checkOut));
-  const [guests, setGuests] = useState<number>(initial?.guests ?? 2);
+
+  // Huéspedes. Las reservas guardadas antes de este cambio solo traen "guests": cuentan como adultos.
+  const [adults, setAdults] = useState<number>(Math.max(1, initial?.adults ?? initial?.guests ?? 2));
+  const [minors, setMinors] = useState<number>(Math.max(0, initial?.minors ?? 0));
+  const [crib, setCrib] = useState<boolean>(Boolean(initial?.crib));
+  const guests = adults + minors;
+
   const [selectedAddons, setSelectedAddons] = useState<Record<string, boolean>>(initial?.selectedAddons ?? {});
   const [editingDates, setEditingDates] = useState(false);
 
@@ -686,15 +730,36 @@ const Checkout: React.FC = () => {
     }
   }, [initial, returningPaymentIntent, navigate]);
 
+  // Si el máximo baja (llega la regla del backend), recortamos primero los menores.
+  useEffect(() => {
+    if (adults + minors <= maxGuests) return;
+    const nextAdults = Math.min(adults, maxGuests);
+    setAdults(nextAdults);
+    setMinors(Math.max(0, maxGuests - nextAdults));
+  }, [adults, minors, maxGuests]);
+
+  // Sin menores no hay cuna.
+  useEffect(() => {
+    if (minors === 0) setCrib(false);
+  }, [minors]);
+
   // Persistimos cualquier edición para sobrevivir a un refresco de la página.
   useEffect(() => {
     if (checkInISO && checkOutISO) {
-      const data: StoredReservation = { checkIn: checkInISO, checkOut: checkOutISO, guests, selectedAddons };
+      const data: StoredReservation = {
+        checkIn: checkInISO,
+        checkOut: checkOutISO,
+        guests: adults + minors,
+        adults,
+        minors,
+        crib,
+        selectedAddons,
+      };
       sessionStorage.setItem(RESERVATION_STORAGE_KEY, JSON.stringify(data));
     }
-  }, [checkInISO, checkOutISO, guests, selectedAddons]);
+  }, [checkInISO, checkOutISO, adults, minors, crib, selectedAddons]);
 
-  // ---------- Presupuesto calculado por el backend ----------
+  // ---------- Presupuesto calculado por el backend (incluye la fianza) ----------
   const [quote, setQuote] = useState<Quote | null>(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState('');
@@ -718,7 +783,9 @@ const Checkout: React.FC = () => {
         const { data } = await axios.post<Quote>(`${API_BASE}/api/reservas/presupuesto`, {
           checkIn: checkInISO,
           checkOut: checkOutISO,
-          guests,
+          guests: adults + minors,
+          adultos: adults,
+          menores: minors,
           adicionales: addonKey ? addonKey.split(',') : [],
         });
         if (!cancelled) {
@@ -738,7 +805,7 @@ const Checkout: React.FC = () => {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [checkInISO, checkOutISO, guests, addonKey]);
+  }, [checkInISO, checkOutISO, adults, minors, addonKey]);
 
   const toggleAddon = (id: string) => {
     setSelectedAddons((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -762,6 +829,10 @@ const Checkout: React.FC = () => {
     : null;
 
   const nightGroups = quote ? groupNightsByPrice(quote.desglose.map((n) => n.precio)) : [];
+
+  // Fianza: la del backend; mientras carga, la estimada para que el aviso no desaparezca.
+  const depositPerGuest = quote?.fianza?.porPersona ?? DEPOSIT_PER_GUEST;
+  const depositTotal = quote?.fianza?.total ?? guests * DEPOSIT_PER_GUEST;
 
   // Vuelta de un pago con redirección: mostramos solo el resultado.
   if (returningPaymentIntent && !initial) {
@@ -850,29 +921,89 @@ const Checkout: React.FC = () => {
             )}
           </div>
 
+          {/* ---------- Huéspedes ---------- */}
           <div className="checkout-summary-guests-block">
-            <span className="checkout-summary-guests-title">Huéspedes</span>
-            <div className="checkout-summary-guests-controls">
-              <button
-                type="button"
-                className="checkout-summary-guests-decrease"
-                onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                disabled={paid || guests <= 1}
-                aria-label="Quitar huésped"
-              >
-                −
-              </button>
-              <span className="checkout-summary-guests-count">{guests}</span>
-              <button
-                type="button"
-                className="checkout-summary-guests-increase"
-                onClick={() => setGuests((g) => Math.min(maxGuests, g + 1))}
-                disabled={paid || guests >= maxGuests}
-                aria-label="Añadir huésped"
-              >
-                +
-              </button>
+            <div className="checkout-summary-guests-header">
+              <span className="checkout-summary-guests-title">Huéspedes</span>
+              <span className="checkout-summary-guests-max">Máximo {maxGuests} personas</span>
             </div>
+
+            <div className="checkout-summary-guests-row">
+              <div className="checkout-summary-guests-text">
+                <span className="checkout-summary-guests-label">Adultos</span>
+                <span className="checkout-summary-guests-note">18 años o más</span>
+              </div>
+              <div className="checkout-summary-guests-controls">
+                <button
+                  type="button"
+                  className="checkout-summary-guests-decrease"
+                  onClick={() => setAdults((a) => Math.max(1, a - 1))}
+                  disabled={paid || adults <= 1}
+                  aria-label="Quitar adulto"
+                >
+                  −
+                </button>
+                <span className="checkout-summary-guests-count">{adults}</span>
+                <button
+                  type="button"
+                  className="checkout-summary-guests-increase"
+                  onClick={() => setAdults((a) => (a + minors < maxGuests ? a + 1 : a))}
+                  disabled={paid || guests >= maxGuests}
+                  aria-label="Añadir adulto"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="checkout-summary-guests-row">
+              <div className="checkout-summary-guests-text">
+                <span className="checkout-summary-guests-label">Menores</span>
+                <span className="checkout-summary-guests-note">Menores de 18 años</span>
+              </div>
+              <div className="checkout-summary-guests-controls">
+                <button
+                  type="button"
+                  className="checkout-summary-guests-decrease"
+                  onClick={() => setMinors((m) => Math.max(0, m - 1))}
+                  disabled={paid || minors <= 0}
+                  aria-label="Quitar menor"
+                >
+                  −
+                </button>
+                <span className="checkout-summary-guests-count">{minors}</span>
+                <button
+                  type="button"
+                  className="checkout-summary-guests-increase"
+                  onClick={() => setMinors((m) => (adults + m < maxGuests ? m + 1 : m))}
+                  disabled={paid || guests >= maxGuests}
+                  aria-label="Añadir menor"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {minors > 0 && (
+              <div className="checkout-summary-guests-row checkout-summary-crib-row">
+                <div className="checkout-summary-guests-text">
+                  <label htmlFor="checkout-cuna" className="checkout-summary-guests-label">
+                    Cuna para bebé
+                  </label>
+                  <span className="checkout-summary-guests-note">Gratuita, sin coste adicional</span>
+                </div>
+                <select
+                  id="checkout-cuna"
+                  className="checkout-field-name-input checkout-field-select checkout-summary-crib-select"
+                  value={crib ? 'si' : 'no'}
+                  onChange={(e) => setCrib(e.target.value === 'si')}
+                  disabled={paid}
+                >
+                  <option value="no">No necesitamos cuna</option>
+                  <option value="si">Sí, necesitamos cuna</option>
+                </select>
+              </div>
+            )}
           </div>
 
           {ADDONS.length > 0 && (
@@ -904,6 +1035,14 @@ const Checkout: React.FC = () => {
 
           {quote && (
             <div className={quoteLoading ? 'checkout-summary-breakdown is-updating' : 'checkout-summary-breakdown'}>
+              <div className="checkout-summary-breakdown-row">
+                <span className="checkout-summary-breakdown-label">Huéspedes</span>
+                <span className="checkout-summary-breakdown-value">
+                  {guestsText(adults, minors)}
+                  {minors > 0 && crib ? ' · cuna' : ''}
+                </span>
+              </div>
+
               {nightGroups.map((group) => (
                 <div key={group.price} className="checkout-summary-breakdown-row">
                   <span className="checkout-summary-breakdown-label">
@@ -920,6 +1059,15 @@ const Checkout: React.FC = () => {
                 </div>
               ))}
 
+              {quote.fianza && quote.fianza.total > 0 && (
+                <div className="checkout-summary-breakdown-row is-deposit">
+                  <span className="checkout-summary-breakdown-label">
+                    Fianza reembolsable ({quote.fianza.personas} × {formatPrice(quote.fianza.porPersona)})
+                  </span>
+                  <span className="checkout-summary-breakdown-value">{formatPrice(quote.fianza.total)}</span>
+                </div>
+              )}
+
               <div className="checkout-summary-total-row">
                 <span className="checkout-summary-total-label">Total</span>
                 <span className="checkout-summary-total-value">{formatPrice(quote.total)}</span>
@@ -928,6 +1076,8 @@ const Checkout: React.FC = () => {
           )}
 
           {!quote && quoteLoading && <p className="checkout-summary-status">Calculando el precio…</p>}
+
+          <DepositNotice total={depositTotal} perGuest={depositPerGuest} guests={guests} />
         </div>
 
         {/* ---------- Columna: pago ---------- */}
@@ -946,7 +1096,15 @@ const Checkout: React.FC = () => {
               {quote && elementsOptions ? (
                 <Elements stripe={stripePromise} options={elementsOptions}>
                   <CheckoutForm
-                    reservation={{ checkIn: quote.checkIn, checkOut: quote.checkOut, guests, selectedAddons }}
+                    reservation={{
+                      checkIn: quote.checkIn,
+                      checkOut: quote.checkOut,
+                      guests,
+                      adults,
+                      minors,
+                      crib,
+                      selectedAddons,
+                    }}
                     quote={quote}
                     onQuoteChanged={setQuote}
                     onPaid={handlePaid}

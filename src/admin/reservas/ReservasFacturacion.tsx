@@ -482,7 +482,7 @@ export default function ReservasFacturacion({ refreshKey, onSyncInfo }: Props) {
                                         <span className="rf-month-label">{formatMonth(m.month)}</span>
                                         <span className="rf-bar" aria-hidden="true">
                                             <span
-                                                className="rf-bar-fill"
+                                                className="rf-bar-fill-mes"
                                                 style={{ width: `${stats.maxMonth ? (m.amount / stats.maxMonth) * 100 : 0}%` }}
                                             />
                                         </span>

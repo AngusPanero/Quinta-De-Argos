@@ -15,7 +15,7 @@ import BookingCalendar from './BookingCalendar';
 import imgPiscina from '../assets/quinta4.jpg';
 import imgBuhardilla from '../assets/quinta3.jpg';
 import imgJardin from '../assets/quinta5.jpg';
-import { ADDONS, MAX_NIGHTS, MAX_GUESTS } from './BookingConfig';
+import { ADDONS, MAX_NIGHTS, MAX_GUESTS, DEPOSIT_PER_GUEST } from './BookingConfig';
 import { formatDateLong, formatPrice, toISODate } from './BookingDates';
 import { useAvailability, estimateStay, groupNightsByPrice, checkDeparture, canArrive } from './useAvailability';
 
@@ -25,11 +25,22 @@ export const RESERVATION_STORAGE_KEY: string =
   import.meta.env.VITE_RESERVATION_STORAGE_KEY || 'qa-reserva';
 
 // Lo que se guarda para pasar a /checkout. Las fechas van como "YYYY-MM-DD".
+// guests = adults + minors (se mantiene para compatibilidad con reservas guardadas antes).
 export interface StoredReservation {
   checkIn: string;
   checkOut: string;
   guests: number;
+  adults?: number;
+  minors?: number;
+  crib?: boolean;
   selectedAddons: Record<string, boolean>;
+}
+
+/** "2 adultos, 1 menor" */
+export function guestsText(adults: number, minors: number): string {
+  const parts = [`${adults} ${adults === 1 ? 'adulto' : 'adultos'}`];
+  if (minors > 0) parts.push(`${minors} ${minors === 1 ? 'menor' : 'menores'}`);
+  return parts.join(', ');
 }
 
 // Mismo easing que la galería, para que todo el sitio respire igual.
@@ -260,6 +271,65 @@ const StayStage: React.FC = () => {
 };
 
 // ==========================================================
+// Huéspedes: contador reutilizable y aviso de fianza
+// ==========================================================
+
+const GuestCounter: React.FC<{
+  label: string;
+  note: string;
+  value: number;
+  onDecrease: () => void;
+  onIncrease: () => void;
+  decreaseDisabled: boolean;
+  increaseDisabled: boolean;
+  decreaseLabel: string;
+  increaseLabel: string;
+}> = ({ label, note, value, onDecrease, onIncrease, decreaseDisabled, increaseDisabled, decreaseLabel, increaseLabel }) => (
+  <div className="reservas-corporate-guests-selector">
+    <div className="reservas-corporate-guests-text">
+      <span className="reservas-corporate-guests-label">{label}</span>
+      <span className="reservas-corporate-guests-max-note">{note}</span>
+    </div>
+    <div className="reservas-corporate-guests-controls">
+      <button
+        type="button"
+        className="reservas-corporate-guests-button"
+        onClick={onDecrease}
+        disabled={decreaseDisabled}
+        aria-label={decreaseLabel}
+      >
+        −
+      </button>
+      <span className="reservas-corporate-guests-count" aria-live="polite">
+        {value}
+      </span>
+      <button
+        type="button"
+        className="reservas-corporate-guests-button"
+        onClick={onIncrease}
+        disabled={increaseDisabled}
+        aria-label={increaseLabel}
+      >
+        +
+      </button>
+    </div>
+  </div>
+);
+
+const DepositNotice: React.FC<{ guests: number }> = ({ guests }) => (
+  <div className="reservas-corporate-deposit" role="note">
+    <span className="reservas-corporate-deposit-title">
+      Fianza reembolsable de {formatPrice(guests * DEPOSIT_PER_GUEST)}
+    </span>
+    <p className="reservas-corporate-deposit-text">
+      Al reservar se abona una fianza de <strong>{formatPrice(DEPOSIT_PER_GUEST)} por persona</strong> (
+      {guests} {guests === 1 ? 'persona' : 'personas'}), incluida en el total. Al terminar tu estancia, si la casa no
+      presenta ningún daño, <strong>te devolvemos la fianza completa</strong> al mismo medio de pago.
+    </p>
+  </div>
+);
+
+// ==========================================================
 // Página
 // ==========================================================
 
@@ -277,7 +347,12 @@ const Reservations: React.FC = () => {
   // ---------- Fechas ----------
   const [checkin, setCheckin] = useState<Date | null>(null);
   const [checkout, setCheckout] = useState<Date | null>(null);
-  const [guests, setGuests] = useState<number>(2);
+
+  // ---------- Huéspedes (el precio no cambia por edad) ----------
+  const [adults, setAdults] = useState<number>(2);
+  const [minors, setMinors] = useState<number>(0);
+  const [crib, setCrib] = useState(false);
+  const guests = adults + minors;
 
   const checkinISO = checkin ? toISODate(checkin) : null;
   const checkoutISO = checkout ? toISODate(checkout) : null;
@@ -298,9 +373,18 @@ const Reservations: React.FC = () => {
     }
   }, [availability, checkinISO, checkoutISO, maxNights]);
 
+  // Si el máximo baja (llega la regla del backend), recortamos primero los menores.
   useEffect(() => {
-    setGuests((g) => Math.min(g, maxGuests));
-  }, [maxGuests]);
+    if (adults + minors <= maxGuests) return;
+    const nextAdults = Math.min(adults, maxGuests);
+    setAdults(nextAdults);
+    setMinors(Math.max(0, maxGuests - nextAdults));
+  }, [adults, minors, maxGuests]);
+
+  // Sin menores no hay cuna.
+  useEffect(() => {
+    if (minors === 0) setCrib(false);
+  }, [minors]);
 
   // ---------- Adicionales ----------
   const hasAddons = ADDONS.length > 0;
@@ -315,13 +399,16 @@ const Reservations: React.FC = () => {
     0
   );
 
+  // ---------- Fianza ----------
+  const deposit = guests * DEPOSIT_PER_GUEST;
+
   // ---------- Wizard de pasos ----------
   const summaryStepIndex = hasAddons ? ADDONS.length + 1 : 1;
 
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
 
-  const canAdvanceFromDates = Boolean(stay && guests >= 1);
+  const canAdvanceFromDates = Boolean(stay && adults >= 1);
 
   const goNext = () => {
     if (step === 0 && !canAdvanceFromDates) return;
@@ -335,7 +422,7 @@ const Reservations: React.FC = () => {
   };
 
   const subtotal = stay?.subtotal ?? 0;
-  const grandTotal = subtotal + addonsTotal;
+  const grandTotal = subtotal + addonsTotal + deposit;
   const nightGroups = stay ? groupNightsByPrice(stay.prices) : [];
 
   const currentAddon = hasAddons && step >= 1 && step <= ADDONS.length ? ADDONS[step - 1] : null;
@@ -356,6 +443,9 @@ const Reservations: React.FC = () => {
       checkIn: checkinISO,
       checkOut: checkoutISO,
       guests,
+      adults,
+      minors,
+      crib: minors > 0 && crib,
       selectedAddons,
     };
 
@@ -420,6 +510,11 @@ const Reservations: React.FC = () => {
                 </motion.span>
               </AnimatePresence>
             </div>
+            {hasDates && (
+              <p className="reservas-corporate-ticket-note">
+                Incluye {formatPrice(deposit)} de fianza reembolsable
+              </p>
+            )}
           </motion.div>
 
           <motion.blockquote className="reservas-corporate-quote-hero" variants={fadeUp} transition={{ duration: 1, ease: EASE }}>
@@ -498,33 +593,58 @@ const Reservations: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="reservas-corporate-guests-selector">
-                    <div className="reservas-corporate-guests-text">
-                      <span className="reservas-corporate-guests-label">Huéspedes</span>
-                      <span className="reservas-corporate-guests-max-note">Máximo {maxGuests}</span>
-                    </div>
-                    <div className="reservas-corporate-guests-controls">
-                      <button
-                        type="button"
-                        className="reservas-corporate-guests-button"
-                        onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                        disabled={guests <= 1}
-                        aria-label="Quitar huésped"
-                      >
-                        −
-                      </button>
-                      <span className="reservas-corporate-guests-count">{guests}</span>
-                      <button
-                        type="button"
-                        className="reservas-corporate-guests-button"
-                        onClick={() => setGuests((g) => Math.min(maxGuests, g + 1))}
-                        disabled={guests >= maxGuests}
-                        aria-label="Añadir huésped"
-                      >
-                        +
-                      </button>
-                    </div>
+                  {/* ---------- Huéspedes ---------- */}
+                  <div className="reservas-corporate-guests-block">
+                    <span className="reservas-corporate-guests-heading">
+                      Huéspedes <span>Máximo {maxGuests} personas en total</span>
+                    </span>
+
+                    <GuestCounter
+                      label="Adultos"
+                      note="18 años o más"
+                      value={adults}
+                      onDecrease={() => setAdults((a) => Math.max(1, a - 1))}
+                      onIncrease={() => setAdults((a) => (a + minors < maxGuests ? a + 1 : a))}
+                      decreaseDisabled={adults <= 1}
+                      increaseDisabled={guests >= maxGuests}
+                      decreaseLabel="Quitar adulto"
+                      increaseLabel="Añadir adulto"
+                    />
+
+                    <GuestCounter
+                      label="Menores"
+                      note="Menores de 18 años"
+                      value={minors}
+                      onDecrease={() => setMinors((m) => Math.max(0, m - 1))}
+                      onIncrease={() => setMinors((m) => (adults + m < maxGuests ? m + 1 : m))}
+                      decreaseDisabled={minors <= 0}
+                      increaseDisabled={guests >= maxGuests}
+                      decreaseLabel="Quitar menor"
+                      increaseLabel="Añadir menor"
+                    />
+
+                    {minors > 0 && (
+                      <div className="reservas-corporate-crib">
+                        <div className="reservas-corporate-guests-text">
+                          <label htmlFor="reservas-cuna" className="reservas-corporate-guests-label">
+                            Cuna para bebé
+                          </label>
+                          <span className="reservas-corporate-guests-max-note">Gratuita, sin coste adicional</span>
+                        </div>
+                        <select
+                          id="reservas-cuna"
+                          className="reservas-corporate-crib-select"
+                          value={crib ? 'si' : 'no'}
+                          onChange={(e) => setCrib(e.target.value === 'si')}
+                        >
+                          <option value="no">No necesitamos cuna</option>
+                          <option value="si">Sí, necesitamos cuna</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
+
+                  <DepositNotice guests={guests} />
                 </motion.div>
               )}
 
@@ -579,8 +699,15 @@ const Reservations: React.FC = () => {
 
                   <div className="reservas-corporate-summary-row">
                     <span className="reservas-corporate-summary-label">Huéspedes</span>
-                    <span className="reservas-corporate-summary-value">{guests}</span>
+                    <span className="reservas-corporate-summary-value">{guestsText(adults, minors)}</span>
                   </div>
+
+                  {minors > 0 && (
+                    <div className="reservas-corporate-summary-row">
+                      <span className="reservas-corporate-summary-label">Cuna para bebé</span>
+                      <span className="reservas-corporate-summary-value">{crib ? 'Sí (gratuita)' : 'No'}</span>
+                    </div>
+                  )}
 
                   {nightGroups.map((group) => (
                     <div key={group.price} className="reservas-corporate-summary-row">
@@ -601,10 +728,19 @@ const Reservations: React.FC = () => {
                       </div>
                     ))}
 
+                  <div className="reservas-corporate-summary-row is-deposit">
+                    <span className="reservas-corporate-summary-label">
+                      Fianza reembolsable ({guests} × {formatPrice(DEPOSIT_PER_GUEST)})
+                    </span>
+                    <span className="reservas-corporate-summary-value">{formatPrice(deposit)}</span>
+                  </div>
+
                   <div className="reservas-corporate-summary-total">
                     <span className="reservas-corporate-summary-total-label">Total</span>
                     <span className="reservas-corporate-summary-total-value">{formatPrice(grandTotal)}</span>
                   </div>
+
+                  <DepositNotice guests={guests} />
 
                   <p className="reservas-corporate-summary-note">
                     El precio de cada noche depende de la fecha. El importe final se confirma en el paso de pago.

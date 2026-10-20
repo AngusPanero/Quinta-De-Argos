@@ -25,7 +25,9 @@
   line-height: 1.1;
   letter-spacing: -0.01em;
   color: var(--qa-title);
-  min-width: 230px;
+  width: 8.8em;
+  flex: none;
+  white-space: nowrap;
   text-align: center;
   margin: 0;
 }
@@ -308,6 +310,15 @@
   color: var(--qa-ink);
 }
 
+/* Nombre del huésped + aviso de cuna en el primer día de la franja */
+.rc-booking-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
 .rc-guest {
   font-weight: 500;
   font-size: 0.85rem;
@@ -319,8 +330,26 @@
   -webkit-box-orient: vertical;
 }
 
-span.rc-guest{
+span.rc-guest {
   text-transform: uppercase;
+}
+
+/* Etiqueta "Cuna": sobre la franja de color usa el texto de la fuente;
+   en la leyenda, los tokens normales. */
+.rc-crib {
+  display: inline-block;
+  font-weight: 500;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+
+.rc-legend .rc-crib {
+  color: var(--qa-accent);
 }
 
 /* ---------- Detalle de la reserva seleccionada ---------- */
@@ -380,15 +409,18 @@ span.rc-guest{
   margin: 0.4rem 0 1.1rem;
 }
 
+/* Grilla fija de 4 columnas: los campos vacíos (reservas que no son web)
+   conservan su lugar y el detalle no se descoloca. */
 .rc-detail-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem 2.25rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem 2rem;
   margin: 0;
 }
 
 .rc-detail-list div {
   margin: 0;
+  min-width: 0;
 }
 
 .rc-detail-list dt {
@@ -398,15 +430,50 @@ span.rc-guest{
 
 .rc-detail-list dd {
   margin: 0.15rem 0 0;
+  min-height: 1.45rem;
   font-size: 0.95rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.rc-detail-sub {
+  display: block;
+  min-height: 1.2rem;
+  font-weight: 300;
+  font-size: 0.8rem;
+  color: var(--qa-muted);
+}
+
+.rc-detail-total {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--qa-title);
+}
+
+.rc-detail-total .rc-detail-sub {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ==========================================================
    RESPONSIVE
    ========================================================== */
 
+@media (max-width: 960px) {
+  .rc-detail-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 760px) {
+    .rc-nav {
+    flex: 1;
+    min-width: 0;
+  }
+
   .rc-month {
+    flex: 1;
+    width: auto;
     min-width: 0;
   }
 
@@ -455,5 +522,20 @@ span.rc-guest{
   .rc-guest {
     font-size: 0.68rem;
     -webkit-line-clamp: 1;
+  }
+
+  /* En la celda no entra: la cuna se ve en el detalle */
+  .rc-cell .rc-crib {
+    display: none;
+  }
+
+  .rc-detail {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .rc-detail-list {
+    grid-template-columns: 1fr;
   }
 }

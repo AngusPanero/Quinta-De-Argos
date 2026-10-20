@@ -51,7 +51,8 @@
   box-sizing: border-box;
 }
 
-.reservas-corporate button:focus-visible {
+.reservas-corporate button:focus-visible,
+.reservas-corporate select:focus-visible {
   outline: 2px solid var(--qa-accent);
   outline-offset: 3px;
 }
@@ -146,6 +147,13 @@
 
 .reservas-corporate-ticket-total span {
   display: block;
+}
+
+.reservas-corporate-ticket-note {
+  margin: 0.45rem 0 0;
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--qa-accent);
 }
 
 .reservas-corporate-quote-hero {
@@ -267,14 +275,39 @@
   font-size: 0.98rem;
 }
 
-/* ---------- Selector de huéspedes ---------- */
+/* ---------- Huéspedes (adultos, menores y cuna) ---------- */
+
+.reservas-corporate-guests-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.25rem 0 0;
+}
+
+.reservas-corporate-guests-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--qa-title);
+}
+
+.reservas-corporate-guests-heading span {
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 300;
+  font-size: 0.82rem;
+  color: var(--qa-muted);
+}
 
 .reservas-corporate-guests-selector {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1.25rem 0 0;
 }
 
 .reservas-corporate-guests-text {
@@ -329,6 +362,70 @@
   min-width: 1.5rem;
   text-align: center;
   font-variant-numeric: tabular-nums;
+}
+
+.reservas-corporate-crib {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--qa-line);
+}
+
+.reservas-corporate-crib-select {
+  appearance: none;
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 0.92rem;
+  color: var(--qa-text);
+  background-color: var(--qa-bg);
+  background-image: linear-gradient(45deg, transparent 50%, var(--qa-text) 50%),
+    linear-gradient(135deg, var(--qa-text) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  border: 1px solid var(--qa-line);
+  border-radius: 999px;
+  padding: 0.7rem 2.4rem 0.7rem 1.1rem;
+  cursor: pointer;
+  transition: border-color 0.3s var(--qa-ease);
+}
+
+.reservas-corporate-crib-select:hover {
+  border-color: var(--qa-title);
+}
+
+/* ---------- Aviso de fianza ---------- */
+
+.reservas-corporate-deposit {
+  margin-top: 1.5rem;
+  padding: 1.1rem 1.25rem;
+  background-color: var(--qa-bg);
+  border: 1px solid var(--qa-line);
+  border-left: 3px solid var(--qa-accent);
+  border-radius: 4px;
+}
+
+.reservas-corporate-deposit-title {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.08rem;
+  color: var(--qa-title);
+  margin-bottom: 0.4rem;
+}
+
+.reservas-corporate-deposit-text {
+  margin: 0;
+  font-weight: 300;
+  font-size: 0.93rem;
+  line-height: 1.65;
+}
+
+.reservas-corporate-deposit-text strong {
+  font-weight: 500;
 }
 
 /* ---------- Paso: adicional ---------- */
@@ -439,11 +536,17 @@
   text-align: right;
 }
 
+.reservas-corporate-summary-row.is-deposit .reservas-corporate-summary-label,
+.reservas-corporate-summary-row.is-deposit .reservas-corporate-summary-value {
+  color: var(--qa-accent);
+  font-weight: 500;
+}
+
 .reservas-corporate-summary-total {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 1.75rem 0 2rem;
+  padding: 1.75rem 0 0.5rem;
 }
 
 .reservas-corporate-summary-total-label {
@@ -461,12 +564,16 @@
   font-variant-numeric: tabular-nums;
 }
 
+.reservas-corporate-step-summary .reservas-corporate-deposit {
+  margin: 1rem 0 1.5rem;
+}
+
 .reservas-corporate-summary-note {
   font-size: 0.82rem;
   font-weight: 300;
   line-height: 1.55;
   color: var(--qa-muted);
-  margin: -0.75rem 0 1.5rem;
+  margin: 0 0 1.5rem;
 }
 
 .reservas-corporate-pay-button:disabled {
@@ -903,6 +1010,10 @@
 
   .reservas-corporate-dates-summary {
     grid-template-columns: 1fr;
+  }
+
+  .reservas-corporate-crib-select {
+    width: 100%;
   }
 }
 

@@ -11,12 +11,40 @@ const API = import.meta.env.VITE_API_URL;
 const WEEKDAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 const LEGEND: ReservaSource[] = ["web", "airbnb", "booking", "owner", "direct"];
 
+// Espacio en blanco que mantiene la altura de los campos vacíos.
+const VACIO = "\u00A0";
+
 // webPrice lo añade el backend (precio de la web, con el descuento ya aplicado).
 type CalendarDayConWeb = CalendarDay & { webPrice?: number | null };
 
+// Datos de la reserva hecha en la web (los adjunta el backend; null si no es web).
+interface WebInfo {
+    codigo: string;
+    estado: string;
+    huespedes: number;
+    adultos: number | null; // null = reserva web antigua, sin desglose
+    menores: number;
+    cuna: boolean;
+    reserva: number; // estancia: alojamiento + adicionales
+    fianza: number;
+    fianzaPorPersona: number;
+    fianzaPersonas: number;
+    fianzaDevuelta: number;
+    total: number; // lo cobrado: reserva + fianza
+}
+
 type CalendarBooking = Pick<Reserva,
     "beds24Id" | "status" | "source" | "arrival" | "departure" | "nights" |
-    "numAdult" | "numChild" | "firstName" | "lastName" | "price" | "commission" | "apiReference">;
+    "numAdult" | "numChild" | "firstName" | "lastName" | "price" | "commission" | "apiReference"> & {
+        web?: WebInfo | null;
+    };
+
+function partyText(w: WebInfo): string {
+    if (w.adultos === null) return `${w.huespedes} ${w.huespedes === 1 ? "huésped" : "huéspedes"}`;
+    const parts = [`${w.adultos} ${w.adultos === 1 ? "adulto" : "adultos"}`];
+    if (w.menores > 0) parts.push(`${w.menores} ${w.menores === 1 ? "menor" : "menores"}`);
+    return parts.join(" · ");
+}
 
 interface Props {
     refreshKey: number;
@@ -105,6 +133,12 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
         setSelected(null);
     };
 
+    // ---------- Datos del detalle ----------
+    const w = selected?.web ?? null;
+    const beds24Price = selected && typeof selected.price === "number" && selected.price > 0 ? selected.price : null;
+    const hasNet = !!selected && !w && selected.source === "airbnb" && !!selected.commission && beds24Price !== null;
+    const totalDetalle = w ? w.total : beds24Price;
+
     return (
         <div className="rc-wrap">
             <div className="rc-toolbar">
@@ -127,12 +161,15 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
                 <li className="rc-legend-price">
                     <span className="rc-price-web"><span className="rc-price-web-label">Web</span>228 €</span>Precio web
                 </li>
+                <li className="rc-legend-price">
+                    <span className="rc-crib">Cuna</span>Piden cuna
+                </li>
             </ul>
 
             {error && <p className="rc-error" role="alert">{error}</p>}
 
             <div className={`rc-grid ${loading ? "rc-grid--loading" : ""}`} aria-busy={loading}>
-                {WEEKDAYS.map((w) => <div key={w} className="rc-weekday">{w}</div>)}
+                {WEEKDAYS.map((d) => <div key={d} className="rc-weekday">{d}</div>)}
 
                 {grid.map((date, i) => {
                     const info = dayMap.get(date);
@@ -157,7 +194,12 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
                     const content = (
                         <>
                             <span className="rc-daynum">{Number(date.slice(8, 10))}</span>
-                            {booking && isStart && <span className="rc-guest">{guestName(booking)}</span>}
+                            {booking && isStart && (
+                                <span className="rc-booking-meta">
+                                    <span className="rc-guest">{guestName(booking)}</span>
+                                    {booking.web?.cuna && <span className="rc-crib">Cuna</span>}
+                                </span>
+                            )}
                             {!booking && info && info.available && (
                                 <span className="rc-meta">
                                     <span className="rc-prices">
@@ -204,15 +246,59 @@ export default function ReservasCalendar({ refreshKey, onSyncInfo }: Props) {
                     </p>
                     <dl className="rc-detail-list">
                         <div><dt>Origen</dt><dd>{SOURCE_LABEL[selected.source]}</dd></div>
-                        {selected.source !== "owner" && (
-                            <div><dt>Huéspedes</dt><dd>{guestsLabel(selected.numAdult, selected.numChild)}</dd></div>
-                        )}
-                        {typeof selected.price === "number" && selected.price > 0 && (
-                            <div><dt>Importe</dt><dd>{formatMoney(selected.price)}</dd></div>
-                        )}
-                        {selected.apiReference && (
-                            <div><dt>Nº en {SOURCE_LABEL[selected.source]}</dt><dd>{selected.apiReference}</dd></div>
-                        )}
+                        <div>
+                            <dt>Huéspedes</dt>
+                            <dd>
+                                {w
+                                    ? partyText(w)
+                                    : selected.source !== "owner"
+                                        ? guestsLabel(selected.numAdult, selected.numChild)
+                                        : VACIO}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Cuna para bebé</dt>
+                            <dd>{w ? (w.cuna ? "Sí (gratuita)" : "No") : VACIO}</dd>
+                        </div>
+                        <div>
+                            <dt>Nº en {SOURCE_LABEL[selected.source]}</dt>
+                            <dd>{selected.apiReference || VACIO}</dd>
+                        </div>
+
+                        {/* ---------- Importes: reserva, fianza y total ---------- */}
+                        <div>
+                            <dt>Reserva</dt>
+                            <dd>
+                                {w ? formatMoney(w.reserva) : VACIO}
+                                <span className="rc-detail-sub">{w ? "Alojamiento y adicionales" : VACIO}</span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Fianza</dt>
+                            <dd>
+                                {w ? formatMoney(w.fianza) : VACIO}
+                                <span className="rc-detail-sub">
+                                    {w && w.fianza > 0
+                                        ? w.fianzaDevuelta > 0
+                                            ? `Devuelta ${formatMoney(w.fianzaDevuelta)} de ${formatMoney(w.fianza)}`
+                                            : `${w.fianzaPersonas} × ${formatMoney(w.fianzaPorPersona)} · pendiente de devolver`
+                                        : VACIO}
+                                </span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Total</dt>
+                            <dd className="rc-detail-total">
+                                {totalDetalle !== null ? formatMoney(totalDetalle) : VACIO}
+                                <span className="rc-detail-sub">
+                                    {w
+                                        ? "Cobrado con Stripe"
+                                        : hasNet
+                                            ? `Neto ${formatMoney((beds24Price as number) - (selected.commission as number))} (comisión ${formatMoney(selected.commission as number)})`
+                                            : VACIO}
+                                </span>
+                            </dd>
+                        </div>
                     </dl>
                 </aside>
             )}

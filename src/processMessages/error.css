@@ -36,7 +36,7 @@
 
 .error-eyebrow {
   display: inline-block;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.2em;
@@ -84,7 +84,7 @@
 }
 
 .error-text.small {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.06em;
@@ -124,7 +124,7 @@
 }
 
 .error-home-button {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: 'Helvetica Neue', 'Courier New', monospace;
   font-weight: 500;
   font-size: 0.72rem;
   letter-spacing: 0.12em;

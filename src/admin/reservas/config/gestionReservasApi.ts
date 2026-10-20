@@ -1,5 +1,5 @@
 // gestionReservasApi.ts — Quinta de Argos
-// Llamadas del panel para reservas particulares, uso propio y cancelaciones.
+// Llamadas del panel para reservas particulares, uso propio, cancelaciones y fianzas.
 // Los errores se leen con toApiError (configApi.ts), igual que el resto de Configuración.
 
 import axios from "axios";
@@ -88,8 +88,118 @@ export interface CancelarRequest {
     motivo?: string;
 }
 
+// ---------- Fianzas y política de cancelación ----------
+
+/** Reembolso que corresponde si se cancela hoy (lo calcula el servidor). Todo en céntimos. */
+export interface PoliticaCancelacion {
+    diasHastaLlegada: number;
+    porcentaje: number; // 100 o 50
+    estanciaCentimos: number;
+    estanciaDevueltaCentimos: number;
+    fianzaCentimos: number; // fianza pendiente: se devuelve siempre completa
+    reembolsoCentimos: number; // estancia según política + fianza
+    maximoCentimos: number;
+}
+
+export interface FianzaPendiente {
+    id: string; // id de la reserva web
+    beds24Id: number | null;
+    codigo: string;
+    nombre: string;
+    email: string;
+    checkIn: string;
+    checkOut: string;
+    huespedes: number;
+    estanciaTerminada: boolean;
+    fianzaCentimos: number;
+    fianzaDevueltaCentimos: number;
+    pendienteCentimos: number;
+}
+
+export interface FianzasListado {
+    hoy: string;
+    reglas: { diasReembolsoTotal: number; porcentajeTardio: number };
+    pendientes: FianzaPendiente[];
+    politica: Record<string, PoliticaCancelacion>; // por id de Beds24
+    linksPendientes: Record<string, LinkPendiente>; // por id de Beds24
+}
+
+// ---------- Cambio de fechas de reservas web ----------
+
+export interface Fechas {
+    checkIn: string;
+    checkOut: string;
+    noches?: number;
+}
+
+/** Link de pago de Stripe de una ampliación que el huésped todavía no ha pagado. */
+export interface LinkPendiente {
+    url: string;
+    cargoCentimos: number;
+    venceEn: string;
+    antes: Fechas;
+    despues: Fechas;
+}
+
+export interface NochePrecio {
+    fecha: string;
+    precio: number; // euros
+}
+
+/** Lo que calcula el servidor antes de cambiar las fechas. Importes en céntimos. */
+export interface ModificacionPreview {
+    codigo: string;
+    empezada: boolean; // si ya empezó, solo se puede cambiar la salida
+    antes: Fechas;
+    despues: Fechas;
+    nochesQuitadas: NochePrecio[]; // con el precio que se pagó por cada una
+    nochesNuevas: NochePrecio[]; // con el precio web de hoy
+    conflictos: string[]; // noches nuevas ya ocupadas
+    sinTarifa: string[]; // noches nuevas sin precio en el calendario
+    disponible: boolean;
+    valorQuitadasCentimos: number;
+    reembolsoSugeridoCentimos: number;
+    maximoReembolsoCentimos: number;
+    cargoNochesCentimos: number;
+    fianzaActualCentimos: number;
+}
+
+export type ReembolsoModificacion = "sugerido" | "otro" | "ninguno";
+export type MetodoCobro = "stripe" | "transferencia";
+
+export interface ModificarRequest {
+    checkIn: string;
+    checkOut: string;
+    reembolso: ReembolsoModificacion;
+    importeReembolso?: string;
+    fianzaAdicional?: string;
+    metodoCobro?: MetodoCobro;
+    nota?: string;
+}
+
+export interface ModificacionResultado {
+    modificacion: {
+        estado: "aplicada" | "pendiente_pago" | "pagada" | "vencida";
+        antes: Fechas;
+        despues: Fechas;
+        cargoCentimos: number;
+        fianzaAdicionalCentimos: number;
+        metodoCobro: MetodoCobro | "sin_cargo";
+        reembolsoCentimos: number;
+        reembolsoPendienteCentimos: number;
+        venceEn?: string;
+    };
+    checkoutUrl: string | null;
+    aviso: string | null;
+}
+
 export async function getGestionReservas(): Promise<GestionListado> {
     const { data } = await axios.get(`${API}/api/admin/gestion-reservas`, opts);
+    return data;
+}
+
+export async function getFianzas(): Promise<FianzasListado> {
+    const { data } = await axios.get(`${API}/api/admin/fianzas`, opts);
     return data;
 }
 
@@ -112,6 +222,28 @@ export async function cancelarReserva(
     pin: string
 ): Promise<{ cancelada: boolean; reembolsoCentimos?: number; totalDevueltoCentimos?: number }> {
     const { data } = await axios.post(`${API}/api/admin/gestion-reservas/${beds24Id}/cancelar`, { ...body, pin }, opts);
+    return data;
+}
+
+/** Devuelve la fianza (toda, o solo `importe` en euros). La reserva no se cancela. */
+export async function devolverFianza(
+    reservaWebId: string,
+    body: { importe?: string; nota?: string },
+    pin: string
+): Promise<{ devueltoCentimos: number; totalDevueltoCentimos: number; pendienteCentimos: number }> {
+    const { data } = await axios.post(`${API}/api/admin/fianzas/${reservaWebId}/devolver`, { ...body, pin }, opts);
+    return data;
+}
+
+/** Calcula el cambio de fechas sin tocar nada. */
+export async function previewModificacion(reservaWebId: string, body: { checkIn: string; checkOut: string }): Promise<ModificacionPreview> {
+    const { data } = await axios.post(`${API}/api/admin/reservas-web/${reservaWebId}/modificar/preview`, body, opts);
+    return data;
+}
+
+/** Cambia las fechas en Beds24 y en la web, devuelve y/o cobra la diferencia. */
+export async function modificarReserva(reservaWebId: string, body: ModificarRequest, pin: string): Promise<ModificacionResultado> {
+    const { data } = await axios.post(`${API}/api/admin/reservas-web/${reservaWebId}/modificar`, { ...body, pin }, opts);
     return data;
 }
 
