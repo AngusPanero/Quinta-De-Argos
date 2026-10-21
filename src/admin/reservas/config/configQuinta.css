@@ -1018,6 +1018,97 @@
   margin-top: 1.25rem;
 }
 
+/* Opción destacada del modal: cambiar en todos lados */
+.cq-choice-btn--all {
+  border-color: var(--qa-accent);
+  box-shadow: inset 3px 0 0 var(--qa-accent);
+}
+
+/* Los dos precios actuales en la opción «En todos lados» */
+.cq-choice-both {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Formulario «Cambiar en todos lados» debajo del calendario */
+.cq-cv-todos {
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+  border: 1px solid var(--qa-line);
+  border-left: 3px solid var(--qa-accent);
+  border-radius: 6px;
+  background-color: var(--qa-bg);
+  scroll-margin-top: 6rem;
+}
+
+.cq-cv-todos .cq-panel {
+  max-width: none;
+}
+
+@container cq-page (max-width: 640px) {
+  .cq-cv-todos {
+    padding: 1rem;
+  }
+}
+
+/* ---------- Cambiar en todos lados: resultado en vivo ---------- */
+
+.ct-result {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 460px;
+  margin: 0.25rem 0 0;
+  border: 1px solid var(--qa-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ct-result-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0.9rem 1.1rem 1rem;
+  background-color: var(--qa-surface);
+}
+
+.ct-result-row + .ct-result-row {
+  border-left: 1px solid var(--qa-line);
+}
+
+.ct-result-row dt {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.5rem;
+  font-size: 0.86rem;
+  color: var(--qa-muted);
+}
+
+.ct-result-note {
+  font-size: 0.78rem;
+  color: var(--qa-accent);
+}
+
+.ct-result-row dd {
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: var(--qa-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.ct-result-row--web dd {
+  color: var(--cq-web);
+}
+
+.cq-page.theme-dark .ct-result-row--web dd {
+  color: var(--qa-ok);
+}
+
 /* ---------- Detalle del día ---------- */
 
 .cq-cv-detail {

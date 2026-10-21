@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import CambiarEnTodos from "./CambiarEnTodos";
 import { fetchCalendarView, fetchWebPriceDays, toApiError } from "./configApi";
 import {
     OVERRIDE_HELP, OVERRIDE_STATE, SOURCE_LABEL, WEEKDAYS,
@@ -41,6 +42,13 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
     const [webDiscount, setWebDiscount] = useState<number | null>(null);
     // Pregunta "¿dónde quieres cambiarlo?" al tocar "Cambiar este día"
     const [choosing, setChoosing] = useState(false);
+    // «En todos lados»: el formulario se abre aquí mismo, debajo del calendario
+    const [todosRange, setTodosRange] = useState<DateRange | null>(null);
+    const todosRef = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        if (todosRange) todosRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, [todosRange]);
 
     useEffect(() => {
         let cancelled = false;
@@ -121,6 +129,12 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
         if (!selected) return;
         setChoosing(false);
         onEdit({ from: selected, to: selected }, target);
+    };
+
+    const chooseTodos = () => {
+        if (!selected) return;
+        setChoosing(false);
+        setTodosRange({ from: selected, to: selected });
     };
     const selBooking = selected ? bookingOn(selected) : undefined;
     const selDeparting = selected ? departingOn(selected) : undefined;
@@ -286,6 +300,21 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
                 </aside>
             )}
 
+            {todosRange && (
+                <section className="cq-cv-todos" ref={todosRef} aria-labelledby="cq-cv-todos-title">
+                    <div className="cq-cv-detail-head">
+                        <h3 id="cq-cv-todos-title" className="cq-cv-detail-date">Cambiar en todos lados</h3>
+                        <button type="button" className="cq-cv-close" onClick={() => setTodosRange(null)} aria-label="Cerrar">×</button>
+                    </div>
+                    <CambiarEnTodos
+                        key={`${todosRange.from}-${todosRange.to}`}
+                        today={today}
+                        initialRange={todosRange}
+                        onApplied={() => setReload((r) => r + 1)}
+                    />
+                </section>
+            )}
+
             {choosing && selected && (
                 <div className="cq-modal-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) setChoosing(false); }}>
                     <div className="cq-modal cq-choice" role="dialog" aria-modal="true" aria-labelledby="cq-choice-title">
@@ -293,7 +322,21 @@ export default function ConfigVista({ today, defaults, month, onMonthChange, onE
                         <p className="cq-choice-date">{formatLongDate(selected)}</p>
 
                         <div className="cq-choice-list">
-                            <button type="button" className="cq-choice-btn" onClick={() => chooseTarget("web")} autoFocus>
+                            <button type="button" className="cq-choice-btn cq-choice-btn--all" onClick={chooseTodos} autoFocus>
+                                <span className="cq-choice-head">
+                                    <span className="cq-choice-title">En todos lados</span>
+                                    {sel?.price != null && selWeb?.price != null && (
+                                        <span className="cq-choice-both">
+                                            <span className="cq-cv-price">{sel.price} €</span>
+                                            <span className="cq-cv-web">{selWeb.price} €</span>
+                                        </span>
+                                    )}
+                                </span>
+                                <span className="cq-choice-sub">
+                                    Escribes el precio de Booking y Airbnb y la web se ajusta sola con su descuento. Un solo cambio y una sola firma.
+                                </span>
+                            </button>
+                            <button type="button" className="cq-choice-btn" onClick={() => chooseTarget("web")}>
                                 <span className="cq-choice-head">
                                     <span className="cq-choice-title">En la web</span>
                                     {selWeb?.price != null && <span className="cq-cv-web">{selWeb.price} €</span>}
