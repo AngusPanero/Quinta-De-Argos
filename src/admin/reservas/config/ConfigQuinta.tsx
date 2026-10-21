@@ -8,6 +8,7 @@ import PreciosWeb, { type WebModo } from "./PreciosWeb";
 import { fetchConfig, toApiError } from "./configApi";
 import type { ConfigResponse, DateRange, EditTarget } from "./configTypes";
 import "./configQuinta.css";
+import InstruccionesCasa from "../instruccionesAutomaticas/InstruccionesCasa";
 
 const TABS = [
     { id: "vista", label: "Calendario" },
@@ -16,6 +17,7 @@ const TABS = [
     { id: "reglas", label: "Reglas de la casa" },
     { id: "propiedad", label: "Datos y políticas" },
     { id: "canales", label: "Canales" },
+    { id: "instrucciones", label: "Instrucciones" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -164,6 +166,7 @@ export default function ConfigQuinta() {
                                 onApplied={setConfig}
                             />
                         )}
+                        {tab === "instrucciones" && <InstruccionesCasa />}
                     </div>
                 )}
             </div>

@@ -1,0 +1,361 @@
+/* ==========================================================
+   instruccionesCasa.css — Quinta de Argos
+   Prefijo de clases: ic-*
+   Campos, botones y mensajes reutilizan las clases cq-* de
+   configQuinta.css. Aquí solo va lo nuevo, con currentColor
+   para que funcione igual en tema claro y oscuro.
+   El aire entre piezas lo dan los gap de cada bloque (no márgenes sueltos).
+   ========================================================== */
+
+.ic {
+  --ic-aire: 2.25rem;     /* entre bloques grandes */
+  --ic-aire-m: 1.25rem;   /* dentro de un bloque */
+  --ic-aire-s: 0.6rem;    /* entre elementos pegados (etiqueta + campo) */
+  --ic-linea: color-mix(in srgb, currentColor 14%, transparent);
+  --ic-arcilla: #b8763e;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--ic-aire);
+}
+
+/* Los márgenes propios de las piezas cq-* no se suman al gap */
+.ic > *,
+.ic .cq-fieldset > *,
+.ic-block > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.ic .cq-intro {
+  max-width: 62ch;
+  line-height: 1.7;
+}
+
+/* ---------- Bloques del formulario ---------- */
+
+.ic .cq-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ic-aire-m);
+  padding: 1.75rem 1.75rem 1.9rem;
+}
+
+.ic .cq-legend {
+  padding: 0 0.6rem;
+}
+
+.ic .cq-grid {
+  gap: var(--ic-aire-m) 1.5rem;
+}
+
+.ic .cq-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ic-aire-s);
+}
+
+.ic .cq-field > * {
+  margin: 0;
+}
+
+.ic .cq-help {
+  line-height: 1.6;
+}
+
+.ic .cq-check {
+  line-height: 1.5;
+}
+
+.ic .cq-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.ic-textarea {
+  resize: vertical;
+  min-height: 7.5rem;
+  font-family: inherit;
+  line-height: 1.65;
+}
+
+.ic-detalle {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  opacity: 0.7;
+  overflow-wrap: anywhere;
+}
+
+.ic-detalle--error {
+  opacity: 1;
+  color: #9a4a34;
+}
+
+/* Botón secundario (contorno) */
+.ic-btn-sec {
+  background: transparent !important;
+  color: inherit !important;
+  border: 1px solid currentColor !important;
+}
+
+/* ---------- PDF ---------- */
+
+.ic-pdf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  padding: 1.15rem 1.35rem;
+  border: 1px solid var(--ic-linea);
+  border-left: 3px solid var(--ic-arcilla);
+  border-radius: 2px;
+  background-color: color-mix(in srgb, currentColor 3%, transparent);
+}
+
+.ic-pdf-icono {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 3.4rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ic-arcilla);
+  border: 1px solid currentColor;
+  border-radius: 2px 10px 2px 2px;
+}
+
+.ic-pdf-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+  flex: 1 1 200px;
+}
+
+.ic-pdf-nombre {
+  font-weight: 500;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.ic-pdf-acciones {
+  display: flex;
+  gap: 1.25rem;
+  flex-shrink: 0;
+}
+
+.ic-subida {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem 1.25rem;
+}
+
+/* El input de archivo se oculta y se usa la etiqueta como botón */
+.ic-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ic-file-label {
+  cursor: pointer;
+}
+
+.ic-file:focus-visible + .ic-file-label {
+  outline: 2px solid var(--ic-arcilla);
+  outline-offset: 2px;
+}
+
+/* ---------- Resumen de la hora de envío ---------- */
+
+.ic-resumen {
+  padding: 1rem 1.2rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  border-left: 3px solid color-mix(in srgb, currentColor 25%, transparent);
+  background-color: color-mix(in srgb, currentColor 4%, transparent);
+  opacity: 0.75;
+  transition: opacity 0.25s ease, border-color 0.25s ease;
+}
+
+.ic-resumen--on {
+  opacity: 1;
+  border-left-color: var(--ic-arcilla);
+}
+
+/* ---------- Prueba ---------- */
+
+.ic-prueba {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1rem;
+  align-items: center;
+}
+
+.ic-prueba .cq-input {
+  flex: 1 1 260px;
+  min-width: 0;
+  font-size: 16px; /* evita el zoom automático en iPhone */
+}
+
+/* ---------- Listados ---------- */
+
+.ic-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ic-aire-m);
+  padding-top: var(--ic-aire);
+  border-top: 1px solid var(--ic-linea);
+}
+
+.ic-block-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ic-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ic-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1.5rem;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--ic-linea);
+}
+
+.ic-fila:first-child {
+  border-top: 1px solid var(--ic-linea);
+}
+
+.ic-fila-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.85rem;
+  min-width: 0;
+  flex: 1 1 260px;
+}
+
+.ic-fila-info .ic-detalle {
+  flex-basis: 100%;
+}
+
+.ic-fechas {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.ic-accion {
+  flex-shrink: 0;
+}
+
+/* ---------- Estado de cada envío ---------- */
+
+.ic-estado {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.ic-estado--programado,
+.ic-estado--en_cola,
+.ic-estado--enviando {
+  color: var(--ic-arcilla);
+  opacity: 1;
+}
+
+.ic-estado--enviado {
+  color: #6b7a55;
+  opacity: 1;
+}
+
+.ic-estado--error,
+.ic-estado--sin_email,
+.ic-estado--sin_pdf {
+  color: #9a4a34;
+  opacity: 1;
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 768px) {
+  .ic {
+    --ic-aire: 1.85rem;
+  }
+
+  .ic .cq-fieldset {
+    padding: 1.4rem 1.25rem 1.5rem;
+  }
+}
+
+/* ---------- Móvil ---------- */
+
+@media (max-width: 480px) {
+  .ic {
+    --ic-aire: 1.6rem;
+    --ic-aire-m: 1.1rem;
+  }
+
+  .ic .cq-fieldset {
+    padding: 1.2rem 1rem 1.3rem;
+  }
+
+  .ic .cq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ic-pdf {
+    padding: 1rem;
+  }
+
+  .ic-pdf-acciones {
+    width: 100%;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--ic-linea);
+  }
+
+  .ic-prueba .cq-btn,
+  .ic-subida .cq-btn,
+  .ic .cq-actions .cq-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ic .cq-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ic-fila {
+    padding: 1rem 0;
+  }
+
+  .ic-accion {
+    width: 100%;
+    text-align: left;
+  }
+}
