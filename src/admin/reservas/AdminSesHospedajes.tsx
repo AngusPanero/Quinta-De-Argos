@@ -13,7 +13,8 @@ const HORA_SALIDA = "11:00";
 // TIPOS
 // ==========================================================
 
-type Estado = "borrador" | "enviando" | "enviado" | "comunicado" | "error" | "anulacion_enviada" | "anulado";
+type Estado = "borrador" | "enviando" | "enviado" | "comunicado" | "error" | "anulacion_enviada" | "anulado" | "externo";
+type ViaExterno = "portal" | "gestoria" | "otro";
 type Origen = "web" | "airbnb" | "booking" | "direct" | "owner";
 
 interface Direccion {
@@ -70,6 +71,7 @@ interface Parte {
     codigoComunicacion?: string | null;
     ultimoError?: string | null;
     envios?: Envio[];
+    externo?: { fecha?: string | null; via?: ViaExterno; nota?: string; marcadoPor?: string; marcadoEn?: string } | null;
     updatedAt?: string;
 }
 
@@ -124,6 +126,15 @@ interface Draft {
         pago: { tipoPago: string; fechaPago: string; medioPago: string; titular: string };
     };
     personas: Persona[];
+}
+
+// Formulario «Ya comunicado por fuera»
+interface ExternoForm {
+    beds24Id: number;
+    codigoComunicacion: string;
+    fecha: string;
+    via: ViaExterno;
+    nota: string;
 }
 
 type Errors = Record<string, string>;
@@ -184,6 +195,9 @@ const ORIGEN_LABEL: Record<Origen, string> = {
     owner: "Uso propio",
 };
 
+// Canales que aparecen en «Por comunicar»
+const ORIGENES_LISTADOS: Origen[] = ["web", "airbnb", "booking"];
+
 const ESTADO_LABEL: Record<Estado, string> = {
     borrador: "Borrador",
     enviando: "Enviando…",
@@ -192,7 +206,17 @@ const ESTADO_LABEL: Record<Estado, string> = {
     error: "Rechazado",
     anulacion_enviada: "Anulación en curso",
     anulado: "Anulado",
+    externo: "Comunicado por fuera",
 };
+
+const VIA_LABEL: Record<ViaExterno, string> = {
+    portal: "en el portal de SES.Hospedajes",
+    gestoria: "por la gestoría",
+    otro: "por otra vía",
+};
+
+// Ya no hay que hacer nada con estas reservas
+const yaComunicada = (estado?: Estado) => estado === "comunicado" || estado === "externo";
 
 // ISO 3166-1: alfa-3 + alfa-2 (el alfa-2 sirve para el nombre en español y para Beds24)
 const COUNTRY_CODES =
@@ -235,6 +259,21 @@ const formatDateTime = (value?: string) => (value ? dateTimeFmt.format(new Date(
 
 const daysBetween = (from: string, to: string) =>
     Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000);
+
+// Número de soporte: DNI = 3 letras + 6 números (AAA123456) · NIE/TIE = 9 caracteres
+const SOPORTE_DNI = /^[A-Z]{3}\d{6}$/;
+const SOPORTE_DNI_PARCIAL = /^[A-Z]{0,3}$|^[A-Z]{3}\d{0,6}$/;
+const limpiarSoporte = (v: string) => v.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 9);
+
+/** Error mientras se escribe (sin esperar al servidor). */
+function errorSoporte(tipo: string, valor: string): string | undefined {
+    if (!valor) return undefined;
+    if (tipo === "NIF") {
+        if (!SOPORTE_DNI_PARCIAL.test(valor)) return "Son 3 letras y después 6 números (p. ej. AAA123456)";
+        if (valor.length === 9 && !SOPORTE_DNI.test(valor)) return "Son 3 letras y 6 números (p. ej. AAA123456)";
+    }
+    return undefined;
+}
 
 function ageOn(birth: string, onDate: string): number | null {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(birth) || !/^\d{4}-\d{2}-\d{2}$/.test(onDate)) return null;
@@ -417,6 +456,10 @@ export default function AdminSesHospedajes() {
     const [notice, setNotice] = useState<Notice>(null);
     const [busyId, setBusyId] = useState<string | null>(null);
 
+    const [externo, setExterno] = useState<ExternoForm | null>(null);
+    const [externoErrors, setExternoErrors] = useState<Errors>({});
+    const [guardandoExterno, setGuardandoExterno] = useState(false);
+
     const [draft, setDraft] = useState<Draft | null>(null);
     const [errors, setErrors] = useState<Errors>({});
     const [saving, setSaving] = useState(false);
@@ -550,6 +593,32 @@ export default function AdminSesHospedajes() {
         });
     };
 
+    // ---------- Comunicado por fuera ----------
+    const abrirExterno = (r: ReservaSes) => {
+        setNotice(null);
+        setExternoErrors({});
+        setExterno({ beds24Id: r.beds24Id, codigoComunicacion: "", fecha: "", via: "portal", nota: "" });
+    };
+
+    const guardarExterno = async () => {
+        if (!externo) return;
+        setGuardandoExterno(true);
+        setExternoErrors({});
+        try {
+            const { beds24Id, ...body } = externo;
+            await axios.post(`${API}/api/admin/ses/reservas/${beds24Id}/externo`, body, { withCredentials: true });
+            setExterno(null);
+            setNotice({ type: "ok", text: "Marcada como comunicada por fuera. Ya no aparece como pendiente y queda en el historial." });
+            await loadReservas();
+        } catch (err) {
+            const fieldErrors = apiErrors(err);
+            if (fieldErrors) setExternoErrors(fieldErrors);
+            setNotice({ type: "error", text: apiMessage(err, "No se ha podido guardar") });
+        } finally {
+            setGuardandoExterno(false);
+        }
+    };
+
     const closeEditor = () => {
         setDraft(null);
         setErrors({});
@@ -596,7 +665,9 @@ export default function AdminSesHospedajes() {
     // ---------- Acciones del historial ----------
     const runAction = async (p: Parte, action: "enviar" | "consultar" | "anular" | "borrar") => {
         if (action === "anular" && !window.confirm("Se anulará este parte en SES.Hospedajes. ¿Continuar?")) return;
-        if (action === "borrar" && !window.confirm("¿Borrar este parte? No se ha comunicado al Ministerio.")) return;
+        if (action === "borrar" && !window.confirm(p.estado === "externo"
+            ? "¿Quitar la marca de «comunicado por fuera»? La reserva volverá a aparecer en «Por comunicar»."
+            : "¿Borrar este parte? No se ha comunicado al Ministerio.")) return;
         if (action === "enviar" && estadoSes?.entorno === "produccion"
             && !window.confirm("Se va a enviar el parte al Ministerio del Interior. ¿Continuar?")) return;
 
@@ -606,7 +677,7 @@ export default function AdminSesHospedajes() {
             if (action === "borrar") {
                 await axios.delete(`${API}/api/admin/ses/partes/${p._id}`, { withCredentials: true });
                 setPartes((prev) => prev.filter((x) => x._id !== p._id));
-                setNotice({ type: "ok", text: "Parte borrado." });
+                setNotice({ type: "ok", text: p.estado === "externo" ? "Marca quitada." : "Parte borrado." });
                 return;
             }
             const { data } = await axios.post(`${API}/api/admin/ses/partes/${p._id}/${action}`, {}, { withCredentials: true });
@@ -659,16 +730,17 @@ export default function AdminSesHospedajes() {
         });
 
     // ---------- Listas ----------
+    // Solo reservas de la web, Airbnb y Booking (ni directas ni usos propios)
     const reservasVisibles = useMemo(
         () => {
-            const list = Array.isArray(reservas) ? reservas : [];
-            return soloPendientes ? list.filter((r) => r.parte?.estado !== "comunicado") : list;
+            const list = (Array.isArray(reservas) ? reservas : []).filter((r) => ORIGENES_LISTADOS.includes(r.source));
+            return soloPendientes ? list.filter((r) => !yaComunicada(r.parte?.estado)) : list;
         },
         [reservas, soloPendientes]
     );
 
     const plazo = (r: ReservaSes) => {
-        if (r.parte?.estado === "comunicado") return null;
+        if (yaComunicada(r.parte?.estado)) return null;
         const diff = daysBetween(today, r.arrival);
         if (diff < 0) return { cls: "sh-due--late", text: "Fuera de plazo" };
         if (diff === 0) return { cls: "sh-due--today", text: "Llega hoy" };
@@ -857,9 +929,13 @@ export default function AdminSesHospedajes() {
                                                 onChange={(ev) => setPersona(i, { numeroDocumento: ev.target.value })} />
                                         </Field>
                                         {conSoporte && (
-                                            <Field label="Número de soporte" error={k("soporteDocumento")} hint="9 caracteres; en el DNI, junto a «IDESP» o en el reverso">
+                                            <Field label="Número de soporte" error={k("soporteDocumento") || errorSoporte(p.tipoDocumento, p.soporteDocumento)}
+                                                hint={p.tipoDocumento === "NIF"
+                                                    ? <>3 letras y 6 números ({p.soporteDocumento.length}/9). En el DNI aparece como «IDESP» o «Nº soporte»</>
+                                                    : <>9 caracteres ({p.soporteDocumento.length}/9). En la tarjeta del NIE o TIE</>}>
                                                 <input value={p.soporteDocumento} maxLength={9} autoComplete="off" autoCapitalize="characters"
-                                                    onChange={(ev) => setPersona(i, { soporteDocumento: ev.target.value })} />
+                                                    spellCheck={false} placeholder={p.tipoDocumento === "NIF" ? "AAA123456" : ""}
+                                                    onChange={(ev) => setPersona(i, { soporteDocumento: limpiarSoporte(ev.target.value) })} />
                                             </Field>
                                         )}
                                     </div>
@@ -956,14 +1032,16 @@ export default function AdminSesHospedajes() {
 
                         {!loading && !loadError && subTab === "reservas" && (
                             reservasVisibles.length === 0 ? (
-                                <p className="sh-empty">No hay reservas pendientes de comunicar entre los últimos 30 días y los próximos 60.</p>
+                                <p className="sh-empty">No hay reservas de la web, Airbnb o Booking pendientes de comunicar entre los últimos 30 días y los próximos 60.</p>
                             ) : (
                                 <ul className="sh-list">
                                     {reservasVisibles.map((r) => {
                                         const due = plazo(r);
                                         const est = r.parte?.estado;
+                                        const formAbierto = externo?.beds24Id === r.beds24Id;
+                                        const puedeMarcar = !r.parte || est === "borrador" || est === "error";
                                         return (
-                                            <li key={r.beds24Id} className="sh-row">
+                                            <li key={r.beds24Id} className={`sh-row ${formAbierto ? "sh-row--abierta" : ""}`}>
                                                 <div className="sh-row-main">
                                                     <span className="sh-row-dates">{formatShort(r.arrival)} – {formatDate(r.departure)}</span>
                                                     <span className="sh-row-name">{guestName(r)}</span>
@@ -976,10 +1054,52 @@ export default function AdminSesHospedajes() {
                                                     {est ? <span className={`sh-state sh-state--${est}`}>{ESTADO_LABEL[est]}</span>
                                                         : <span className="sh-state sh-state--none">Sin parte</span>}
                                                     {due && <span className={`sh-due ${due.cls}`}>{due.text}</span>}
+                                                    {puedeMarcar && !formAbierto && (
+                                                        <button className="sh-link" onClick={() => abrirExterno(r)}>Ya comunicado por fuera</button>
+                                                    )}
                                                     <button className="sh-btn sh-btn--small" onClick={() => openFromReserva(r)}>
                                                         {!r.parte ? "Rellenar parte" : est === "borrador" || est === "error" ? "Continuar" : "Ver"}
                                                     </button>
                                                 </div>
+
+                                                {formAbierto && externo && (
+                                                    <div className="sh-externo">
+                                                        <p className="sh-externo-intro">
+                                                            Para reservas que ya se dieron de alta en SES.Hospedajes por otra vía (portal con certificado
+                                                            digital, gestoría…). No se envía nada al Ministerio: solo se deja constancia aquí.
+                                                        </p>
+                                                        <div className="sh-grid">
+                                                            <Field label="Cómo se comunicó">
+                                                                <select value={externo.via} onChange={(ev) => setExterno({ ...externo, via: ev.target.value as ViaExterno })}>
+                                                                    <option value="portal">Portal de SES.Hospedajes</option>
+                                                                    <option value="gestoria">Gestoría</option>
+                                                                    <option value="otro">Otra vía</option>
+                                                                </select>
+                                                            </Field>
+                                                            <Field label="Fecha de la comunicación" error={externoErrors.fecha} hint="Opcional">
+                                                                <input type="date" value={externo.fecha} max={today}
+                                                                    onChange={(ev) => setExterno({ ...externo, fecha: ev.target.value })} />
+                                                            </Field>
+                                                            <Field label="Código de comunicación" error={externoErrors.codigoComunicacion}
+                                                                hint="Opcional, pero recomendable: es la prueba ante una inspección">
+                                                                <input value={externo.codigoComunicacion} maxLength={60} autoComplete="off" autoCapitalize="characters"
+                                                                    onChange={(ev) => setExterno({ ...externo, codigoComunicacion: ev.target.value })} />
+                                                            </Field>
+                                                            <Field label="Nota" error={externoErrors.nota} hint="Opcional" wide>
+                                                                <input value={externo.nota} maxLength={300}
+                                                                    onChange={(ev) => setExterno({ ...externo, nota: ev.target.value })} />
+                                                            </Field>
+                                                        </div>
+                                                        <div className="sh-externo-actions">
+                                                            <button className="sh-btn sh-btn--ghost sh-btn--small" onClick={() => setExterno(null)} disabled={guardandoExterno}>
+                                                                Cancelar
+                                                            </button>
+                                                            <button className="sh-btn sh-btn--small" onClick={guardarExterno} disabled={guardandoExterno}>
+                                                                {guardandoExterno ? "Guardando…" : "Marcar como comunicado"}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </li>
                                         );
                                     })}
@@ -1009,6 +1129,14 @@ export default function AdminSesHospedajes() {
                                                         {p.personas?.length || 0} {(p.personas?.length || 0) === 1 ? "viajero" : "viajeros"}
                                                         {p.contrato?.referencia && <> · Ref. {p.contrato.referencia}</>}
                                                     </span>
+                                                    {p.estado === "externo" && (
+                                                        <span className="sh-row-code">
+                                                            Dado de alta fuera de la web de Quinta de Argos, {VIA_LABEL[p.externo?.via || "portal"]}
+                                                            {p.externo?.fecha && <> el {formatDate(p.externo.fecha)}</>}
+                                                            {p.externo?.marcadoPor && <> · marcado por {p.externo.marcadoPor}</>}
+                                                        </span>
+                                                    )}
+                                                    {p.externo?.nota && <span className="sh-row-code">Nota: {p.externo.nota}</span>}
                                                     {p.codigoComunicacion && (
                                                         <span className="sh-row-code">Código de comunicación: <code>{p.codigoComunicacion}</code></span>
                                                     )}
@@ -1037,6 +1165,11 @@ export default function AdminSesHospedajes() {
                                                         {(p.estado === "enviado" || p.estado === "anulacion_enviada") && (
                                                             <button className="sh-btn sh-btn--ghost sh-btn--small" onClick={() => runAction(p, "consultar")} disabled={busy}>
                                                                 {busy ? "Consultando…" : "Consultar ahora"}
+                                                            </button>
+                                                        )}
+                                                        {p.estado === "externo" && (
+                                                            <button className="sh-link sh-link--danger" onClick={() => runAction(p, "borrar")} disabled={busy}>
+                                                                Quitar marca
                                                             </button>
                                                         )}
                                                         {p.estado === "comunicado" && (
