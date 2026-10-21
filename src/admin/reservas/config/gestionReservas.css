@@ -253,6 +253,62 @@
   font-size: 0.82rem;
 }
 
+/* Qué ocupa las noches que no están libres */
+.gr-bloqueos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem 0.85rem;
+  border-left: 3px solid #b3423a;
+  background-color: color-mix(in srgb, #b3423a 7%, transparent);
+}
+
+.gr-bloqueos-titulo {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.gr-bloqueos-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gr-bloqueo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.gr-bloqueo-titulo {
+  font-weight: 600;
+}
+
+.gr-bloqueo-detalle {
+  opacity: 0.8;
+}
+
+.gr-bloqueo--liberable .gr-bloqueo-titulo::before {
+  content: "";
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background-color: #b8763e;
+  vertical-align: middle;
+}
+
+.gr-bloqueos-btn {
+  align-self: flex-start;
+}
+
 @media (max-width: 480px) {
   .gr-cancel {
     padding: 0.75rem;
@@ -263,6 +319,10 @@
   }
 
   .gr-link .cq-btn {
+    width: 100%;
+  }
+
+  .gr-bloqueos-btn {
     width: 100%;
   }
 }

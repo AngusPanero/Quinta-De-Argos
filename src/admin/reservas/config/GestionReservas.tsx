@@ -8,10 +8,12 @@ import {
     devolverFianza,
     getFianzas,
     getGestionReservas,
+    liberarNoches,
     modificarReserva,
     previewModificacion,
     previewReservaManual,
     reintentarBeds24,
+    type Bloqueo,
     type FianzaPendiente,
     type FianzasListado,
     type GestionListado,
@@ -47,8 +49,9 @@ import "./gestionReservas.css";
  *     · acortar  -> se sugiere devolver lo que se pagó por las noches quitadas
  *                   (o otro importe, o nada)
  *     · alargar  -> disponibilidad desde la llegada real (sin la antelación de la web);
- *                   la diferencia se cobra por transferencia (la gestiona el propietario)
- *                   o con un link de pago de Stripe que vence en 23 h.
+ *                   la diferencia se cobra por transferencia (se aplica ya; el cobro lo
+ *                   gestiona el propietario) o con un link de pago de Stripe que vence en
+ *                   23 h: la reserva NO cambia hasta que Stripe confirma el pago.
  *   Las de Airbnb y Booking se cancelan en cada plataforma.
  *
  * El navegador solo envía lo que escribe el usuario: el servidor valida,
@@ -78,6 +81,39 @@ const horaTxt = (iso: string) =>
 const listaNoches = (n: { fecha: string }[]) => n.map((x) => formatDate(x.fecha)).join(", ");
 
 type Mensaje = { tone: "ok" | "error" | "warn"; text: string } | null;
+
+const ORIGEN_LABEL: Record<string, string> = {
+    web: "Reserva web",
+    airbnb: "Reserva de Airbnb",
+    booking: "Reserva de Booking",
+    particular: "Reserva particular",
+    uso_propio: "Uso propio",
+};
+
+/** Explicación de qué ocupa unas noches, en lenguaje del panel. */
+function textoBloqueo(b: Bloqueo): { titulo: string; detalle: string } {
+    const noches = b.noches.map(formatDate).join(", ");
+    if (b.tipo === "cierre") {
+        return { titulo: `Cierre manual: ${noches}`, detalle: "Esas noches se cerraron a mano en el calendario. Se pueden abrir desde aquí." };
+    }
+    if (b.tipo === "desconocido") {
+        return {
+            titulo: `No disponible: ${noches}`,
+            detalle:
+                "No hay ninguna reserva ni cierre en esas noches. Suele ser el margen de limpieza que Beds24 deja antes o después de otra reserva; si no, puede ser un retraso de Beds24: vuelve a comprobar en un par de minutos.",
+        };
+    }
+    const quien = [ORIGEN_LABEL[b.origen] ?? "Reserva", b.codigo, b.nombre].filter(Boolean).join(" · ");
+    const fechas = `${formatDate(b.checkIn)} → ${formatDate(b.checkOut)}`;
+    if (b.liberable) return { titulo: `${quien} (${fechas})`, detalle: `${b.motivo ?? "Quedó colgada."} Se puede liberar desde aquí.` };
+    const consejo =
+        b.origen === "airbnb" || b.origen === "booking"
+            ? "Es una reserva real de otro canal: no se puede pisar."
+            : b.origen === "web"
+              ? "Es una reserva web pagada y vigente. Si es una prueba, cancélala en la lista de abajo."
+              : "Si ya no vale, cancélala en la lista de abajo.";
+    return { titulo: `${quien} (${fechas})`, detalle: consejo };
+}
 
 // «politica» es solo de la pantalla: al firmar se envía como total, parcial o ninguno.
 type OpcionReembolso = "politica" | TipoReembolso;
@@ -168,7 +204,7 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
     const [mensaje, setMensaje] = useState<Mensaje>(null);
 
     // ---------- Firma ----------
-    const [firmando, setFirmando] = useState<"crear" | "cancelar" | "fianza" | "modificar" | null>(null);
+    const [firmando, setFirmando] = useState<"crear" | "cancelar" | "fianza" | "modificar" | "liberar" | null>(null);
     const [cancelando, setCancelando] = useState<CancelState | null>(null);
     const [devolviendo, setDevolviendo] = useState<FianzaState | null>(null);
     const [modificando, setModificando] = useState<ModState | null>(null);
@@ -418,17 +454,20 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
             setModificando(null);
             const mod = r.modificacion;
             const fechas = `Del ${formatDate(mod.despues.checkIn)} al ${formatDate(mod.despues.checkOut)}`;
-            let texto = `Fechas cambiadas en la web y en Beds24 (${fechas}). Airbnb y Booking se actualizan en unos minutos.`;
-            if (mod.reembolsoCentimos > 0) texto += ` Reembolso de ${eurosC(mod.reembolsoCentimos)} (llega a la tarjeta en 5-10 días).`;
+            let texto: string;
             if (r.checkoutUrl) {
-                texto += ` Envía al huésped el link de pago de ${eurosC(mod.cargoCentimos)}: le ha llegado también por correo y vence ${
+                texto = `Link de pago de ${eurosC(mod.cargoCentimos)} creado y enviado al huésped por correo (vence ${
                     mod.venceEn ? `el ${horaTxt(mod.venceEn)}` : "en 23 h"
-                }. Si no paga, la reserva vuelve a sus fechas.`;
+                }). La reserva no cambia todavía: en cuanto Stripe confirme el pago se pasa sola a ${fechas.toLowerCase()} en la web, Beds24, Airbnb y Booking. Si no paga, sigue igual.`;
                 if (mod.reembolsoPendienteCentimos > 0) {
                     texto += ` El reembolso de ${eurosC(mod.reembolsoPendienteCentimos)} se hace cuando pague.`;
                 }
                 setLinkCreado(r.checkoutUrl);
-            } else if (mod.metodoCobro === "transferencia") {
+            } else {
+                texto = `Fechas cambiadas en la web y en Beds24 (${fechas}). Airbnb y Booking se actualizan en unos minutos.`;
+            }
+            if (mod.reembolsoCentimos > 0) texto += ` Reembolso de ${eurosC(mod.reembolsoCentimos)} (llega a la tarjeta en 5-10 días).`;
+            if (!r.checkoutUrl && mod.metodoCobro === "transferencia") {
                 texto += ` Se han sumado ${eurosC(mod.cargoCentimos)} a la reserva, a cobrar por transferencia.`;
             }
             setMensaje({ tone: r.aviso ? "warn" : "ok", text: r.aviso ? `${texto} ${r.aviso}` : texto });
@@ -441,6 +480,44 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
             return null;
         }
     };
+
+    const bloqueosLiberables = modPreview?.bloqueos.filter((b) => b.liberable) ?? [];
+
+    const handleFirmarLiberar = async (pin: string) => {
+        if (!modificando?.item.web) return null;
+        const m = modificando;
+        try {
+            const r = await liberarNoches(m.item.web!.id, { checkIn: m.checkIn, checkOut: m.checkOut }, pin);
+            setFirmando(null);
+            setModificando({
+                ...m,
+                preview: r.calculo,
+                error: "",
+                errors: {},
+                reembolso: r.calculo.nochesQuitadas.length && r.calculo.reembolsoSugeridoCentimos > 0 ? "sugerido" : "ninguno",
+            });
+            const partes = [
+                r.liberadas.length ? `${r.liberadas.length === 1 ? "1 reserva colgada cancelada" : `${r.liberadas.length} reservas colgadas canceladas`}` : null,
+                r.cierresQuitados.length ? `cierre quitado en ${r.cierresQuitados.length === 1 ? "1 noche" : `${r.cierresQuitados.length} noches`}` : null,
+            ].filter(Boolean);
+            setMensaje({
+                tone: r.calculo.disponible ? "ok" : "warn",
+                text: `Noches liberadas (${partes.join(" y ")}).${r.calculo.disponible ? " Ya puedes cambiar las fechas." : " Todavía queda algo ocupado: revisa el detalle."}`,
+            });
+            cargar();
+            return null;
+        } catch (err) {
+            const r = resultadoFirma(err);
+            if ("message" in r) return r;
+            setModificando({ ...m, error: r.detail });
+            return null;
+        }
+    };
+
+    const lineasLiberar = bloqueosLiberables.map((b) => {
+        const t = textoBloqueo(b);
+        return b.tipo === "cierre" ? `Abrir ${t.titulo.toLowerCase()}` : `Cancelar en Beds24: ${t.titulo}`;
+    });
 
     const copiar = async (url: string) => {
         try {
@@ -527,10 +604,14 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                   ...(cargoModC > 0
                       ? [
                             `A pagar por el huésped: ${eurosC(cargoModC)}${fianzaAdicionalC > 0 ? ` (incluye ${eurosC(fianzaAdicionalC)} de fianza adicional)` : ""}`,
-                            modificando.metodo === "stripe" ? "Cobro: link de pago de Stripe (vence en 23 h)" : "Cobro: transferencia (la gestionas tú)",
+                            modificando.metodo === "stripe"
+                                ? "Cobro: link de pago de Stripe (vence en 23 h). La reserva cambia cuando pague"
+                                : "Cobro: transferencia (la gestionas tú). La reserva cambia ya",
                         ]
                       : []),
-                  "Se cambia la misma reserva en Beds24: Airbnb y Booking se actualizan",
+                  cargoModC > 0 && modificando.metodo === "stripe"
+                      ? "Al pagar, se cambia la misma reserva en Beds24: Airbnb y Booking se actualizan"
+                      : "Se cambia la misma reserva en Beds24: Airbnb y Booking se actualizan",
               ]
             : [];
 
@@ -935,6 +1016,13 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                                                         </div>
                                                     )}
 
+                                                    {modPreview.margenPropio.length > 0 && (
+                                                        <p className="cq-help">
+                                                            {modPreview.margenPropio.map(formatDate).join(", ")}: {modPreview.margenPropio.length === 1 ? "estaba bloqueada" : "estaban bloqueadas"} solo
+                                                            por el margen de limpieza de esta misma reserva. Al cambiar las fechas, el margen se corre con ella.
+                                                        </p>
+                                                    )}
+
                                                     {modPreview.nochesNuevas.length > 0 && (
                                                         <div className="gr-noches">
                                                             <span className="gr-noches-titulo">Noches nuevas · {eurosC(modPreview.cargoNochesCentimos)}</span>
@@ -948,10 +1036,37 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                                                 </div>
 
                                                 {!modPreview.disponible && (
-                                                    <p className="cq-message cq-message--error" role="alert">
-                                                        {modPreview.conflictos.length > 0 && `Ya están ocupadas: ${modPreview.conflictos.map(formatDate).join(", ")}. `}
-                                                        {modPreview.sinTarifa.length > 0 && `Sin precio en el calendario: ${modPreview.sinTarifa.map(formatDate).join(", ")}.`}
-                                                    </p>
+                                                    <div className="gr-bloqueos" role="alert">
+                                                        {modPreview.conflictos.length > 0 && (
+                                                            <>
+                                                                <p className="gr-bloqueos-titulo">
+                                                                    Ocupadas: {modPreview.conflictos.map(formatDate).join(", ")}
+                                                                </p>
+                                                                <ul className="gr-bloqueos-lista">
+                                                                    {modPreview.bloqueos.map((b, i) => {
+                                                                        const t = textoBloqueo(b);
+                                                                        return (
+                                                                            <li key={i} className={b.liberable ? "gr-bloqueo gr-bloqueo--liberable" : "gr-bloqueo"}>
+                                                                                <span className="gr-bloqueo-titulo">{t.titulo}</span>
+                                                                                <span className="gr-bloqueo-detalle">{t.detalle}</span>
+                                                                            </li>
+                                                                        );
+                                                                    })}
+                                                                </ul>
+                                                                {bloqueosLiberables.length > 0 && (
+                                                                    <button type="button" className="cq-btn gr-bloqueos-btn" onClick={() => setFirmando("liberar")}>
+                                                                        Liberar y volver a comprobar
+                                                                    </button>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                        {modPreview.sinTarifa.length > 0 && (
+                                                            <p className="gr-bloqueos-titulo">
+                                                                Sin precio en el calendario: {modPreview.sinTarifa.map(formatDate).join(", ")}. Ponles
+                                                                precio en «Precios y disponibilidad».
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 )}
 
                                                 {modPreview.disponible && (
@@ -1042,7 +1157,7 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                                                                     {modificando.errors.metodoCobro && <p className="cq-field-error">{modificando.errors.metodoCobro}</p>}
                                                                     <p className="cq-help">
                                                                         {modificando.metodo === "stripe"
-                                                                            ? "Las fechas nuevas se bloquean ya y el huésped recibe por correo un link para pagar con tarjeta. Si no paga en 23 h, la reserva vuelve a sus fechas y se liberan las noches."
+                                                                            ? "El huésped recibe por correo un link para pagar con tarjeta. La reserva no cambia hasta que Stripe confirma el pago; entonces se comprueba otra vez que las noches sigan libres y se aplica sola. Si para entonces alguien las reservó, se le devuelve el pago entero. Si no paga en 23 h, no pasa nada."
                                                                             : "El cambio se aplica ya y el importe se suma a la reserva. El cobro lo gestionas tú; lo pagado por transferencia no se puede devolver por Stripe."}
                                                                         {modificando.metodo === "stripe" && reembolsoModC > 0 && " El reembolso se hace cuando pague."}
                                                                     </p>
@@ -1149,6 +1264,13 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                 title="Firmar cancelación"
                 lines={lineasCancelar}
                 onSign={handleFirmarCancelar}
+                onClose={() => setFirmando(null)}
+            />
+            <SignModal
+                open={firmando === "liberar"}
+                title="Firmar liberación de noches"
+                lines={[...lineasLiberar, "Solo se liberan reservas que ya no valen y cierres manuales"]}
+                onSign={handleFirmarLiberar}
                 onClose={() => setFirmando(null)}
             />
             <SignModal

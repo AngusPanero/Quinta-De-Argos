@@ -146,6 +146,24 @@ export interface NochePrecio {
     precio: number; // euros
 }
 
+/** Qué ocupa una noche que no está libre. */
+export type Bloqueo =
+    | {
+          tipo: "reserva";
+          beds24Id: number;
+          origen: "web" | "airbnb" | "booking" | "particular" | "uso_propio";
+          nombre: string | null;
+          checkIn: string;
+          checkOut: string;
+          noches: string[];
+          codigo: string | null;
+          estadoWeb: string | null;
+          liberable: boolean; // quedó colgada: se puede liberar desde el panel
+          motivo: string | null;
+      }
+    | { tipo: "cierre"; noches: string[]; liberable: true }
+    | { tipo: "desconocido"; noches: string[]; liberable: false };
+
 /** Lo que calcula el servidor antes de cambiar las fechas. Importes en céntimos. */
 export interface ModificacionPreview {
     codigo: string;
@@ -155,6 +173,8 @@ export interface ModificacionPreview {
     nochesQuitadas: NochePrecio[]; // con el precio que se pagó por cada una
     nochesNuevas: NochePrecio[]; // con el precio web de hoy
     conflictos: string[]; // noches nuevas ya ocupadas
+    bloqueos: Bloqueo[]; // qué ocupa cada una
+    margenPropio: string[]; // bloqueadas solo por el margen de limpieza de esta reserva (cuentan como libres)
     sinTarifa: string[]; // noches nuevas sin precio en el calendario
     disponible: boolean;
     valorQuitadasCentimos: number;
@@ -179,7 +199,7 @@ export interface ModificarRequest {
 
 export interface ModificacionResultado {
     modificacion: {
-        estado: "aplicada" | "pendiente_pago" | "pagada" | "vencida";
+        estado: "aplicada" | "pendiente_pago" | "pagada" | "vencida" | "rechazada";
         antes: Fechas;
         despues: Fechas;
         cargoCentimos: number;
@@ -244,6 +264,16 @@ export async function previewModificacion(reservaWebId: string, body: { checkIn:
 /** Cambia las fechas en Beds24 y en la web, devuelve y/o cobra la diferencia. */
 export async function modificarReserva(reservaWebId: string, body: ModificarRequest, pin: string): Promise<ModificacionResultado> {
     const { data } = await axios.post(`${API}/api/admin/reservas-web/${reservaWebId}/modificar`, { ...body, pin }, opts);
+    return data;
+}
+
+/** Libera las noches ocupadas por algo colgado y devuelve el cálculo nuevo. */
+export async function liberarNoches(
+    reservaWebId: string,
+    body: { checkIn: string; checkOut: string },
+    pin: string
+): Promise<{ liberadas: number[]; cierresQuitados: string[]; calculo: ModificacionPreview }> {
+    const { data } = await axios.post(`${API}/api/admin/reservas-web/${reservaWebId}/modificar/liberar`, { ...body, pin }, opts);
     return data;
 }
 
