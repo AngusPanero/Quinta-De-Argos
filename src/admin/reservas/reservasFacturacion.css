@@ -27,12 +27,14 @@
   background-color: var(--qa-surface);
   border: 1px solid var(--qa-line);
   border-radius: 14px;
+  min-width: 0;
 }
 
 .rf-group {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  min-width: 0;
 }
 
 .rf-group--dates {
@@ -110,9 +112,15 @@
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+  min-width: 0; /* deja que el hijo se achique dentro del flex */
 }
 
 .rf-date input {
+  box-sizing: border-box; /* padding y borde dentro del 100% */
+  max-width: 100%;
+  min-width: 0;
+  -webkit-appearance: none; /* quita el ancho mínimo nativo de iOS */
+  appearance: none;
   font-family: inherit;
   font-size: 16px; /* evita el zoom en iOS */
   color: var(--qa-text);
@@ -122,6 +130,11 @@
   padding: 0.55rem 0.8rem;
   min-height: 44px;
   color-scheme: light;
+}
+
+/* iOS centra el valor de la fecha: se alinea a la izquierda */
+.rf-date input::-webkit-date-and-time-value {
+  text-align: left;
 }
 
 .ar-page.theme-dark .rf-date input {
@@ -134,6 +147,8 @@
   border: 1px solid var(--qa-line);
   border-radius: 999px;
   background-color: var(--qa-bg);
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .rf-seg {
@@ -371,7 +386,7 @@
   transition: width 0.6s var(--qa-ease);
 }
 
-.rf-bar-fill-mes{
+.rf-bar-fill-mes {
   display: block;
   height: 100%;
   min-width: 2px;
@@ -495,11 +510,13 @@
   }
 
   .rf-date input {
+    display: block;
     width: 100%;
   }
 
   .rf-segmented {
     display: flex;
+    width: 100%;
   }
 
   .rf-seg {

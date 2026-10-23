@@ -63,3 +63,23 @@ input:autofill {
   -webkit-text-fill-color: inherit;
   caret-color: inherit;
 }
+
+/* ==========================================================
+   SAFE AREA (notch / barra de estado en mobile)
+   ========================================================== */
+
+:root {
+  --qa-top-bg: #2a3626; /* mismo color que el theme-color del index.html */
+}
+
+html {
+  /* Safari en iOS 26 tiñe la barra de estado con el fondo del html/body
+     o del elemento fixed que esté arriba de todo */
+  background-color: var(--qa-top-bg);
+}
+
+body {
+  /* Si el contenido de la web tiene otro fondo, ponelo en #root o en
+     tus secciones, no en body, para que la zona de arriba no quede blanca */
+  background-color: var(--qa-top-bg);
+}
