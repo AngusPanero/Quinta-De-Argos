@@ -20,6 +20,10 @@ export interface ReservaGestionable {
     nombre: string | null;
     huespedes: number | null;
     precio: number | null;
+    // Para rellenar el formulario de edición (particular / uso propio)
+    email?: string | null;
+    telefono?: string | null;
+    notas?: string | null;
     web: {
         id: string;
         codigo: string;
@@ -80,6 +84,47 @@ export interface ReservaManualPreview {
     };
     conflictos: Conflicto[];
     cierres: string[];
+}
+
+// ---------- Editar reserva particular / uso propio ----------
+
+/** Lo mismo que al crear, sin el tipo (no se cambia) ni quitarCierre. */
+export interface EdicionRequest {
+    checkIn: string;
+    checkOut: string;
+    nombre?: string;
+    email?: string;
+    telefono?: string;
+    huespedes?: string;
+    precio?: string;
+    notas?: string;
+}
+
+export interface DatosReservaManual {
+    tipo: TipoManual;
+    checkIn: string;
+    checkOut: string;
+    noches: number;
+    nombre: string;
+    huespedes: number;
+    precio: number;
+    email?: string;
+    telefono?: string;
+    notas?: string;
+}
+
+export interface EdicionPreview {
+    antes: {
+        checkIn: string;
+        checkOut: string;
+        noches: number;
+        nombre: string | null;
+        huespedes: number | null;
+        precio: number | null;
+    };
+    datos: DatosReservaManual;
+    conflictos: Conflicto[];
+    empezada: boolean; // si ya empezó, solo se puede cambiar la salida
 }
 
 export interface CancelarRequest {
@@ -233,6 +278,22 @@ export async function crearReservaManual(
     pin: string
 ): Promise<{ bookingId: string; tipo: TipoManual; cierresQuitados: number; aviso: string | null }> {
     const { data } = await axios.post(`${API}/api/admin/gestion-reservas`, { ...body, pin }, opts);
+    return data;
+}
+
+/** Comprueba la edición de una particular / uso propio sin tocar nada. */
+export async function previewEdicion(beds24Id: number, body: EdicionRequest): Promise<EdicionPreview> {
+    const { data } = await axios.post(`${API}/api/admin/gestion-reservas/${beds24Id}/editar/preview`, body, opts);
+    return data;
+}
+
+/** Guarda la edición en Beds24 (la misma reserva: Booking y Airbnb se actualizan). */
+export async function editarReserva(
+    beds24Id: number,
+    body: EdicionRequest,
+    pin: string
+): Promise<{ editada: boolean; beds24Id: number; antes: EdicionPreview["antes"]; datos: DatosReservaManual }> {
+    const { data } = await axios.put(`${API}/api/admin/gestion-reservas/${beds24Id}`, { ...body, pin }, opts);
     return data;
 }
 

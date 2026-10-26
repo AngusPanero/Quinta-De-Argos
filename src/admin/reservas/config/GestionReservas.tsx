@@ -6,14 +6,18 @@ import {
     cancelarReserva,
     crearReservaManual,
     devolverFianza,
+    editarReserva,
     getFianzas,
     getGestionReservas,
     liberarNoches,
     modificarReserva,
+    previewEdicion,
     previewModificacion,
     previewReservaManual,
     reintentarBeds24,
     type Bloqueo,
+    type EdicionPreview,
+    type EdicionRequest,
     type FianzaPendiente,
     type FianzasListado,
     type GestionListado,
@@ -44,6 +48,9 @@ import "./gestionReservas.css";
  *   siempre completa). Se puede cambiar por otro importe si hay un acuerdo.
  * - Devolver la fianza de las reservas web al terminar la estancia, sin
  *   cancelar la reserva.
+ * - Editar una reserva particular o un uso propio (fechas, datos del cliente,
+ *   precio, notas). Es la misma reserva en Beds24, así que Airbnb y Booking se
+ *   actualizan solos. Si la estancia ya empezó, solo se puede cambiar la salida.
  * - Cambiar las fechas de una reserva web (la misma reserva en Beds24, así que
  *   Airbnb y Booking se actualizan solos):
  *     · acortar  -> se sugiere devolver lo que se pagó por las noches quitadas
@@ -140,6 +147,24 @@ interface ModState {
     nota: string;
 }
 
+interface EditState {
+    item: ReservaGestionable;
+    checkIn: string;
+    checkOut: string;
+    nombre: string;
+    email: string;
+    telefono: string;
+    huespedes: string;
+    precio: string;
+    notas: string;
+    preview: EdicionPreview | null;
+    comprobando: boolean;
+    error: string;
+    errors: Record<string, string>;
+}
+
+type CampoEdicion = "checkIn" | "checkOut" | "nombre" | "email" | "telefono" | "huespedes" | "precio" | "notas";
+
 interface FianzaState {
     item: FianzaPendiente;
     modo: "toda" | "parte";
@@ -204,8 +229,9 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
     const [mensaje, setMensaje] = useState<Mensaje>(null);
 
     // ---------- Firma ----------
-    const [firmando, setFirmando] = useState<"crear" | "cancelar" | "fianza" | "modificar" | "liberar" | null>(null);
+    const [firmando, setFirmando] = useState<"crear" | "cancelar" | "fianza" | "modificar" | "liberar" | "editar" | null>(null);
     const [cancelando, setCancelando] = useState<CancelState | null>(null);
+    const [editando, setEditando] = useState<EditState | null>(null);
     const [devolviendo, setDevolviendo] = useState<FianzaState | null>(null);
     const [modificando, setModificando] = useState<ModState | null>(null);
     const [linkCreado, setLinkCreado] = useState<string | null>(null);
@@ -316,6 +342,7 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
     const abrirCancelacion = (item: ReservaGestionable) => {
         setDevolviendo(null);
         setModificando(null);
+        setEditando(null);
         setCancelando({ item, reembolso: politicaDe(item) ? "politica" : "total", importe: "", motivo: "" });
     };
 
@@ -346,6 +373,7 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
     const abrirFianza = (item: FianzaPendiente) => {
         setCancelando(null);
         setModificando(null);
+        setEditando(null);
         setDevolviendo({ item, modo: "toda", importe: "", nota: "" });
     };
 
@@ -371,10 +399,95 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
         }
     };
 
+    // ---------- Editar particular / uso propio ----------
+    const abrirEdicion = (item: ReservaGestionable) => {
+        setCancelando(null);
+        setDevolviendo(null);
+        setModificando(null);
+        setLinkCreado(null);
+        setEditando({
+            item,
+            checkIn: item.checkIn,
+            checkOut: item.checkOut,
+            nombre: item.nombre ?? "",
+            email: item.email ?? "",
+            telefono: item.telefono ?? "",
+            huespedes: String(item.huespedes ?? 2),
+            precio: item.precio != null ? String(item.precio) : "",
+            notas: item.notas ?? "",
+            preview: null,
+            comprobando: false,
+            error: "",
+            errors: {},
+        });
+    };
+
+    /** Cualquier cambio invalida la comprobación anterior. */
+    const cambiarEdicion = (campo: CampoEdicion, valor: string) => {
+        if (!editando) return;
+        setEditando({ ...editando, [campo]: valor, preview: null, error: "", errors: {} });
+    };
+
+    /** Lo que se envía: en un uso propio no van precio, huéspedes ni contacto. */
+    const edicionRequest = (e: EditState): EdicionRequest =>
+        e.item.tipo === "owner"
+            ? { checkIn: e.checkIn, checkOut: e.checkOut, nombre: e.nombre, notas: e.notas }
+            : {
+                  checkIn: e.checkIn,
+                  checkOut: e.checkOut,
+                  nombre: e.nombre,
+                  email: e.email,
+                  telefono: e.telefono,
+                  huespedes: e.huespedes,
+                  precio: e.precio,
+                  notas: e.notas,
+              };
+
+    const handleComprobarEdicion = async () => {
+        if (!editando) return;
+        const actual = editando;
+        setEditando({ ...actual, comprobando: true, error: "", errors: {} });
+        try {
+            const p = await previewEdicion(actual.item.beds24Id, edicionRequest(actual));
+            setEditando({ ...actual, comprobando: false, preview: p });
+        } catch (err) {
+            const e = toApiError(err);
+            setEditando({ ...actual, comprobando: false, preview: null, error: e.detail, errors: e.errors ?? {} });
+        }
+    };
+
+    const handleFirmarEdicion = async (pin: string) => {
+        if (!editando?.preview) return null;
+        const e = editando;
+        try {
+            await editarReserva(e.item.beds24Id, edicionRequest(e), pin);
+            setFirmando(null);
+            setEditando(null);
+            const cambianFechas = e.preview!.antes.checkIn !== e.preview!.datos.checkIn || e.preview!.antes.checkOut !== e.preview!.datos.checkOut;
+            setMensaje({
+                tone: "ok",
+                text: cambianFechas
+                    ? "Reserva actualizada en Beds24. Booking y Airbnb ajustan las fechas en unos minutos."
+                    : "Reserva actualizada en Beds24.",
+            });
+            cargar();
+            return null;
+        } catch (err) {
+            const r = resultadoFirma(err);
+            if ("message" in r) return r;
+            setEditando({ ...e, preview: null, error: r.detail, errors: r.errors ?? {} });
+            return null;
+        }
+    };
+
+    const editPreview = editando?.preview ?? null;
+    const edicionConflictos = editPreview?.conflictos ?? [];
+
     // ---------- Cambio de fechas (solo web) ----------
     const abrirModificacion = (item: ReservaGestionable) => {
         setCancelando(null);
         setDevolviendo(null);
+        setEditando(null);
         setLinkCreado(null);
         setModificando({
             item,
@@ -614,6 +727,32 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                       : "Se cambia la misma reserva en Beds24: Airbnb y Booking se actualizan",
               ]
             : [];
+
+    const lineasEditar = (() => {
+        if (!editando || !editPreview) return [];
+        const { antes, datos } = editPreview;
+        const lineas = [
+            `${TIPO_LABEL[editando.item.tipo]}${datos.nombre ? `: ${datos.nombre}` : ""}`,
+        ];
+        const fechasAntes = `${formatDate(antes.checkIn)} → ${formatDate(antes.checkOut)}`;
+        const fechasDespues = `${formatDate(datos.checkIn)} → ${formatDate(datos.checkOut)}`;
+        lineas.push(
+            fechasAntes === fechasDespues
+                ? `Fechas sin cambios: ${fechasDespues} (${nochesTxt(datos.noches)})`
+                : `Fechas: ${fechasAntes} pasa a ${fechasDespues} (${nochesTxt(datos.noches)})`
+        );
+        if (editando.item.tipo !== "owner") {
+            if (antes.precio !== datos.precio) {
+                lineas.push(`Precio: ${antes.precio != null ? euros(antes.precio) : "—"} pasa a ${euros(datos.precio)}`);
+            }
+            if (antes.huespedes !== datos.huespedes) {
+                lineas.push(`Huéspedes: ${antes.huespedes ?? "—"} pasa a ${datos.huespedes}`);
+            }
+        }
+        if ((antes.nombre ?? "") !== (datos.nombre ?? "")) lineas.push(`Nombre: ${antes.nombre ?? "—"} pasa a ${datos.nombre}`);
+        lineas.push("Es la misma reserva en Beds24: Booking y Airbnb se actualizan");
+        return lineas;
+    })();
 
     const linksPendientes: Record<string, LinkPendiente> = fianzas?.linksPendientes ?? {};
 
@@ -906,8 +1045,8 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                     </button>
                 </div>
                 <p className="cq-help">
-                    Web, particulares y usos propios. En las web también puedes cambiar las fechas. Las de Airbnb y Booking se
-                    cancelan o cambian en cada plataforma.
+                    Web, particulares y usos propios. En las web puedes cambiar las fechas; las particulares y los usos
+                    propios se pueden editar enteros. Las de Airbnb y Booking se cancelan o cambian en cada plataforma.
                 </p>
 
                 {errorListado && <p className="cq-message cq-message--error">{errorListado}</p>}
@@ -917,12 +1056,14 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                     {reservas.map((r) => {
                         const abierta = cancelando?.item.beds24Id === r.beds24Id;
                         const modAbierta = modificando?.item.beds24Id === r.beds24Id;
+                        const editAbierta = editando?.item.beds24Id === r.beds24Id;
+                        const hoyPanel = fianzas?.hoy ?? listado?.hoy ?? today;
                         const importe = r.web ? r.web.totalCentimos / 100 : r.precio;
                         const politica = politicaDe(r);
                         const link = r.web ? linksPendientes[String(r.beds24Id)] : undefined;
                         const empezada = r.checkIn <= (fianzas?.hoy ?? today);
                         return (
-                            <li key={r.beds24Id} className={`gr-fila ${abierta || modAbierta ? "gr-fila--abierta" : ""}`}>
+                            <li key={r.beds24Id} className={`gr-fila ${abierta || modAbierta || editAbierta ? "gr-fila--abierta" : ""}`}>
                                 <div className="gr-fila-info">
                                     <span className={`gr-badge gr-badge--${r.tipo}`}>{TIPO_LABEL[r.tipo]}</span>
                                     <span className="gr-fechas">
@@ -944,11 +1085,16 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                                         </span>
                                     )}
                                 </div>
-                                {!abierta && !modAbierta && (
+                                {!abierta && !modAbierta && !editAbierta && (
                                     <div className="gr-fila-acciones">
                                         {r.web && !link && (
                                             <button type="button" className="cq-link" onClick={() => abrirModificacion(r)}>
                                                 Cambiar fechas
+                                            </button>
+                                        )}
+                                        {!r.web && r.tipo !== "web" && (
+                                            <button type="button" className="cq-link" onClick={() => abrirEdicion(r)}>
+                                                Editar
                                             </button>
                                         )}
                                         <button type="button" className="cq-link gr-cancelar" onClick={() => abrirCancelacion(r)}>
@@ -956,6 +1102,146 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                                         </button>
                                     </div>
                                 )}
+
+                                {editAbierta && editando && (() => {
+                                    const e = editando;
+                                    const id = r.beds24Id;
+                                    const empezadaEd = r.checkIn <= hoyPanel;
+                                    const esParticular = r.tipo === "direct";
+                                    const nochesEd = e.checkOut > e.checkIn ? diasEntre(e.checkIn, e.checkOut) : 0;
+                                    return (
+                                        <div className="gr-cancel gr-mod">
+                                            <div className="cq-grid">
+                                                <div className="cq-field">
+                                                    <label className="cq-label" htmlFor={`gr-ed-in-${id}`}>Llegada</label>
+                                                    <input id={`gr-ed-in-${id}`} className="cq-input" type="date"
+                                                        min={empezadaEd ? undefined : hoyPanel} value={e.checkIn} disabled={empezadaEd}
+                                                        onChange={(ev) => cambiarEdicion("checkIn", ev.target.value)}
+                                                        aria-invalid={!!e.errors.checkIn} />
+                                                    {e.errors.checkIn && <p className="cq-field-error">{e.errors.checkIn}</p>}
+                                                </div>
+                                                <div className="cq-field">
+                                                    <label className="cq-label" htmlFor={`gr-ed-out-${id}`}>Salida</label>
+                                                    <input id={`gr-ed-out-${id}`} className="cq-input" type="date"
+                                                        min={addDays(e.checkIn, 1)} value={e.checkOut}
+                                                        onChange={(ev) => cambiarEdicion("checkOut", ev.target.value)}
+                                                        aria-invalid={!!e.errors.checkOut} />
+                                                    {e.errors.checkOut && <p className="cq-field-error">{e.errors.checkOut}</p>}
+                                                </div>
+                                            </div>
+                                            <p className="cq-help">
+                                                {empezadaEd
+                                                    ? "La estancia ya ha empezado: solo se puede cambiar la salida."
+                                                    : nochesEd > 0
+                                                      ? `${nochesTxt(nochesEd)}. El día de salida queda libre para otra llegada.`
+                                                      : "La salida tiene que ser posterior a la llegada."}
+                                            </p>
+
+                                            <div className="cq-field cq-field--wide">
+                                                <label className="cq-label" htmlFor={`gr-ed-nombre-${id}`}>
+                                                    {esParticular ? "Nombre del cliente" : "Nombre (opcional)"}
+                                                </label>
+                                                <input id={`gr-ed-nombre-${id}`} className="cq-input" type="text" maxLength={120}
+                                                    placeholder={esParticular ? "" : "Uso propio"} value={e.nombre}
+                                                    onChange={(ev) => cambiarEdicion("nombre", ev.target.value)}
+                                                    aria-invalid={!!e.errors.nombre} />
+                                                {e.errors.nombre && <p className="cq-field-error">{e.errors.nombre}</p>}
+                                            </div>
+
+                                            {esParticular && (
+                                                <>
+                                                    <div className="cq-grid">
+                                                        <div className="cq-field">
+                                                            <label className="cq-label" htmlFor={`gr-ed-precio-${id}`}>Precio total de la estancia</label>
+                                                            <div className="cq-input-wrap">
+                                                                <input id={`gr-ed-precio-${id}`} className="cq-input" type="text" inputMode="decimal"
+                                                                    value={e.precio} onChange={(ev) => cambiarEdicion("precio", ev.target.value)}
+                                                                    aria-invalid={!!e.errors.precio} />
+                                                                <span className="cq-unit">€</span>
+                                                            </div>
+                                                            {e.errors.precio && <p className="cq-field-error">{e.errors.precio}</p>}
+                                                        </div>
+                                                        <div className="cq-field">
+                                                            <label className="cq-label" htmlFor={`gr-ed-huespedes-${id}`}>Huéspedes</label>
+                                                            <select id={`gr-ed-huespedes-${id}`} className="cq-input" value={e.huespedes}
+                                                                onChange={(ev) => cambiarEdicion("huespedes", ev.target.value)}
+                                                                aria-invalid={!!e.errors.huespedes}>
+                                                                {Array.from({ length: maxHuespedes }, (_, i) => String(i + 1)).map((n) => (
+                                                                    <option key={n} value={n}>{n}</option>
+                                                                ))}
+                                                            </select>
+                                                            {e.errors.huespedes && <p className="cq-field-error">{e.errors.huespedes}</p>}
+                                                        </div>
+                                                    </div>
+                                                    <div className="cq-grid">
+                                                        <div className="cq-field">
+                                                            <label className="cq-label" htmlFor={`gr-ed-tel-${id}`}>Teléfono (opcional)</label>
+                                                            <input id={`gr-ed-tel-${id}`} className="cq-input" type="tel" value={e.telefono}
+                                                                onChange={(ev) => cambiarEdicion("telefono", ev.target.value)}
+                                                                aria-invalid={!!e.errors.telefono} />
+                                                            {e.errors.telefono && <p className="cq-field-error">{e.errors.telefono}</p>}
+                                                        </div>
+                                                        <div className="cq-field">
+                                                            <label className="cq-label" htmlFor={`gr-ed-email-${id}`}>Correo (opcional)</label>
+                                                            <input id={`gr-ed-email-${id}`} className="cq-input" type="email" value={e.email}
+                                                                onChange={(ev) => cambiarEdicion("email", ev.target.value)}
+                                                                aria-invalid={!!e.errors.email} />
+                                                            {e.errors.email && <p className="cq-field-error">{e.errors.email}</p>}
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            <div className="cq-field cq-field--wide">
+                                                <label className="cq-label" htmlFor={`gr-ed-notas-${id}`}>Notas internas (opcional)</label>
+                                                <textarea id={`gr-ed-notas-${id}`} className="cq-input gr-textarea" rows={2} maxLength={500}
+                                                    value={e.notas} onChange={(ev) => cambiarEdicion("notas", ev.target.value)} />
+                                            </div>
+
+                                            {e.error && <p className="cq-message cq-message--error" role="alert">{e.error}</p>}
+
+                                            {editPreview && edicionConflictos.length > 0 && (
+                                                <div className="gr-bloqueos" role="alert">
+                                                    <p className="gr-bloqueos-titulo">Esas fechas ya tienen otra reserva:</p>
+                                                    <ul className="gr-bloqueos-lista">
+                                                        {edicionConflictos.map((c) => (
+                                                            <li key={c.beds24Id} className="gr-bloqueo">
+                                                                <span className="gr-bloqueo-titulo">
+                                                                    {[ORIGEN_LABEL[c.origen] ?? c.origen, c.nombre].filter(Boolean).join(" · ")}
+                                                                </span>
+                                                                <span className="gr-bloqueo-detalle">
+                                                                    {formatDate(c.checkIn)} → {formatDate(c.checkOut)}
+                                                                </span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {editPreview && edicionConflictos.length === 0 && (
+                                                <div className="gr-mod-resumen">
+                                                    <ul className="gr-resumen">
+                                                        {lineasEditar.slice(1, -1).map((l) => <li key={l}>{l}</li>)}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            <div className="gr-cancel-actions">
+                                                {editPreview && edicionConflictos.length === 0 ? (
+                                                    <button type="button" className="cq-btn" onClick={() => setFirmando("editar")}>
+                                                        Firmar y guardar
+                                                    </button>
+                                                ) : (
+                                                    <button type="button" className="cq-btn" onClick={handleComprobarEdicion}
+                                                        disabled={e.comprobando || nochesEd < 1}>
+                                                        {e.comprobando ? "Comprobando…" : "Comprobar cambios"}
+                                                    </button>
+                                                )}
+                                                <button type="button" className="cq-link" onClick={() => setEditando(null)}>No editar</button>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
 
                                 {modAbierta && modificando && (
                                     <div className="gr-cancel gr-mod">
@@ -1278,6 +1564,13 @@ export default function GestionReservas({ today, initialFrom, initialTo }: Props
                 title="Firmar cambio de fechas"
                 lines={lineasModificar}
                 onSign={handleFirmarMod}
+                onClose={() => setFirmando(null)}
+            />
+            <SignModal
+                open={firmando === "editar"}
+                title="Firmar edición de la reserva"
+                lines={lineasEditar}
+                onSign={handleFirmarEdicion}
                 onClose={() => setFirmando(null)}
             />
             <SignModal
