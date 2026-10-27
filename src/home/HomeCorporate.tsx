@@ -140,12 +140,12 @@ const HomeCorporate: React.FC = () => {
           variants={staggerContainer}
         >
           <motion.img
-            src="/logos/Logo Completo sin Dibujo sin Fondo.png"
+            src="/logos/Logo_Completo_sin_Fondo.png"
             alt="Quinta de Argos"
             className="home-corporate-hero-logo"
             variants={fadeUp}
             transition={{ duration: 0.8 }}
-            height={"400px"}
+            height={"300px"}
             width={"auto"}
           />
           <motion.span className="home-corporate-eyebrow-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
