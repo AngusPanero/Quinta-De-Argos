@@ -41,6 +41,7 @@ const AppRouter = () => {
                     <Route path="/ok" element={<ProcessOk processMessage="Proceso completado con éxito" />} />
                     {/* Tiene Acceso solo el admin con la prop pasada */}
                     <Route path="/admin" element={<PrivateRoute adminOnly={true}><AdminDashboard /></PrivateRoute>} />
+                    {/* <Route path="/dashboard" element={<PrivateRoute role="user"><UserDashboard /></PrivateRoute>} /> */}
                 </Routes>
                 <Footer />
             </SessionProvider>

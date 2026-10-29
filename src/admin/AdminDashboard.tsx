@@ -1,4 +1,7 @@
-import { useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import axios from "axios";
+import Loader from "../loader/Loader";
+import Error from "../processMessages/Error";
 import AdminReservas from "./reservas/AdminReservas";
 import "./adminDashboard.css";
 import ConfigQuinta from "./reservas/config/ConfigQuinta";
@@ -35,10 +38,52 @@ function readStoredSection(): SectionId {
     }
 }
 
+// "checking" → esperando al servidor · "ok" → admin real
+// "threat"   → el servidor detectó que NO es admin (incidente registrado + ban)
+// "refresh"  → le acaban de dar admin y su sesión es vieja: tiene que reloguearse
+// "denied"   → sin sesión válida o error de red: no se muestra nada
+type AccessStatus = "checking" | "ok" | "threat" | "refresh" | "denied";
+
 export default function AdminDashboard() {
     const { theme } = UseTheme();
     const [active, setActive] = useState<SectionId>(readStoredSection);
     const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+    // ── Verificación de acceso contra el servidor ─────────────────────────────
+    // El panel (reservas, viajeros, configuración) NO se renderiza ni pide datos
+    // hasta que el servidor confirme con el token firmado que la cuenta es admin.
+    // El user del contexto se puede falsear con un proxy (Burp).
+    const [access, setAccess]         = useState<AccessStatus>("checking");
+    const [incidentId, setIncidentId] = useState<string | null>(null);
+    const verifyStartedRef            = useRef(false);
+
+    useEffect(() => {
+        // Evita el doble pedido de React StrictMode en desarrollo
+        if (verifyStartedRef.current) return;
+        verifyStartedRef.current = true;
+
+        axios.post(
+            `${import.meta.env.VITE_API_URL}/security/verify-admin-access`,
+            { path: window.location.pathname, tab: readStoredSection() },
+            { withCredentials: true, timeout: 60000 } // Render puede tardar en despertar
+        )
+            .then((res) => {
+                setAccess(res.data?.ok === true ? "ok" : "denied");
+            })
+            .catch((err) => {
+                const data = err.response?.data;
+                if (data?.code === "SECURITY_THREAT") {
+                    setIncidentId(data.incidentId ?? null);
+                    setAccess("threat");
+                    return;
+                }
+                if (data?.code === "SESSION_REFRESH_REQUIRED") {
+                    setAccess("refresh");
+                    return;
+                }
+                setAccess("denied");
+            });
+    }, []);
 
     const selectSection = (id: SectionId) => {
         setActive(id);
@@ -64,6 +109,26 @@ export default function AdminDashboard() {
     };
 
     const current = SECTIONS.find((s) => s.id === active) ?? SECTIONS[0];
+
+    // ── Esperando confirmación del servidor: no se muestra nada del panel ─────
+    if (access === "checking") return <Loader />;
+
+    // ── Amenaza detectada: el servidor ya registró el incidente y baneó ───────
+    if (access === "threat") return (
+        <Error errorMessage={
+            "Amenaza de seguridad detectada: intento de acceso no autorizado al panel de administración. " +
+            "El incidente fue registrado con los datos de tu sesión y tu cuenta fue suspendida." +
+            (incidentId ? ` Incidente: ${incidentId}` : "")
+        } />
+    );
+
+    if (access === "refresh") return (
+        <Error errorMessage={"Tu cuenta se actualizó. Cerrá sesión y volvé a ingresar para acceder al panel."} />
+    );
+
+    if (access !== "ok") return (
+        <Error errorMessage={"No autorizado, por favor inicia sesión."} />
+    );
 
     return (
         <div className={`ad-page ${theme === "dark" ? "theme-dark" : ""}`}>

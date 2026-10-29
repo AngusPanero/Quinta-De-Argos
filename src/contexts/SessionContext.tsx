@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { auth } from "../firebase/firebase.ts"
-import { sendPasswordResetEmail } from "firebase/auth";
+// Sin SDK cliente de Firebase: todo pasa por el backend (Admin SDK).
+// Así la API key de Firebase ya no viaja en el bundle del frontend.
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -77,31 +77,38 @@ export const SessionProvider = ({ children }: ProviderProps) => {
             setLoading(true)
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`, { email, password })
             if(response.status === 201){
-                /* console.log(`User created successfully! 🟢`); */
-                
                 registerOpen(false)
                 loginOpen(true)
+                // Se muestra en el login que se abre: tiene que verificar antes de entrar
+                setError(response.data?.verificationSent
+                    ? "Cuenta creada. Te enviamos un mail para verificarla: revisá tu casilla (y spam) antes de ingresar."
+                    : "Cuenta creada. Al iniciar sesión te vamos a enviar el mail de verificación.")
             }
         } catch (error: any) {
             if(error.response?.status === 409){
-                setError(true)
+                setError("Este email ya está registrado. Iniciá sesión o restablecé tu contraseña.")
                 return
             }
-            setError(true)
-            /* console.error("Internal error creating user! 🔴", error) */
+            if(error.response?.status === 400){
+                setError("Revisá el email y la contraseña: mínimo 10 caracteres, una mayúscula, un número y un símbolo (@$!%*?&).")
+                return
+            }
+            setError("Error al crear la cuenta. Intentá más tarde.")
         } finally {
             setLoading(false)
         }
     }
 
     // Login
+    // El conteo de intentos fallidos y el bloqueo los hace el backend dentro de
+    // /login. Antes el navegador llamaba a /login-failed y cualquiera podía
+    // banear cualquier cuenta mandando su email 5 veces.
     const handleLogin = async (email: string, password: string) => {
     try {
         sessionVersion.current += 1; // desde aquí manda el login, no la comprobación inicial
         setLoading(true);
         setError(null);
 
-        // 1. Llamada única al backend
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password }, { withCredentials: true });
 
         if (response.status === 200) {
@@ -119,33 +126,39 @@ export const SessionProvider = ({ children }: ProviderProps) => {
         }
 
     } catch (error: any) {
-        const serverCode = error.response?.data?.code;
+        const serverData = error.response?.data;
+        const serverCode = serverData?.code;
 
-        // 4. Respetar tu lógica de intentos fallidos
-        if (serverCode === "auth/invalid-credential" || error.response?.status === 401) {
-            try {
-                const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/login-failed`, { email });
-                
-                if (data.banned) {
-                    setError("Tu cuenta fue bloqueada por demasiados intentos fallidos.");
-                } else if (data.attempts < 5) {
-                    setError(`Credenciales inválidas. Te quedan ${5 - data.attempts} intento(s).`);
-                } else {
-                    setError("Credenciales inválidas.");
-                }
-            } catch (error) {
-                setError("Credenciales inválidas.");
-                console.error("Login error:", error);
-            }
+        if (serverCode === "auth/too-many-attempts" || error.response?.status === 429) {
+            const minutes = serverData?.retryAfterMinutes;
+            setError(minutes
+                ? `Demasiados intentos fallidos. Probá de nuevo en ${minutes} minuto(s).`
+                : "Demasiados intentos fallidos. Probá de nuevo más tarde.");
+            return;
+        }
+
+        if (serverCode === "auth/user-banned") {
+            setError("Usuario baneado. Contactate con Boggero Propiedades.");
             return;
         }
 
         if (serverCode === "auth/user-not-found" || error.response?.status === 404) {
-                setError("No existe ninguna cuenta registrada con ese email.");
-                return;
-            }
-        if (serverCode === "auth/user-banned") {
-            setError("Usuario baneado. Contactate con Boggero Propiedades.");
+            setError("No existe ninguna cuenta registrada con ese email.");
+            return;
+        }
+
+        if (serverCode === "auth/email-not-verified") {
+            setError(serverData?.verificationSent
+                ? "Tu email todavía no está verificado. Te reenviamos el mail de verificación: revisá tu casilla (y spam)."
+                : "Tu email todavía no está verificado. Revisá el mail que te enviamos al registrarte.");
+            return;
+        }
+
+        if (serverCode === "auth/invalid-credential" || error.response?.status === 401) {
+            const left = serverData?.attemptsLeft;
+            setError(typeof left === "number" && left > 0
+                ? `Credenciales inválidas. Te quedan ${left} intento(s).`
+                : "Credenciales inválidas.");
             return;
         }
 
@@ -155,55 +168,47 @@ export const SessionProvider = ({ children }: ProviderProps) => {
         setLoading(false);
     }
 };
-    // Logout
+    // Logout — el backend lee el token de la cookie y la borra
     const handleLogout = async () => {
         try {
             sessionVersion.current += 1;
             setError(false)
             setLoading(true);
-            const idToken = await auth.currentUser?.getIdToken();
 
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/logout`, { idToken }, { withCredentials: true });
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, { withCredentials: true });
 
             if (response.status === 200) {
-                await auth.signOut()
                 setUser(null)
                 navigate("/");
             }
         } catch (error: any) {
-            setError("Error al cerrar sesión."); // Error al cerrar
+            setError("Error al cerrar sesión.");
             console.error("Error logging out session 🔴", error);
         } finally {
             setLoading(false)
         }
     }
 
-    // Reset Password
+    // Reset Password — el backend le pide a Firebase que mande el mail.
+    // Siempre responde igual exista o no el email (evita enumerar cuentas).
     const handleResetPassword = async (email: string) => {
         try {
             if(!email){
-                alert("Por favor, ingresa tu email para restablecer la contraseña."); // Ingresá mail
+                alert("Por favor, ingresa tu email para restablecer la contraseña.");
                 return;
-            } else {
-                await sendPasswordResetEmail(auth, email);
-                alert("Email de restablecimiento enviado."); // Mail enviado
             }
-            
+            await axios.post(`${import.meta.env.VITE_API_URL}/reset-password`, { email });
+            alert("Si el email está registrado, vas a recibir un link para restablecer la contraseña.");
         } catch (error: any) {
-            console.error("Error al enviar el email:", error.code);
-
-            switch (error.code) {
-                case "auth/user-not-found":
-                    alert("No existe cuenta vinculada a este correo."); // No Existe usuario
-                    break;
-                case "auth/invalid-email":
-                    alert("Formato de email inválido."); // Formato mail invalido
-                    break;
-                case "auth/too-many-requests":
-                    alert("Demasiados intentos. Intentá más tarde."); // Demasiados Intentos
-                    break;
-                default:
-                    alert("Default Error.");
+            const status = error.response?.status;
+            const code   = error.response?.data?.code;
+            console.error("Error al enviar el email:", code || status);
+            if (code === "auth/invalid-email" || status === 400) {
+                alert("Formato de email inválido.");
+            } else if (status === 429) {
+                alert("Demasiados intentos. Intentá más tarde.");
+            } else {
+                alert("Default Error.");
             }
         }
     }
@@ -248,24 +253,21 @@ export const SessionProvider = ({ children }: ProviderProps) => {
         }
     }
 
-    // Para el renderizado del ul li del nav
+    // Para el renderizado del ul li del nav.
+    // El rol se pregunta al servidor (token verificado), no al SDK cliente.
     const verifyIsAdmin = async () => {
-        const customClaims = await auth.currentUser?.getIdTokenResult();
-        {/* Doble negación forza a undefined y null a ser falsos, para solo trabajar con booleanos */}
-        const isAdmin = !!customClaims?.claims.admin; // Esto es TRUE como si no tuviera los signos de exclamación
-
-        if(isAdmin){
-            setIsAdmin(true)
-        } else {
-            setIsAdmin(false)
+        try {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/me`, { withCredentials: true });
+            setIsAdmin(data?.user?.admin === true);
+        } catch {
+            setIsAdmin(false);
         }
     }
 
    // Refresh
     // Comprueba la cookie al abrir la web y al volver a una pestaña restaurada.
     // - Tiene tiempo máximo: si el servidor no contesta, el loading NO se queda pensando para siempre.
-    // - Si mientras tanto el usuario inicia o cierra sesión, la respuesta vieja se descarta
-    //   (antes podía llegar tarde y borrar la sesión recién iniciada).
+    // - Si mientras tanto el usuario inicia o cierra sesión, la respuesta vieja se descarta.
     useEffect(() => {
         let controller: AbortController | null = null;
 
@@ -278,7 +280,6 @@ export const SessionProvider = ({ children }: ProviderProps) => {
             try {
                 setLoading(true);
 
-                // Llamamos a nuestro backend para ver si la cookie es válida
                 const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/check-auth`, {
                     withCredentials: true,
                     timeout: CHECK_AUTH_TIMEOUT_MS,
@@ -327,5 +328,5 @@ export const UseSession = () => {
   if (!context) {
     throw new Error("useSession debe ser usado dentro de un SessionProvider");
   }
-  return context; 
+  return context;
 };
