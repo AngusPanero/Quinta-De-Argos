@@ -27,6 +27,9 @@ interface SessionContextType {
     verifyIsAdmin: () => void
     // true si la comprobación de sesión tarda (servidor de Render despertando)
     slowServer: boolean
+    // true si el último login falló porque el email no está verificado
+    // (el login muestra el botón "Reenviar mail de verificación")
+    emailNotVerified: boolean
 }
 
 // Render (plan gratuito) duerme el servidor tras 15 min sin uso y tarda hasta ~50 s en despertar.
@@ -42,6 +45,7 @@ export const SessionProvider = ({ children }: ProviderProps) => {
     const [ user, setUser ] = useState<unknown>(null)
     const [ isAdmin, setIsAdmin ] = useState<boolean | null>(null)
     const [ slowServer, setSlowServer ] = useState(false)
+    const [ emailNotVerified, setEmailNotVerified ] = useState(false)
     // Sube con cada login/logout: así una comprobación de sesión que llega tarde no pisa el estado nuevo
     const sessionVersion = useRef(0)
 
@@ -110,6 +114,7 @@ export const SessionProvider = ({ children }: ProviderProps) => {
         sessionVersion.current += 1; // desde aquí manda el login, no la comprobación inicial
         setLoading(true);
         setError(null);
+        setEmailNotVerified(false);
 
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password }, { withCredentials: true });
 
@@ -150,6 +155,7 @@ export const SessionProvider = ({ children }: ProviderProps) => {
         }
 
         if (serverCode === "auth/email-not-verified") {
+            setEmailNotVerified(true);
             setError(serverData?.verificationSent
                 ? "Tu email todavía no está verificado. Te reenviamos el mail de verificación: revisá tu casilla (y spam)."
                 : serverData?.verificationRateLimited
@@ -320,7 +326,7 @@ export const SessionProvider = ({ children }: ProviderProps) => {
     }, []);
 
     return(
-        <SessionContext.Provider value={{ handleRegister , handleLogin, handleLogout, handleResetPassword, error, setError, loading, setLoading, user, setUser, handleUnbanUser, verifyIsAdmin, isAdmin, handleBanUser, slowServer }}>
+        <SessionContext.Provider value={{ handleRegister , handleLogin, handleLogout, handleResetPassword, error, setError, loading, setLoading, user, setUser, handleUnbanUser, verifyIsAdmin, isAdmin, handleBanUser, slowServer, emailNotVerified }}>
             { children }
         </SessionContext.Provider>
     )

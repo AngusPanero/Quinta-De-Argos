@@ -14,7 +14,7 @@ interface LoginProps {
 const LoginCorporate = ({ closeLogin }: LoginProps) => {
     const { language, texts } = UseLanguage()  
     const { theme } = UseTheme()
-    const { handleLogin, loading, error } = UseSession()
+    const { handleLogin, loading, error, emailNotVerified } = UseSession()
     const loginRef = useRef<HTMLDivElement>(null);
 
     const [ exit, setExit ] = useState(false);
@@ -41,7 +41,17 @@ const LoginCorporate = ({ closeLogin }: LoginProps) => {
 
     const loginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const response = await handleLogin(email, password); 
+        const response = await handleLogin(email, password);
+        if (response) {
+            closeLogin();
+        }
+    }
+
+    // Reenviar verificación: el backend la reenvía al intentar entrar con la
+    // contraseña correcta, así solo puede pedirla el dueño de la cuenta
+    const resendVerification = async () => {
+        if (!email || !password) return;
+        const response = await handleLogin(email, password);
         if (response) {
             closeLogin();
         }
@@ -130,6 +140,17 @@ const LoginCorporate = ({ closeLogin }: LoginProps) => {
                         <button type="submit" className="log-corp-submit-btn">
                             {texts[language].login.button}
                         </button>
+
+                        {emailNotVerified && (
+                            <button
+                                type="button"
+                                className="log-corp-submit-btn"
+                                onClick={resendVerification}
+                                disabled={!email || !password}
+                            >
+                                Reenviar mail de verificación
+                            </button>
+                        )}
 
                     </form>
 
