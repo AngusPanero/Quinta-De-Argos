@@ -82,7 +82,9 @@ export const SessionProvider = ({ children }: ProviderProps) => {
                 // Se muestra en el login que se abre: tiene que verificar antes de entrar
                 setError(response.data?.verificationSent
                     ? "Cuenta creada. Te enviamos un mail para verificarla: revisá tu casilla (y spam) antes de ingresar."
-                    : "Cuenta creada. Al iniciar sesión te vamos a enviar el mail de verificación.")
+                    : response.data?.verificationRateLimited
+                        ? "Cuenta creada. Ya te enviamos un mail de verificación hace poco: revisá tu casilla (y spam)."
+                        : "Cuenta creada. Al iniciar sesión te vamos a enviar el mail de verificación.")
             }
         } catch (error: any) {
             if(error.response?.status === 409){
@@ -150,7 +152,9 @@ export const SessionProvider = ({ children }: ProviderProps) => {
         if (serverCode === "auth/email-not-verified") {
             setError(serverData?.verificationSent
                 ? "Tu email todavía no está verificado. Te reenviamos el mail de verificación: revisá tu casilla (y spam)."
-                : "Tu email todavía no está verificado. Revisá el mail que te enviamos al registrarte.");
+                : serverData?.verificationRateLimited
+                    ? "Tu email todavía no está verificado. Ya te enviamos el mail hace poco: revisá tu casilla (y spam) o probá de nuevo en unos minutos."
+                    : "Tu email todavía no está verificado. Revisá el mail que te enviamos al registrarte.");
             return;
         }
 
