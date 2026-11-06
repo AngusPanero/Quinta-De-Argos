@@ -148,17 +148,20 @@ const HomeCorporate: React.FC = () => {
             height={"300px"}
             width={"auto"}
           />
-          <motion.span className="home-corporate-eyebrow-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
-            Cehegín, Murcia
-          </motion.span>
+          
           {/* <motion.h1 className="home-corporate-hero-title" variants={fadeUp} transition={{ duration: 0.8 }}>
             Quinta de Argos
           </motion.h1> */}
           {/*LOGO IMG EN PUBLIC FOLDER*/}
           
           <motion.p className="home-corporate-hero-subtitle" variants={fadeUp} transition={{ duration: 0.8 }}>
-            El refugio de tus sueños. Privacidad y confort en plena naturaleza.
+            El refugio de tus sueños. <br /> Privacidad y confort en plena naturaleza.
           </motion.p>
+          <br />
+          <br />
+          <motion.span className="home-corporate-eyebrow-hero" variants={fadeUp} transition={{ duration: 0.7 }}>
+            Cehegín, Murcia
+          </motion.span>
           <motion.div variants={fadeUp} transition={{ duration: 0.8 }}>
             <HorizonLine className="home-corporate-horizon-hero" />
           </motion.div>
