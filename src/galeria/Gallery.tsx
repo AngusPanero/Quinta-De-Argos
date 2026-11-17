@@ -55,8 +55,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: 'jardin',
     src: imgJardin,
-    alt: 'Jardín de 7.000 metros cuadrados de Quinta de Argos',
-    eyebrow: 'Jardín',
+    alt: 'Jardín y exteriores de 7.000 metros cuadrados de Quinta de Argos',
+    eyebrow: 'Jardín y Exteriores',
     description:
       'Una parcela que invita a pasear y respirar naturaleza, donde cada rincón transmite privacidad, belleza y la esencia elegante de Quinta de Argos.',
     folder: 'jardin',
