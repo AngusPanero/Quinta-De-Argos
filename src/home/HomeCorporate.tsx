@@ -109,7 +109,7 @@ const HomeCorporate: React.FC = () => {
   const themeContext = UseTheme() as { theme?: 'light' | 'dark' } | undefined;
   const theme = themeContext?.theme ?? 'light';
 
-  const videoRef = useRef<HTMLVideoElement>(null);
+  /* const videoRef = useRef<HTMLVideoElement>(null); */
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -119,17 +119,13 @@ const HomeCorporate: React.FC = () => {
     <div className={`home-corporate ${theme === 'dark' ? 'theme-dark' : ''}`}>
       {/* ============ HERO DE VIDEO ============ */}
       <section className="home-corporate-hero">
-        <video
-          ref={videoRef}
+        <img
           className="home-corporate-hero-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="/images/quinta-de-argos-poster.jpg"
-        >
-          <source src="https://res.cloudinary.com/cs9iys75/video/upload/v1790091260/5056237-hd_1920_1080_25fps.mp4" type="video/mp4" />
-        </video>
+          src="/fotos/piscina/piscina1.jpg"
+          alt="Piscina de Quinta de Argos"
+          fetchPriority="high"
+          decoding="async"
+        />
 
         <div className="home-corporate-hero-overlay" />
 

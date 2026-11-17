@@ -10,17 +10,7 @@ import {
 import axios from 'axios';
 import './contactCorporate.css';
 import { UseTheme } from '../contexts/ThemeContext';
-import imgPiscina from '../assets/quinta4.jpg';
-
-/**
- * ContactCorporate — Quinta de Argos
- * ---------------------------------------------------------
- * Sección de contacto: hero con la piscina, tarjeta de info
- * en verde pino y formulario de consulta en tres pasos.
- * Envía a `${API_BASE}/contact` con el mismo shape de datos
- * que antes (nombre, email, telefono, checkin, checkout,
- * huespedes, mensaje).
- */
+import imgPiscina from '/fotos/piscina/piscina1.jpg';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
