@@ -12,9 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import './reservations.css';
 import { UseTheme } from '../contexts/ThemeContext';
 import BookingCalendar from './BookingCalendar';
-import imgPiscina from '../assets/quinta4.jpg';
-import imgBuhardilla from '../assets/quinta3.jpg';
-import imgJardin from '../assets/quinta5.jpg';
 import { ADDONS, MAX_NIGHTS, MAX_GUESTS, DEPOSIT_PER_GUEST } from './BookingConfig';
 import { formatDateLong, formatPrice, toISODate } from './BookingDates';
 import { useAvailability, estimateStay, groupNightsByPrice, checkDeparture, canArrive } from './useAvailability';
@@ -74,10 +71,27 @@ interface StayScene {
   description: string;
 }
 
+// Fotos del fotógrafo en /public/fotos (se referencian por ruta, no se importan).
 const STAY_SCENES: StayScene[] = [
   {
+    id: 'jardin',
+    src: '/fotos/jardin/jardin33.jpg',
+    alt: 'Jardín y exteriores de 7.000 metros cuadrados de Quinta de Argos',
+    name: 'Jardín y Exteriores',
+    description:
+      'Una parcela que invita a pasear y respirar naturaleza, donde cada rincón transmite privacidad, belleza y la esencia elegante de Quinta de Argos.',
+  },
+  {
+    id: 'salon',
+    src: '/fotos/salon/salon15.jpg',
+    alt: 'Salón principal de Quinta de Argos',
+    name: 'Salón',
+    description:
+      'Un espacio cálido y luminoso donde la madera, la luz natural y los detalles artísticos crean un ambiente acogedor y elegante para compartir momentos inolvidables.',
+  },
+  {
     id: 'piscina',
-    src: imgPiscina,
+    src: '/fotos/piscina/piscina2.jpg',
     alt: 'Piscina infinity de Quinta de Argos',
     name: 'Piscina infinity',
     description:
@@ -85,19 +99,11 @@ const STAY_SCENES: StayScene[] = [
   },
   {
     id: 'buhardilla',
-    src: imgBuhardilla,
+    src: '/fotos/buhardilla/buhardilla4.jpg',
     alt: 'Buhardilla con proyector de Quinta de Argos',
     name: 'Buhardilla',
     description:
       'Refugio versátil de ocio y descanso, con sofá, sillón y zona de juegos, donde la luz cálida y la madera aportan confort y estilo contemporáneo. Proyector y pantalla invitan a disfrutar de películas con total comodidad.',
-  },
-  {
-    id: 'jardin',
-    src: imgJardin,
-    alt: 'Jardín de 7.000 metros cuadrados de Quinta de Argos',
-    name: 'Jardín de 7.000 m²',
-    description:
-      'Una parcela que invita a pasear y respirar naturaleza, donde cada rincón transmite privacidad, belleza y la esencia elegante de Quinta de Argos.',
   },
 ];
 
@@ -159,43 +165,72 @@ const SceneLayer: React.FC<{
 }> = ({ scene, index, total, progress }) => {
   const seg = 1 / total;
   const start = index * seg;
+  const isFirst = index === 0;
   const isLast = index === total - 1;
 
-  const openEnd = start + seg * 0.55;
+  // Cada espacio entra como una cortina a todo el ancho que sube desde abajo
+  // (sin recuadro en el medio). El primero ya está entero desde el principio.
+  const reveal: [number, number] = [start, start + seg * 0.5];
   const capIn: [number, number] = [start + seg * 0.35, start + seg * 0.6];
   const capOut: [number, number] = [start + seg * 0.88, start + seg * 1.02];
   const capRange = isLast ? capIn : [...capIn, ...capOut];
 
   const clipPath = useTransform(
     progress,
-    [start, openEnd],
-    ['inset(24% 30% 24% 30% round 6px)', 'inset(0% 0% 0% 0% round 0px)']
+    reveal,
+    isFirst
+      ? ['inset(0% 0% 0% 0%)', 'inset(0% 0% 0% 0%)']
+      : ['inset(100% 0% 0% 0%)', 'inset(0% 0% 0% 0%)']
   );
-  const imageScale = useTransform(progress, [start, start + seg], [1.28, 1.02]);
+
+  // La foto entra subiendo un poco más lento que la cortina, y cuando la
+  // tapa el espacio siguiente se va hacia arriba y se oscurece (parallax).
+  // Todos los rangos tienen que quedar entre 0 y 1: framer acelera estas
+  // animaciones con la API nativa del navegador y rompe con valores fuera de ahí.
+  // Por eso el último espacio no tiene tramo de "retroceso".
+  const imageY = useTransform(
+    progress,
+    isLast ? reveal : [start, start + seg * 0.5, start + seg, start + seg * 1.5],
+    isLast ? [isFirst ? '0%' : '12%', '0%'] : [isFirst ? '0%' : '12%', '0%', '0%', '-10%']
+  );
+  const imageScale = useTransform(progress, [start, start + seg], [1.12, 1.02]);
+  const veilOpacity = useTransform(
+    progress,
+    isLast ? reveal : [start + seg, start + seg * 1.5],
+    isLast ? [0, 0] : [0, 0.55]
+  );
+
   const captionOpacity = useTransform(progress, capRange, isLast ? [0, 1] : [0, 1, 1, 0]);
   const captionY = useTransform(progress, capRange, isLast ? [48, 0] : [48, 0, 0, -32]);
   const titleY = useTransform(progress, capIn, ['105%', '0%']);
 
+  const pad = (n: number) => String(n).padStart(2, '0');
+
   return (
-    <div className="reservas-corporate-scene" style={{ zIndex: index + 1 }}>
+    <motion.div className="reservas-corporate-scene" style={{ zIndex: index + 1 }}>
       <motion.div className="reservas-corporate-scene-frame" style={{ clipPath }}>
         <motion.img
           src={scene.src}
           alt={scene.alt}
           className="reservas-corporate-scene-image"
-          style={{ scale: imageScale }}
+          style={{ scale: imageScale, y: imageY }}
+          loading="lazy"
           decoding="async"
         />
         <div className="reservas-corporate-scene-shade" />
+        <motion.div className="reservas-corporate-scene-veil" style={{ opacity: veilOpacity }} aria-hidden="true" />
       </motion.div>
 
       <motion.div className="reservas-corporate-scene-caption" style={{ opacity: captionOpacity, y: captionY }}>
+        <span className="reservas-corporate-scene-index">
+          {pad(index + 1)} / {pad(total)}
+        </span>
         <h3 className="reservas-corporate-scene-name">
           <motion.span style={{ y: titleY }}>{scene.name}</motion.span>
         </h3>
         <p className="reservas-corporate-scene-description">{scene.description}</p>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 

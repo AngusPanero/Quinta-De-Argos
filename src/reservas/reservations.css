@@ -726,7 +726,8 @@
 
 .reservas-corporate-stage {
   position: relative;
-  height: calc(var(--qa-scenes, 3) * 130vh);
+  /* 4 espacios: un poco menos de recorrido por espacio para que no se haga eterno */
+  height: calc(var(--qa-scenes, 4) * 120vh);
   background-color: var(--qa-pine-deep);
 }
 
@@ -766,6 +767,25 @@
     rgba(20, 26, 18, 0.35) 38%,
     rgba(20, 26, 18, 0) 65%
   );
+}
+
+.reservas-corporate-scene-veil {
+  position: absolute;
+  inset: 0;
+  background-color: #141a12;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reservas-corporate-scene-index {
+  display: block;
+  font-family: 'Jost', Arial, sans-serif;
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--qa-sand);
+  margin-bottom: 1rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .reservas-corporate-scene-caption {
@@ -974,7 +994,7 @@
   }
 
   .reservas-corporate-stage {
-    height: calc(var(--qa-scenes, 3) * 110vh);
+    height: calc(var(--qa-scenes, 4) * 105vh);
   }
 
   .reservas-corporate-stage-nav {
