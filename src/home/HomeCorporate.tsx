@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, animate, useInView } from 'framer-motion';
+import { motion, animate, useInView, useReducedMotion } from 'framer-motion';
 import './homeCorporate.css';
 import { UseTheme } from '../contexts/ThemeContext';
-import img1 from '../assets/quinta.jpg';
-import img2 from '../assets/quinta2.jpg';
-import img3 from '../assets/quinta3.jpg';
-import img4 from '../assets/quinta4.jpg';
-import img5 from '../assets/quinta5.jpg';
-import img6 from '../assets/quinta6.jpg';
-import img7 from '../assets/quinta7.jpg';
+import img1 from '/fotos/jardin/jardin32.jpg';
+import img2 from '/fotos/piscina/piscina11.jpg';
+import img3 from '/fotos/buhardilla/buhardilla3.jpg';
+import img4 from '/fotos/flora/flora5.jpg';
+import img6 from '/fotos/fabula/fabula8.jpg';
+import img7 from '/fotos/salon/salon23.jpg';
+import img8 from '/fotos/salon/salon25.jpg';
+import img9 from '/fotos/piscina/piscina2.jpg';
+import img10 from '/fotos/argos/argos5.jpg';
+import img11 from '/fotos/jardin/jardin23.jpg';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -68,39 +71,57 @@ const AnimatedStat: React.FC<{
 const galleryItems = [
   {
     src: img1,
-    alt: 'Fachada de Quinta de Argos al atardecer',
-    caption: 'Arquitectura nórdica, alma mediterránea',
+    alt: 'Jardín de 7.000 m² de Quinta de Argos',
+    caption: 'El jardín',
     figureClass: 'home-corporate-gallery-item-fachada',
   },
   {
-    src: img2,
-    alt: 'Interior de madera clara de Quinta de Argos',
+    src: img8,
+    alt: 'Salón principal de Quinta de Argos',
     caption: 'El salón',
     figureClass: 'home-corporate-gallery-item-interior',
   },
   {
     src: img3,
-    alt: 'Bosque de pinos junto a la finca',
+    alt: 'Buhardilla de Quinta de Argos',
     caption: 'La buhardilla',
     figureClass: 'home-corporate-gallery-item-pinar',
   },
   {
-    src: img4,
-    alt: 'Piscina natural rodeada de piedra caliza',
+    src: img2,
+    alt: 'Piscina infinity de Quinta de Argos',
     caption: 'La piscina infinity',
     figureClass: 'home-corporate-gallery-item-piscina',
   },
   {
-    src: img5,
-    alt: 'Cielo nocturno sin contaminación lumínica',
-    caption: 'Noches sin luz artificial',
+    src: img6,
+    alt: 'Habitación Fábula de Quinta de Argos',
+    caption: 'Habitación Fábula',
+    figureClass: 'home-corporate-gallery-item-fabula',
+  },
+  {
+    src: img9,
+    alt: 'Piscina infinity frente al paisaje',
+    caption: 'Agua que se funde con el horizonte',
     figureClass: 'home-corporate-gallery-item-noche',
   },
   {
-    src: img6,
-    alt: 'Desayuno servido en la terraza',
-    caption: 'El porche',
+    src: img4,
+    alt: 'Habitación Flora de Quinta de Argos',
+    caption: 'Habitación Flora',
     figureClass: 'home-corporate-gallery-item-terraza',
+  },
+  {
+    src: img10,
+    alt: 'Habitación Argos de Quinta de Argos',
+    caption: 'Habitación Argos',
+    figureClass: 'home-corporate-gallery-item-argos',
+  },
+  {
+    src: img11,
+    alt: 'Parcela y pinos de Quinta de Argos',
+    caption: 'Arquitectura nórdica, alma mediterránea',
+    figureClass: 'home-corporate-gallery-item-parcela',
   },
 ];
 
@@ -115,16 +136,25 @@ const HomeCorporate: React.FC = () => {
     window.scrollTo(0, 0);
   }, [])
 
+  // Zoom lento de la foto del hero apenas se renderiza la página, sin
+  // depender del scroll. Va de 1 a 1.18 en 10 s y queda quieta ahí (el hero
+  // tiene overflow: hidden, así que la foto nunca se sale de su caja).
+  const heroRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+
   return (
     <div className={`home-corporate ${theme === 'dark' ? 'theme-dark' : ''}`}>
       {/* ============ HERO DE VIDEO ============ */}
-      <section className="home-corporate-hero">
-        <img
+      <section className="home-corporate-hero" ref={heroRef}>
+        <motion.img
           className="home-corporate-hero-video"
           src="/fotos/piscina/piscina1.jpg"
           alt="Piscina de Quinta de Argos"
           fetchPriority="high"
           decoding="async"
+          initial={{ scale: 1 }}
+          animate={{ scale: reduceMotion ? 1 : 1.18 }}
+          transition={{ duration: 10, ease: [0.25, 0.1, 0.25, 1] }}
         />
 
         <div className="home-corporate-hero-overlay" />
@@ -191,17 +221,17 @@ const HomeCorporate: React.FC = () => {
           </motion.h2>
           <motion.p className="home-corporate-story-paragraph-one" variants={fadeUp} transition={{ duration: 0.7 }}>
             Quinta de Argos es una casa exclusiva en plena campiña del
-noroeste murciano concebida como una experiencia estética y sensorial. Rodeada de 7.000
-m² de jardín y abierta al paisaje a través de un porche y una piscina infinity que se funde
-con el horizonte, la propiedad invita a desconectar del ruido y reconectar con la belleza y la
-naturaleza.
+            noroeste murciano concebida como una experiencia estética y sensorial. Rodeada de 7.000
+            m² de jardín y abierta al paisaje a través de un porche y una piscina infinity que se funde
+            con el horizonte, la propiedad invita a desconectar del ruido y reconectar con la belleza y la
+            naturaleza.
           </motion.p>
           <motion.p className="home-corporate-story-paragraph-two" variants={fadeUp} transition={{ duration: 0.7 }}>
             Cada espacio ha sido diseñado con intención: madera noble, luz cuidadosamente
-modulada, piezas artísticas con carácter y una arquitectura que respira amplitud y calma. En
-Quinta de Argos, el campo no es rústico, es elegante; el descanso no es casual, es
-ritual; y cada estancia cuenta una historia propia dentro de un conjunto coherente y
-exclusivo.
+            modulada, piezas artísticas con carácter y una arquitectura que respira amplitud y calma. En
+            Quinta de Argos, el campo no es rústico, es elegante; el descanso no es casual, es
+            ritual; y cada estancia cuenta una historia propia dentro de un conjunto coherente y
+            exclusivo.
           </motion.p>
         </motion.div>
 
@@ -309,8 +339,8 @@ exclusivo.
           </motion.h2>
           <motion.p className="home-corporate-closing-paragraph" variants={fadeUp} transition={{ duration: 0.7 }}>
           Dimensionada para un máximo de seis huéspedes, Quinta de Argos
-mantiene el silencio, una extraordinaria privacidad y esa sensación boutique que la
-distingue de cualquier otra propiedad rural.
+          mantiene el silencio, una extraordinaria privacidad y esa sensación boutique que la
+          distingue de cualquier otra propiedad rural.
           </motion.p>
           <motion.a
             href="/reservations"

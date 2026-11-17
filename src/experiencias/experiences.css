@@ -33,6 +33,13 @@
   max-width: 760px;
 }
 
+.experiences-corporate-hero-logo {
+  display: block;
+  height: 200px;
+  width: auto;
+  margin-bottom: 2rem;
+}
+
 .experiences-corporate-eyebrow-hero {
   display: inline-block;
   font-family: 'Helvetica Neue', 'Courier New', monospace;
@@ -315,6 +322,10 @@
    ========================================================== */
 
 @media (max-width: 860px) {
+  .experiences-corporate-hero-logo {
+    height: 150px;
+  }
+
   .experiences-corporate-timeline-track {
     left: 1.25rem;
     transform: none;

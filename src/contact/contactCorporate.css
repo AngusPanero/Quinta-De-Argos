@@ -122,6 +122,13 @@
   max-width: 760px;
 }
 
+.cc-hero-logo {
+  display: block;
+  height: 200px;
+  width: auto;
+  margin-bottom: 2rem;
+}
+
 .cc-hero-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -952,6 +959,11 @@ a.cc-channel:hover .cc-channel-arrow {
 }
 
 @media (max-width: 640px) {
+  .cc-hero-logo {
+    height: 150px;
+    margin-bottom: 1.5rem;
+  }
+
   .cc-hero {
     min-height: 560px;
     padding-top: 7rem;

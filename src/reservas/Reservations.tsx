@@ -471,12 +471,20 @@ const Reservations: React.FC = () => {
           animate="visible"
           variants={staggerContainer}
         >
+          <motion.img
+            src="/logos/Logo_Completo_sin_Fondo.png"
+            alt="Quinta de Argos"
+            className="reservas-corporate-hero-logo"
+            variants={fadeUp}
+            transition={{ duration: 0.8, ease: EASE }}
+          />
           <motion.span className="reservas-corporate-kicker" variants={fadeUp} transition={{ duration: 0.8, ease: EASE }}>
             Reservas
           </motion.span>
           <motion.h1 className="reservas-corporate-heading-hero" variants={fadeUp} transition={{ duration: 0.9, ease: EASE }}>
             Diseña tu estancia perfecta
           </motion.h1>
+          
           <motion.p className="reservas-corporate-paragraph-hero" variants={fadeUp} transition={{ duration: 0.9, ease: EASE }}>
             Quinta de Argos recibe a muy pocos huéspedes a la vez — hasta seis personas en cada estancia. Elige tus
             fechas y diseña tu reserva a tu manera, con los adicionales que quieras añadir.

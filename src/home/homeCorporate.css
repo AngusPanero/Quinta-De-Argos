@@ -113,9 +113,11 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   overflow: hidden;
   background-color: #201f1a;
+  padding-top: 150px;
 }
 
 .home-corporate.theme-dark .home-corporate-hero {
@@ -517,6 +519,90 @@
   background: linear-gradient(180deg, transparent 0%, rgba(28, 37, 25, 0.75) 100%);
 }
 
+/* ---------- Ítem: Habitación Fábula (bajo, rellena el hueco junto al salón) ---------- */
+.home-corporate-gallery-item-fabula {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 2px;
+  grid-column: span 2;
+  grid-row: span 1;
+}
+.home-corporate-gallery-item-fabula img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: qa-home-kenburns-a 20s ease-in-out infinite alternate;
+}
+.home-corporate-gallery-item-fabula figcaption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 1.5rem 1.25rem 1.1rem;
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #f2ede1;
+  background: linear-gradient(180deg, transparent 0%, rgba(28, 37, 25, 0.75) 100%);
+}
+
+/* ---------- Ítem: Habitación Argos (normal) ---------- */
+.home-corporate-gallery-item-argos {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 2px;
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.home-corporate-gallery-item-argos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: qa-home-kenburns-b 21s ease-in-out infinite alternate;
+}
+.home-corporate-gallery-item-argos figcaption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 1.5rem 1.25rem 1.1rem;
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #f2ede1;
+  background: linear-gradient(180deg, transparent 0%, rgba(28, 37, 25, 0.75) 100%);
+}
+
+/* ---------- Ítem: La parcela (ancho) ---------- */
+.home-corporate-gallery-item-parcela {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 2px;
+  grid-column: span 4;
+  grid-row: span 2;
+}
+.home-corporate-gallery-item-parcela img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: qa-home-kenburns-a 23s ease-in-out infinite alternate;
+}
+.home-corporate-gallery-item-parcela figcaption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 1.5rem 1.25rem 1.1rem;
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #f2ede1;
+  background: linear-gradient(180deg, transparent 0%, rgba(28, 37, 25, 0.75) 100%);
+}
+
 /* ============ CIERRE ============ */
 
 .home-corporate-closing {
@@ -652,6 +738,18 @@
     grid-column: span 2;
     grid-row: span 1;
   }
+  .home-corporate-gallery-item-fabula {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  .home-corporate-gallery-item-argos {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  .home-corporate-gallery-item-parcela {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
 }
 
 @media (max-width: 480px) {
@@ -688,7 +786,10 @@
   .home-corporate-gallery-item-pinar img,
   .home-corporate-gallery-item-piscina img,
   .home-corporate-gallery-item-noche img,
-  .home-corporate-gallery-item-terraza img {
+  .home-corporate-gallery-item-terraza img,
+  .home-corporate-gallery-item-fabula img,
+  .home-corporate-gallery-item-argos img,
+  .home-corporate-gallery-item-parcela img {
     animation: none;
   }
 }

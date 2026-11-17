@@ -180,6 +180,13 @@ const Experiences: React.FC = () => {
           viewport={{ once: true, amount: 0.5 }}
           variants={staggerContainer}
         >
+          <motion.img
+            src="/logos/Logo_Completo_sin_Fondo.png"
+            alt="Quinta de Argos"
+            className="experiences-corporate-hero-logo"
+            variants={fadeUp}
+            transition={{ duration: 0.6 }}
+          />
           <motion.span className="experiences-corporate-eyebrow-hero" variants={fadeUp} transition={{ duration: 0.6 }}>
             Experiencias
           </motion.span>

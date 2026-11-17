@@ -3,8 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import './gallery.css';
 import { UseTheme } from '../contexts/ThemeContext';
-import imgPorche from '../assets/quinta6.jpg';
-import imgBarbacoa from '../assets/quinta.jpg';
 
 // Ruta base de la galería (la misma que ya tienes en el router).
 // La vista de cada espacio vive en `${GALLERY_PATH}/:lugar`.
@@ -52,7 +50,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     description:
       'Agua que se funde con el horizonte, un espacio sereno y elegante para disfrutar de amaneceres, atardeceres y momentos de contemplación.',
     folder: 'piscina',
-    photoCount: 34,
+    photoCount: 35,
   },
   {
     id: 'jardin',
@@ -62,15 +60,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     description:
       'Una parcela que invita a pasear y respirar naturaleza, donde cada rincón transmite privacidad, belleza y la esencia elegante de Quinta de Argos.',
     folder: 'jardin',
-    photoCount: 45,
-  },
-  {
-    id: 'porche',
-    src: imgPorche,
-    alt: 'Porche de Quinta de Argos',
-    eyebrow: 'Porche',
-    description:
-      'Espacio exterior abierto al paisaje, con mobiliario confortable y detalles acogedores, perfecto para desayunos, cenas, reuniones familiares y de amigos… o simplemente contemplar la naturaleza.',
+    photoCount: 46,
   },
   {
     id: 'salon',
@@ -80,7 +70,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     description:
       'Un espacio cálido y luminoso donde la madera, la luz natural y los detalles artísticos crean un ambiente acogedor y elegante para compartir momentos inolvidables.',
     folder: 'salon',
-    photoCount: 31,
+    photoCount: 36,
   },
   {
     id: 'dormitorio1',
@@ -90,7 +80,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     description:
       'Habitación de inspiración floral con cama doble de 150 cm, vestidor y baño.',
     folder: 'flora',
-    photoCount: 11,
+    photoCount: 12,
   },
   {
     id: 'dormitorio2',
@@ -120,21 +110,13 @@ const GALLERY_ITEMS: GalleryItem[] = [
     description:
       'Refugio versátil de ocio y descanso, con sofá, sillón, espacio audiovisual y zona de juegos, donde la luz cálida y la madera aportan confort y estilo contemporáneo.',
     folder: 'buhardilla',
-    filePrefix: 'buardilla',
+    filePrefix: 'buhardilla',
     photoCount: 17,
   },
-  {
-    id: 'barbacoa',
-    src: imgBarbacoa,
-    alt: 'Zona de barbacoa de Quinta de Argos',
-    eyebrow: 'Barbacoa',
-    description:
-      'Espacio al aire libre diseñado para compartir aromas, sabores y conversaciones.',
-  }
 ];
 
 // Espacios con sesión completa del fotógrafo, en el orden en que se listan.
-const PHOTO_GROUP_ORDER = ['dormitorio3', 'dormitorio2', 'dormitorio1', 'salon', 'buhardilla', 'jardin', 'piscina'];
+const PHOTO_GROUP_ORDER = [ 'jardin', 'piscina', 'salon', 'buhardilla', 'dormitorio1', 'dormitorio2', 'dormitorio3'];
 const PHOTO_GROUPS = PHOTO_GROUP_ORDER
   .map((id) => GALLERY_ITEMS.find((item) => item.id === id))
   .filter((item): item is GalleryItem => !!item && !!item.folder && !!item.photoCount);
@@ -562,6 +544,13 @@ const Gallery: React.FC = () => {
           viewport={{ once: true, amount: 0.5 }}
           variants={staggerContainer}
         >
+          <motion.img
+            src="/logos/Logo_Completo_sin_Fondo.png"
+            alt="Quinta de Argos"
+            className="gallery-carousel-hero-logo"
+            variants={fadeUp}
+            transition={{ duration: 0.6 }}
+          />
           <motion.span className="gallery-carousel-eyebrow-cover" variants={fadeUp} transition={{ duration: 0.6 }}>
             Galería
           </motion.span>

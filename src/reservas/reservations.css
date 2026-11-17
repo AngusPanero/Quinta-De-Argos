@@ -78,6 +78,13 @@
   flex-direction: column;
 }
 
+.reservas-corporate-hero-logo {
+  display: block;
+  height: 200px;
+  width: 290px;
+  margin-bottom: 2rem;
+}
+
 .reservas-corporate-kicker {
   font-weight: 500;
   font-size: 0.95rem;
@@ -955,6 +962,12 @@
 }
 
 @media (max-width: 720px) {
+  .reservas-corporate-hero-logo {
+    height: 150px;
+    width: 220px;
+    margin-bottom: 1.5rem;
+  }
+
   .reservas-corporate-manifesto-columns {
     grid-template-columns: 1fr;
     margin-left: 0;

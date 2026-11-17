@@ -33,6 +33,13 @@
   text-align: center;
 }
 
+.gallery-carousel-hero-logo {
+  display: block;
+  height: 200px;
+  width: auto;
+  margin: 0 auto 2rem;
+}
+
 .gallery-carousel-eyebrow-cover {
   display: inline-block;
   font-family: 'Helvetica Neue', 'Courier New', monospace;
@@ -438,6 +445,11 @@
    ========================================================== */
 
 @media (max-width: 768px) {
+  .gallery-carousel-hero-logo {
+    height: 150px;
+    margin-bottom: 1.5rem;
+  }
+
   .gallery-carousel-stage {
     aspect-ratio: 4 / 5;
   }

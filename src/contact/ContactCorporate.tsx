@@ -10,7 +10,7 @@ import {
 import axios from 'axios';
 import './contactCorporate.css';
 import { UseTheme } from '../contexts/ThemeContext';
-import imgPiscina from '/fotos/piscina/piscina1.jpg';
+import imgPiscina from '/fotos/jardin/jardin30.jpg';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -210,6 +210,13 @@ const ContactCorporate: React.FC = () => {
           animate="visible"
           variants={stagger}
         >
+          <motion.img
+            src="/logos/Logo_Completo_sin_Fondo.png"
+            alt="Quinta de Argos"
+            className="cc-hero-logo"
+            variants={fadeUp}
+          />
+
           <motion.span className="cc-hero-eyebrow" variants={fadeUp}>
             <span className="cc-hero-eyebrow-line" aria-hidden="true" />
             Contacto
